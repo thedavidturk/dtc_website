@@ -58,10 +58,10 @@ function ParticleField() {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.04}
-        color={TEAL}
+        size={0.08}
+        color={PERSIMMON}
         transparent
-        opacity={0.7}
+        opacity={0.9}
         sizeAttenuation
         blending={THREE.AdditiveBlending}
       />
@@ -111,7 +111,7 @@ function GlassSphere() {
 
     if (glowRef.current) {
       // Glow pulses more intensely as you scroll
-      const pulseIntensity = 0.05 + scroll * 0.1;
+      const pulseIntensity = 0.15 + scroll * 0.2;
       glowRef.current.scale.setScalar(1.8 + Math.sin(time * 2) * pulseIntensity);
     }
   });
@@ -119,47 +119,84 @@ function GlassSphere() {
   return (
     <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
       <group ref={groupRef}>
-        {/* Inner glowing core - coral orange */}
-        <mesh ref={innerRef} scale={0.35}>
+        {/* Inner glowing core - persimmon */}
+        <mesh ref={innerRef} scale={0.4}>
           <sphereGeometry args={[1, 64, 64]} />
           <meshStandardMaterial
             color={PERSIMMON}
             emissive={PERSIMMON}
-            emissiveIntensity={2}
+            emissiveIntensity={5}
             toneMapped={false}
           />
         </mesh>
 
-        {/* Main glass sphere - light blue tint */}
+        {/* Secondary inner glow - teal */}
+        <mesh scale={0.55}>
+          <sphereGeometry args={[1, 48, 48]} />
+          <meshStandardMaterial
+            color={TEAL}
+            emissive={TEAL}
+            emissiveIntensity={2}
+            transparent
+            opacity={0.6}
+            toneMapped={false}
+          />
+        </mesh>
+
+        {/* Main glass sphere - neo mint tint */}
         <mesh scale={1.2}>
           <sphereGeometry args={[1, 128, 128]} />
           <meshPhysicalMaterial
             color={NEO_MINT}
-            roughness={0.05}
-            metalness={0.1}
-            transmission={0.95}
-            thickness={0.5}
-            ior={1.5}
+            roughness={0.02}
+            metalness={0.15}
+            transmission={0.9}
+            thickness={0.8}
+            ior={1.6}
             transparent
+            emissive={NEO_MINT}
+            emissiveIntensity={0.3}
           />
         </mesh>
 
-        {/* Outer fresnel glow - lime yellow */}
+        {/* Inner glow layer */}
+        <mesh scale={1.4}>
+          <sphereGeometry args={[1, 64, 64]} />
+          <meshBasicMaterial
+            color={PERSIMMON}
+            transparent
+            opacity={0.15}
+            side={THREE.BackSide}
+          />
+        </mesh>
+
+        {/* Outer fresnel glow - teal */}
         <mesh ref={glowRef} scale={1.8}>
           <sphereGeometry args={[1, 64, 64]} />
           <meshBasicMaterial
             color={TEAL}
             transparent
-            opacity={0.08}
+            opacity={0.2}
             side={THREE.BackSide}
           />
         </mesh>
 
-        {/* Soft ambient glow - sage green */}
-        <mesh scale={2.2}>
+        {/* Soft ambient glow - neo mint */}
+        <mesh scale={2.4}>
           <sphereGeometry args={[1, 32, 32]} />
           <meshBasicMaterial
-            color={SANDSTONE}
+            color={NEO_MINT}
+            transparent
+            opacity={0.12}
+            side={THREE.BackSide}
+          />
+        </mesh>
+
+        {/* Outer atmosphere */}
+        <mesh scale={3}>
+          <sphereGeometry args={[1, 32, 32]} />
+          <meshBasicMaterial
+            color={PERSIMMON}
             transparent
             opacity={0.05}
             side={THREE.BackSide}
@@ -233,28 +270,37 @@ function OrbWithTrail({ angle, radius, speed, color, size, index }: {
   return (
     <>
       <Trail
-        width={0.3}
-        length={8}
+        width={0.5}
+        length={12}
         color={color}
-        attenuation={(t) => t * t * t}
+        attenuation={(t) => t * t}
       >
         <mesh ref={meshRef}>
-          <sphereGeometry args={[size, 32, 32]} />
+          <sphereGeometry args={[size * 1.5, 32, 32]} />
           <meshStandardMaterial
             color="#ffffff"
             emissive={color}
-            emissiveIntensity={3}
+            emissiveIntensity={8}
             toneMapped={false}
           />
         </mesh>
       </Trail>
-      {/* Soft glow around orb */}
+      {/* Inner glow */}
       <mesh ref={glowRef}>
-        <sphereGeometry args={[size * 3, 16, 16]} />
+        <sphereGeometry args={[size * 4, 16, 16]} />
         <meshBasicMaterial
           color={color}
           transparent
-          opacity={0.15}
+          opacity={0.35}
+        />
+      </mesh>
+      {/* Outer glow */}
+      <mesh position={meshRef.current?.position || [0, 0, 0]}>
+        <sphereGeometry args={[size * 8, 16, 16]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.1}
         />
       </mesh>
     </>
@@ -309,26 +355,26 @@ function OrbitalRings() {
 
   return (
     <group>
-      {/* Inner ring - coral orange */}
+      {/* Inner ring - persimmon */}
       <points ref={ring1Ref}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[ring1Positions, 3]} />
         </bufferGeometry>
-        <pointsMaterial size={0.05} color={PERSIMMON} transparent opacity={0.9} sizeAttenuation blending={THREE.AdditiveBlending} />
+        <pointsMaterial size={0.1} color={PERSIMMON} transparent opacity={1} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
-      {/* Middle ring - light blue */}
+      {/* Middle ring - neo mint */}
       <points ref={ring2Ref}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[ring2Positions, 3]} />
         </bufferGeometry>
-        <pointsMaterial size={0.04} color={NEO_MINT} transparent opacity={0.7} sizeAttenuation blending={THREE.AdditiveBlending} />
+        <pointsMaterial size={0.08} color={NEO_MINT} transparent opacity={0.9} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
-      {/* Outer ring - sage green */}
+      {/* Outer ring - teal */}
       <points ref={ring3Ref}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[ring3Positions, 3]} />
         </bufferGeometry>
-        <pointsMaterial size={0.03} color={SANDSTONE} transparent opacity={0.5} sizeAttenuation blending={THREE.AdditiveBlending} />
+        <pointsMaterial size={0.06} color={TEAL} transparent opacity={0.8} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
     </group>
   );
@@ -416,39 +462,46 @@ function CameraController() {
   return null;
 }
 
-// Post-processing effects
+// Post-processing effects - enhanced for more glow
 function Effects() {
   return (
     <EffectComposer>
       <Bloom
-        intensity={1.2}
-        luminanceThreshold={0.2}
-        luminanceSmoothing={0.9}
+        intensity={2.5}
+        luminanceThreshold={0.1}
+        luminanceSmoothing={0.95}
         mipmapBlur
+        radius={0.8}
       />
-      <Vignette offset={0.4} darkness={0.8} />
+      <Vignette offset={0.3} darkness={0.6} />
     </EffectComposer>
   );
 }
 
-// Main scene with brand colors
+// Main scene with brand colors - enhanced glow
 function Scene() {
   return (
     <>
       <color attach="background" args={[COCOA_BROWN]} />
-      <fog attach="fog" args={[COCOA_BROWN, 8, 25]} />
+      <fog attach="fog" args={[COCOA_BROWN, 12, 35]} />
 
-      {/* Subtle ambient */}
-      <ambientLight intensity={0.1} />
+      {/* Ambient light - boosted */}
+      <ambientLight intensity={0.15} />
 
-      {/* Key lights using brand colors */}
-      <pointLight position={[5, 5, 5]} intensity={1.5} color={PERSIMMON} distance={25} />
-      <pointLight position={[-5, -3, 5]} intensity={1.2} color={NEO_MINT} distance={20} />
-      <pointLight position={[0, 5, -5]} intensity={1} color={TEAL} distance={20} />
-      <pointLight position={[-3, 0, 8]} intensity={0.8} color={SANDSTONE} distance={15} />
+      {/* Key lights using brand colors - significantly boosted */}
+      <pointLight position={[5, 5, 5]} intensity={3} color={PERSIMMON} distance={30} />
+      <pointLight position={[-5, -3, 5]} intensity={2.5} color={NEO_MINT} distance={25} />
+      <pointLight position={[0, 5, -5]} intensity={2} color={TEAL} distance={25} />
+      <pointLight position={[-3, 0, 8]} intensity={1.5} color={CREAM} distance={20} />
 
-      {/* Rim light */}
-      <pointLight position={[3, 0, -5]} intensity={0.6} color={NEO_MINT} distance={15} />
+      {/* Additional accent lights for more glow */}
+      <pointLight position={[0, 0, 3]} intensity={2} color={PERSIMMON} distance={15} />
+      <pointLight position={[3, 3, 0]} intensity={1.5} color={NEO_MINT} distance={18} />
+      <pointLight position={[-3, -2, 2]} intensity={1.5} color={TEAL} distance={18} />
+
+      {/* Rim lights */}
+      <pointLight position={[3, 0, -5]} intensity={1.2} color={NEO_MINT} distance={20} />
+      <pointLight position={[-3, 0, -5]} intensity={1} color={PERSIMMON} distance={20} />
 
       <CameraController />
       <GlassSphere />
@@ -456,10 +509,11 @@ function Scene() {
       <OrbitalRings />
       <ParticleField />
 
-      {/* Sparkles with brand colors */}
-      <Sparkles count={80} scale={12} size={1.5} speed={0.3} opacity={0.5} color={TEAL} />
-      <Sparkles count={60} scale={14} size={1.2} speed={0.25} opacity={0.4} color={PERSIMMON} />
-      <Sparkles count={50} scale={16} size={1} speed={0.2} opacity={0.3} color={NEO_MINT} />
+      {/* Sparkles with brand colors - more and brighter */}
+      <Sparkles count={120} scale={12} size={2.5} speed={0.4} opacity={0.7} color={PERSIMMON} />
+      <Sparkles count={100} scale={14} size={2} speed={0.3} opacity={0.6} color={TEAL} />
+      <Sparkles count={80} scale={16} size={1.8} speed={0.25} opacity={0.5} color={NEO_MINT} />
+      <Sparkles count={60} scale={18} size={1.5} speed={0.2} opacity={0.4} color={CREAM} />
 
       <Effects />
     </>
