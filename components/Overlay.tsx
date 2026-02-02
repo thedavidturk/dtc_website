@@ -102,10 +102,11 @@ function Navigation({ onNavigate }: { onNavigate: (position: number) => void }) 
 
         <MagneticButton
           onClick={() => setContactOpen(true)}
-          className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-sm text-white hover:bg-white/20 hover:border-[#FF5C34]/50 transition-all"
+          className="px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-xs md:text-sm text-white hover:bg-white/20 hover:border-[#FF5C34]/50 transition-all"
           strength={0.25}
         >
-          Start a Project
+          <span className="hidden sm:inline">Start a Project</span>
+          <span className="sm:hidden">Contact</span>
         </MagneticButton>
       </div>
     </motion.nav>
@@ -270,22 +271,22 @@ function HeroSection() {
           </p>
         </motion.div>
 
-        {/* Hero Stats */}
+        {/* Hero Stats - Hidden on very small screens */}
         <motion.div
           style={{
             opacity: Math.min(1, Math.max(0, revealProgress - 0.55) * 2.5),
             transform: `translateY(${(1 - Math.min(1, Math.max(0, revealProgress - 0.55) * 2.5)) * 20}px)`
           }}
-          className="flex justify-center gap-8 md:gap-12 mb-10"
+          className="hidden sm:flex justify-center gap-6 md:gap-12 mb-8 md:mb-10"
         >
           {[
-            { value: "50+", label: "Projects Delivered" },
-            { value: "60%", label: "Faster Than Traditional" },
-            { value: "3x", label: "More Concepts" },
+            { value: "50+", label: "Projects" },
+            { value: "60%", label: "Faster" },
+            { value: "3x", label: "Concepts" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <span className="text-2xl md:text-3xl font-bold text-[#E9F056] block">{stat.value}</span>
-              <span className="text-xs text-white/40">{stat.label}</span>
+              <span className="text-xl sm:text-2xl md:text-3xl font-bold text-[#E9F056] block">{stat.value}</span>
+              <span className="text-[10px] sm:text-xs text-white/40">{stat.label}</span>
             </div>
           ))}
         </motion.div>
@@ -295,17 +296,17 @@ function HeroSection() {
             opacity: Math.min(1, Math.max(0, revealProgress - 0.7) * 3.5),
             transform: `translateY(${(1 - Math.min(1, Math.max(0, revealProgress - 0.7) * 3.5)) * 20}px)`
           }}
-          className="flex flex-col sm:flex-row gap-4 justify-center pointer-events-auto"
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pointer-events-auto px-4"
         >
           <MagneticButton
             onClick={() => setContactOpen(true)}
-            className="px-8 py-4 bg-[#FF5C34] rounded-full text-white font-semibold hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
+            className="px-6 py-3 sm:px-8 sm:py-4 bg-[#FF5C34] rounded-full text-white text-sm sm:text-base font-semibold hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
             strength={0.3}
           >
             Start a Project
           </MagneticButton>
           <MagneticButton
-            className="px-8 py-4 border border-white/20 rounded-full text-white font-medium hover:bg-white/10 hover:border-white/40 transition-all"
+            className="px-6 py-3 sm:px-8 sm:py-4 border border-white/20 rounded-full text-white text-sm sm:text-base font-medium hover:bg-white/10 hover:border-white/40 transition-all"
             strength={0.3}
           >
             View Our Work
@@ -316,13 +317,13 @@ function HeroSection() {
           style={{
             opacity: Math.min(1, Math.max(0, revealProgress - 0.8) * 5),
           }}
-          className="flex flex-wrap justify-center gap-3 mt-8"
+          className="hidden sm:flex flex-wrap justify-center gap-2 sm:gap-3 mt-6 sm:mt-8 px-4"
         >
           {["AI Strategy", "Video Production", "Brand Systems", "Rapid Prototyping"].map(
             (tag) => (
               <span
                 key={tag}
-                className="px-4 py-2 border border-white/10 rounded-full text-xs text-white/40 tracking-wide hover:border-[#FF5C34]/30 hover:text-white/60 transition-all cursor-default"
+                className="px-3 py-1.5 sm:px-4 sm:py-2 border border-white/10 rounded-full text-[10px] sm:text-xs text-white/40 tracking-wide hover:border-[#FF5C34]/30 hover:text-white/60 transition-all cursor-default"
               >
                 {tag}
               </span>
@@ -330,12 +331,12 @@ function HeroSection() {
           )}
         </motion.div>
 
-        {/* Client Logo Marquee */}
+        {/* Client Logo Marquee - Hidden on mobile */}
         <motion.div
           style={{
             opacity: Math.min(1, Math.max(0, revealProgress - 0.85) * 6),
           }}
-          className="mt-16 w-full max-w-3xl mx-auto"
+          className="hidden md:block mt-16 w-full max-w-3xl mx-auto"
         >
           <p className="text-xs text-white/30 text-center mb-4 tracking-widest uppercase">Trusted by</p>
           <div className="relative overflow-hidden">
@@ -537,18 +538,18 @@ const CAPABILITIES: Capability[] = [
 function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: Capability) => void }) {
   return (
     <ContentSection scrollStart={0.28} scrollEnd={0.40}>
-      <div className="px-6 max-w-6xl w-full" style={{ perspective: "1200px" }}>
-        <div className="text-center mb-12">
+      <div className="px-4 sm:px-6 max-w-6xl w-full overflow-y-auto max-h-[80vh]" style={{ perspective: "1200px" }}>
+        <div className="text-center mb-6 sm:mb-12">
           <TextReveal
             as="h2"
-            className="text-3xl md:text-4xl font-bold text-white"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-white"
             type="words"
             stagger={0.05}
           >
             What we do
           </TextReveal>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pointer-events-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pointer-events-auto pb-4">
           {CAPABILITIES.map((cap, i) => (
             <motion.div
               key={cap.title}
@@ -561,17 +562,17 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
                 glowColor={`${cap.color}66`}
                 className="h-full rounded-2xl"
               >
-                <div className="p-8 h-full border border-white/10 rounded-2xl bg-zinc-900/80 backdrop-blur-sm group">
+                <div className="p-4 sm:p-8 h-full border border-white/10 rounded-2xl bg-zinc-900/80 backdrop-blur-sm group">
                   {/* Accent line */}
                   <div
-                    className="absolute top-0 left-8 right-8 h-px opacity-50"
+                    className="absolute top-0 left-4 right-4 sm:left-8 sm:right-8 h-px opacity-50"
                     style={{ backgroundColor: cap.color }}
                   />
 
                   {/* Icon */}
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
                     <div
-                      className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold text-white shadow-lg"
+                      className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-lg sm:text-2xl font-bold text-white shadow-lg"
                       style={{ backgroundColor: cap.color }}
                     >
                       {cap.icon}
@@ -583,10 +584,10 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-xl font-semibold text-white mb-3 transition-all">
+                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 transition-all">
                     {cap.title}
                   </h3>
-                  <p className="text-white/50 leading-relaxed mb-4 group-hover:text-white/70 transition-colors">
+                  <p className="text-sm sm:text-base text-white/50 leading-relaxed mb-3 sm:mb-4 group-hover:text-white/70 transition-colors">
                     {cap.description}
                   </p>
 
@@ -757,10 +758,10 @@ function AIDifferentiatorSection() {
 
   return (
     <ContentSection scrollStart={0.42} scrollEnd={0.52}>
-      <div className="px-6 max-w-5xl w-full">
-        <motion.div className="text-center mb-12">
+      <div className="px-4 sm:px-6 max-w-5xl w-full overflow-y-auto max-h-[80vh]">
+        <motion.div className="text-center mb-6 sm:mb-12">
           <motion.p
-            className="text-[#E9F056] text-sm tracking-[0.2em] uppercase mb-4"
+            className="text-[#E9F056] text-xs sm:text-sm tracking-[0.2em] uppercase mb-2 sm:mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
@@ -768,22 +769,22 @@ function AIDifferentiatorSection() {
           </motion.p>
           <TextReveal
             as="h2"
-            className="text-3xl md:text-4xl font-bold text-white mb-4"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-4"
             type="words"
             stagger={0.05}
           >
             AI-Augmented Creative
           </TextReveal>
           <FadeReveal delay={0.2}>
-            <p className="text-white/50 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-white/50 max-w-2xl mx-auto px-4">
               We don&apos;t replace creativity with AI—we multiply it. Our workflow lets us explore
               more ideas, iterate faster, and deliver higher quality at a fraction of traditional timelines.
             </p>
           </FadeReveal>
         </motion.div>
 
-        {/* Workflow Comparison */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pointer-events-auto">
+        {/* Workflow Comparison - 2 columns on mobile, 4 on large screens */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pointer-events-auto pb-4">
           {workflowSteps.map((step, i) => (
             <motion.div
               key={step.phase}
@@ -792,35 +793,35 @@ function AIDifferentiatorSection() {
               transition={{ delay: i * 0.1 }}
               className="relative group"
             >
-              <div className="p-6 rounded-2xl bg-zinc-900/80 border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all h-full">
+              <div className="p-3 sm:p-6 rounded-xl sm:rounded-2xl bg-zinc-900/80 border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all h-full">
                 {/* Icon */}
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4"
+                  className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-4"
                   style={{ backgroundColor: `${step.color}20` }}
                 >
                   {step.icon}
                 </div>
 
                 {/* Phase */}
-                <h3 className="text-lg font-semibold text-white mb-4">
+                <h3 className="text-sm sm:text-lg font-semibold text-white mb-2 sm:mb-4">
                   {step.phase}
                 </h3>
 
                 {/* Comparison */}
-                <div className="space-y-3">
-                  <div className="flex items-start gap-2">
-                    <span className="text-white/30 text-xs mt-0.5">OLD</span>
-                    <span className="text-white/40 text-sm line-through">{step.traditional}</span>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex items-start gap-1 sm:gap-2">
+                    <span className="text-white/30 text-[10px] sm:text-xs mt-0.5">OLD</span>
+                    <span className="text-white/40 text-[10px] sm:text-sm line-through">{step.traditional}</span>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-[#E9F056] text-xs mt-0.5 font-semibold">NEW</span>
-                    <span className="text-white/70 text-sm">{step.aiPowered}</span>
+                  <div className="flex items-start gap-1 sm:gap-2">
+                    <span className="text-[#E9F056] text-[10px] sm:text-xs mt-0.5 font-semibold">NEW</span>
+                    <span className="text-white/70 text-[10px] sm:text-sm">{step.aiPowered}</span>
                   </div>
                 </div>
 
                 {/* Accent line */}
                 <div
-                  className="absolute bottom-0 left-4 right-4 h-px opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute bottom-0 left-3 right-3 sm:left-4 sm:right-4 h-px opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{ backgroundColor: step.color }}
                 />
               </div>
@@ -833,18 +834,18 @@ function AIDifferentiatorSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-12 flex flex-wrap justify-center gap-8 md:gap-16"
+          className="mt-6 sm:mt-12 flex justify-center gap-6 sm:gap-8 md:gap-16"
         >
           {[
-            { value: "60%", label: "Faster delivery" },
-            { value: "3x", label: "More concepts" },
-            { value: "0", label: "Quality compromise" },
+            { value: "60%", label: "Faster" },
+            { value: "3x", label: "Concepts" },
+            { value: "0", label: "Compromise" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <span className="text-3xl md:text-4xl font-bold text-[#FF5C34] block">
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#FF5C34] block">
                 {stat.value}
               </span>
-              <span className="text-white/40 text-sm">{stat.label}</span>
+              <span className="text-white/40 text-[10px] sm:text-sm">{stat.label}</span>
             </div>
           ))}
         </motion.div>
@@ -856,10 +857,10 @@ function AIDifferentiatorSection() {
 function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project) => void }) {
   return (
     <ContentSection scrollStart={0.50} scrollEnd={0.62}>
-      <div className="px-6 max-w-6xl w-full">
-        <motion.div className="text-center mb-12">
+      <div className="px-4 sm:px-6 max-w-6xl w-full overflow-y-auto max-h-[80vh]">
+        <motion.div className="text-center mb-6 sm:mb-12">
           <motion.p
-            className="text-[#FF5C34] text-sm tracking-[0.2em] uppercase mb-4"
+            className="text-[#FF5C34] text-xs sm:text-sm tracking-[0.2em] uppercase mb-2 sm:mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
@@ -867,7 +868,7 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
           </motion.p>
           <TextReveal
             as="h2"
-            className="text-3xl md:text-5xl font-bold text-white"
+            className="text-2xl sm:text-3xl md:text-5xl font-bold text-white"
             type="words"
             stagger={0.05}
           >
@@ -875,7 +876,7 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
           </TextReveal>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pointer-events-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pointer-events-auto pb-4">
           {PROJECTS.map((project, i) => (
             <motion.div
               key={project.title}
@@ -886,25 +887,25 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
               <LiquidGlass
                 onClick={() => onProjectClick(project)}
                 glowColor={`${project.color}66`}
-                className="rounded-2xl"
+                className="rounded-xl sm:rounded-2xl"
               >
-                <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
+                <div className="group relative overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
                   {/* Content */}
-                  <div className="relative p-8">
-                    <div className="flex items-start justify-between mb-6">
+                  <div className="relative p-4 sm:p-8">
+                    <div className="flex items-start justify-between mb-3 sm:mb-6">
                       <div>
-                        <p className="text-white/40 text-sm mb-1">{project.category}</p>
-                        <h3 className="text-2xl font-bold text-white transition-all">
+                        <p className="text-white/40 text-xs sm:text-sm mb-1">{project.category}</p>
+                        <h3 className="text-lg sm:text-2xl font-bold text-white transition-all">
                           {project.title}
                         </h3>
                       </div>
                       <motion.div
-                        className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#FF5C34]/50 group-hover:bg-[#FF5C34]/10 transition-all"
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#FF5C34]/50 group-hover:bg-[#FF5C34]/10 transition-all flex-shrink-0 ml-2"
                         whileHover={{ scale: 1.1, rotate: 45 }}
                       >
                         <svg
-                          width="16"
-                          height="16"
+                          width="14"
+                          height="14"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -916,15 +917,15 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
                       </motion.div>
                     </div>
 
-                    <p className="text-white/50 leading-relaxed mb-6 group-hover:text-white/70 transition-colors">
+                    <p className="text-sm sm:text-base text-white/50 leading-relaxed mb-3 sm:mb-6 group-hover:text-white/70 transition-colors line-clamp-2 sm:line-clamp-none">
                       {project.description}
                     </p>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {project.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-3 py-1 text-xs rounded-full border border-white/10 text-white/40 group-hover:border-white/20 group-hover:text-white/60 transition-all"
+                          className="px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs rounded-full border border-white/10 text-white/40 group-hover:border-white/20 group-hover:text-white/60 transition-all"
                         >
                           {tag}
                         </span>
@@ -957,22 +958,22 @@ function ProcessSection() {
 
   return (
     <ContentSection scrollStart={0.60} scrollEnd={0.75}>
-      <div className="px-6 max-w-5xl text-center">
+      <div className="px-4 sm:px-6 max-w-5xl text-center">
         <TextReveal
           as="h2"
-          className="text-3xl md:text-4xl font-bold text-white mb-4"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-4"
           type="words"
           stagger={0.05}
         >
           How we work
         </TextReveal>
-        <FadeReveal delay={0.2} className="mb-16">
-          <p className="text-white/50 text-lg">
+        <FadeReveal delay={0.2} className="mb-8 sm:mb-16">
+          <p className="text-white/50 text-sm sm:text-lg">
             A proven process that delivers results
           </p>
         </FadeReveal>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
           {steps.map((step, i) => (
             <motion.div
               key={step.num}
@@ -982,23 +983,23 @@ function ProcessSection() {
               transition={{ delay: i * 0.15 }}
             >
               <motion.span
-                className="text-5xl md:text-6xl font-bold text-[#FF5C34] block mb-4"
+                className="text-3xl sm:text-5xl md:text-6xl font-bold text-[#FF5C34] block mb-2 sm:mb-4"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
                 {step.num}
               </motion.span>
-              <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#FF5C34] transition-colors">
+              <h3 className="text-base sm:text-xl font-semibold text-white mb-1 sm:mb-2 group-hover:text-[#FF5C34] transition-colors">
                 {step.title}
               </h3>
-              <p className="text-white/40 text-sm">{step.desc}</p>
+              <p className="text-white/40 text-xs sm:text-sm">{step.desc}</p>
             </motion.div>
           ))}
         </div>
 
-        <FadeReveal delay={0.6} className="mt-16">
-          <div className="inline-block px-6 py-3 border border-white/10 rounded-full hover:border-[#FF5C34]/30 transition-colors">
-            <span className="text-white/60 italic">We&apos;re a partner, not a vendor.</span>
+        <FadeReveal delay={0.6} className="mt-8 sm:mt-16">
+          <div className="inline-block px-4 py-2 sm:px-6 sm:py-3 border border-white/10 rounded-full hover:border-[#FF5C34]/30 transition-colors">
+            <span className="text-white/60 italic text-sm sm:text-base">We&apos;re a partner, not a vendor.</span>
           </div>
         </FadeReveal>
       </div>
@@ -1011,8 +1012,8 @@ function CTASection() {
 
   return (
     <ContentSection scrollStart={0.73} scrollEnd={1}>
-      <div className="px-6 text-center max-w-3xl pointer-events-auto">
-        <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+      <div className="px-4 sm:px-6 text-center max-w-3xl pointer-events-auto">
+        <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6">
           <TextReveal type="words" stagger={0.04}>
             Ready to build
           </TextReveal>
@@ -1026,20 +1027,20 @@ function CTASection() {
             </TextReveal>
           </span>
         </h2>
-        <FadeReveal delay={0.5} className="mb-10">
-          <p className="text-lg text-white/50">
+        <FadeReveal delay={0.5} className="mb-6 sm:mb-10">
+          <p className="text-sm sm:text-lg text-white/50">
             One strategy call can replace months of trial and error.
           </p>
         </FadeReveal>
         <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
           <MagneticButton
             onClick={() => setContactOpen(true)}
-            className="px-8 py-4 bg-[#FF5C34] rounded-full text-black font-semibold hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
+            className="px-6 py-3 sm:px-8 sm:py-4 bg-[#FF5C34] rounded-full text-black text-sm sm:text-base font-semibold hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
             strength={0.3}
           >
             Book a Strategy Call
@@ -1047,7 +1048,7 @@ function CTASection() {
           <MagneticButton
             as="a"
             href="mailto:david@davidturkcreative.com"
-            className="px-8 py-4 border border-white/20 rounded-full text-white font-medium hover:bg-white/10 hover:border-white/40 transition-all inline-flex items-center justify-center"
+            className="px-6 py-3 sm:px-8 sm:py-4 border border-white/20 rounded-full text-white text-sm sm:text-base font-medium hover:bg-white/10 hover:border-white/40 transition-all inline-flex items-center justify-center"
             strength={0.3}
           >
             Email Me
@@ -1055,7 +1056,7 @@ function CTASection() {
         </motion.div>
 
         <motion.div
-          className="mt-20 text-sm text-white/30"
+          className="mt-12 sm:mt-20 text-xs sm:text-sm text-white/30"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
@@ -1232,16 +1233,18 @@ export default function Overlay() {
     const container = containerRef.current;
     if (!container) return;
 
+    const isMobile = window.innerWidth < 768;
+
     const lenis = new Lenis({
       wrapper: container,
       content: container.firstChild as HTMLElement,
-      duration: 1.8,
+      duration: isMobile ? 1.2 : 1.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 0.6,
-      touchMultiplier: 1.2,
+      wheelMultiplier: isMobile ? 0.4 : 0.6,
+      touchMultiplier: isMobile ? 2 : 1.2,
     });
 
     lenisRef.current = lenis;
@@ -1285,7 +1288,8 @@ export default function Overlay() {
         ref={containerRef}
         className="fixed inset-0 overflow-y-auto z-20"
       >
-        <div className="h-[500vh]" />
+        {/* Taller scroll area on mobile for better section separation */}
+        <div className="h-[800vh] md:h-[500vh]" />
       </div>
 
       <IntroSection />
