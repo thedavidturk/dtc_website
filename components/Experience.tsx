@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Sparkles, Trail, Text, Center } from "@react-three/drei";
+import { Float, Sparkles, Trail } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useStore } from "@/store/useStore";
@@ -41,127 +41,6 @@ function CursorLight() {
       distance={12}
       decay={2}
     />
-  );
-}
-
-// 3D Logo that's part of the scene
-function Logo3D() {
-  const groupRef = useRef<THREE.Group>(null);
-  const scroll = useStore((state) => state.scroll);
-  const introProgress = useStore((state) => state.introProgress);
-  const isIntroComplete = useStore((state) => state.isIntroComplete);
-
-  useFrame((state) => {
-    if (!groupRef.current) return;
-    const time = state.clock.elapsedTime;
-
-    // Logo fades and moves back as you scroll
-    const fadeStart = 0.05;
-    const fadeEnd = 0.25;
-    const opacity = scroll < fadeStart ? 1 : scroll > fadeEnd ? 0 : 1 - (scroll - fadeStart) / (fadeEnd - fadeStart);
-
-    groupRef.current.visible = opacity > 0.01;
-
-    // Subtle float animation
-    groupRef.current.position.y = Math.sin(time * 0.5) * 0.1;
-    groupRef.current.position.z = -1 - scroll * 5;
-
-    // Slight rotation
-    groupRef.current.rotation.y = Math.sin(time * 0.3) * 0.05;
-
-    // Scale based on intro progress
-    const introScale = isIntroComplete ? 1 : introProgress;
-    groupRef.current.scale.setScalar(0.8 * introScale);
-  });
-
-  return (
-    <group ref={groupRef} position={[0, 0, -1]}>
-      <Center>
-        {/* D */}
-        <Text
-          position={[-1.8, 0, 0]}
-          fontSize={1.5}
-          anchorX="center"
-          anchorY="middle"
-          fontWeight="bold"
-        >
-          D
-          <meshStandardMaterial
-            color={CREAM}
-            emissive={CREAM}
-            emissiveIntensity={0.5}
-            metalness={0.3}
-            roughness={0.4}
-          />
-        </Text>
-
-        {/* T */}
-        <Text
-          position={[-0.6, 0, 0]}
-          fontSize={1.5}
-          anchorX="center"
-          anchorY="middle"
-          fontWeight="bold"
-        >
-          T
-          <meshStandardMaterial
-            color={CREAM}
-            emissive={CREAM}
-            emissiveIntensity={0.5}
-            metalness={0.3}
-            roughness={0.4}
-          />
-        </Text>
-
-        {/* + */}
-        <Text
-          position={[0.4, 0, 0]}
-          fontSize={1.5}
-          anchorX="center"
-          anchorY="middle"
-          fontWeight="bold"
-        >
-          +
-          <meshStandardMaterial
-            color={PERSIMMON}
-            emissive={PERSIMMON}
-            emissiveIntensity={2}
-            metalness={0.3}
-            roughness={0.4}
-            toneMapped={false}
-          />
-        </Text>
-
-        {/* C */}
-        <Text
-          position={[1.5, 0, 0]}
-          fontSize={1.5}
-          anchorX="center"
-          anchorY="middle"
-          fontWeight="bold"
-        >
-          C
-          <meshStandardMaterial
-            color={CREAM}
-            emissive={CREAM}
-            emissiveIntensity={0.5}
-            metalness={0.3}
-            roughness={0.4}
-          />
-        </Text>
-      </Center>
-
-      {/* Glow behind logo */}
-      <mesh position={[0, 0, -0.5]} scale={[6, 2, 1]}>
-        <planeGeometry />
-        <meshBasicMaterial
-          color={PERSIMMON}
-          transparent
-          opacity={0.15}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
-    </group>
   );
 }
 
@@ -733,7 +612,6 @@ function Scene() {
 
       <CursorLight />
       <CameraController />
-      <Logo3D />
       <GlassSphere />
       <OrbitingOrbs />
       <OrbitalRings />
