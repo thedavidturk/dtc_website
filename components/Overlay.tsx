@@ -1374,6 +1374,8 @@ function ReturnAnimation() {
 function ContactModal() {
   const isContactOpen = useStore((state) => state.isContactOpen);
   const setContactOpen = useStore((state) => state.setContactOpen);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -1382,6 +1384,41 @@ function ContactModal() {
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
   }, [setContactOpen]);
+
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.email || !formData.message) return;
+
+    setStatus("submitting");
+
+    try {
+      const response = await fetch("https://formspree.io/f/meezzwjl", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          _subject: `New inquiry from ${formData.name} - DT+C Website`,
+        }),
+      });
+
+      if (response.ok) {
+        setStatus("success");
+        setTimeout(() => {
+          setFormData({ name: "", email: "", message: "" });
+          setStatus("idle");
+          setContactOpen(false);
+        }, 2000);
+      } else {
+        throw new Error("Failed");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -1398,6 +1435,7 @@ function ContactModal() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            onClick={(e) => e.stopPropagation()}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg mx-4 p-8 bg-zinc-900 border border-white/10 rounded-2xl z-[101]"
           >
             <button
@@ -1413,29 +1451,63 @@ function ContactModal() {
             <h3 className="text-2xl font-bold text-white mb-2">Let&apos;s talk</h3>
             <p className="text-white/50 mb-8">Tell us about your project</p>
 
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="text"
-                placeholder="Name"
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] transition-colors"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] transition-colors"
-              />
-              <textarea
-                placeholder="Tell us about your project..."
-                rows={4}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] resize-none transition-colors"
-              />
-              <MagneticButton
-                className="w-full py-4 bg-[#FF5C34] rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"
-                strength={0.15}
+            {status === "success" ? (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center py-8"
               >
-                Send Message
-              </MagneticButton>
-            </form>
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                </div>
+                <p className="text-white text-lg font-medium">Message sent!</p>
+                <p className="text-white/50 text-sm mt-1">We&apos;ll be in touch soon.</p>
+              </motion.div>
+            ) : (
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] transition-colors"
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] transition-colors"
+                />
+                <textarea
+                  placeholder="Tell us about your project..."
+                  rows={4}
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] resize-none transition-colors"
+                />
+                {status === "error" && (
+                  <p className="text-red-400 text-sm">Something went wrong. Please try again.</p>
+                )}
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={status === "submitting" || !formData.name || !formData.email || !formData.message}
+                  className="w-full py-4 bg-[#FF5C34] rounded-lg text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {status === "submitting" ? (
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                  ) : (
+                    "Send Message"
+                  )}
+                </button>
+              </div>
+            )}
           </motion.div>
         </>
       )}
