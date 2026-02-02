@@ -40,12 +40,10 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     };
   }, [isOpen, onClose]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitForm = async () => {
+    console.log("Form submission started", formData);
     setStatus("submitting");
 
-    // Formspree endpoint - replace YOUR_FORM_ID with your actual Formspree form ID
-    // Get your form ID at https://formspree.io
     const FORMSPREE_ENDPOINT = "https://formspree.io/f/meezzwjl";
 
     try {
@@ -64,20 +62,44 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         }),
       });
 
+      console.log("Formspree response:", response.status, response.ok);
+
       if (response.ok) {
         setStatus("success");
-        // Reset form after success
         setTimeout(() => {
           setFormData({ name: "", email: "", company: "", message: "" });
           setStatus("idle");
           onClose();
         }, 2000);
       } else {
+        const errorData = await response.json();
+        console.error("Formspree error:", errorData);
         throw new Error("Form submission failed");
       }
-    } catch {
+    } catch (error) {
+      console.error("Form submission error:", error);
       setStatus("error");
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form onSubmit triggered");
+    await submitForm();
+  };
+
+  const handleButtonClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("Button onClick triggered");
+
+    // Validate required fields
+    if (!formData.name || !formData.email || !formData.message) {
+      console.log("Validation failed - missing required fields");
+      return;
+    }
+
+    await submitForm();
   };
 
   const handleChange = (
@@ -247,7 +269,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleButtonClick}
                   disabled={status === "submitting" || status === "success"}
                   className="relative flex-1 px-6 py-3 bg-[var(--accent)] text-[var(--background)] font-medium rounded-lg hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
