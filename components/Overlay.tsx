@@ -232,12 +232,12 @@ function HeroSection() {
             transform: `translateY(${(1 - revealProgress) * 30}px)`
           }}
         >
-          <span className="text-[#FF5C34] text-sm tracking-[0.3em] uppercase mb-6 inline-block">
+          <span className="text-[#FF5C34] text-xs font-medium tracking-[0.4em] uppercase mb-6 inline-block border-b border-[#FF5C34]/30 pb-1">
             Creative Studio
           </span>
         </motion.div>
 
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight mb-8 overflow-hidden">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[0.9] tracking-[-0.03em] mb-8 overflow-hidden">
           <motion.span
             className="block text-[#E9F056]"
             style={{
@@ -248,7 +248,7 @@ function HeroSection() {
             We build
           </motion.span>
           <motion.span
-            className="block text-[#FF5C34]"
+            className="block text-[#FF5C34] italic"
             style={{
               opacity: Math.min(1, Math.max(0, revealProgress - 0.3) * 1.8),
               transform: `translateY(${(1 - Math.min(1, Math.max(0, revealProgress - 0.3) * 1.8)) * 60}px)`
@@ -265,9 +265,9 @@ function HeroSection() {
           }}
           className="mb-8"
         >
-          <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto font-light leading-relaxed">
             AI-powered strategy, story, and production for brands
-            that refuse to blend in.
+            that <span className="text-white/80 font-medium italic">refuse to blend in.</span>
           </p>
         </motion.div>
 
@@ -280,13 +280,13 @@ function HeroSection() {
           className="hidden sm:flex justify-center gap-6 md:gap-12 mb-8 md:mb-10"
         >
           {[
-            { value: "50+", label: "Projects" },
-            { value: "60%", label: "Faster" },
-            { value: "3x", label: "Concepts" },
+            { value: "50+", label: "PROJECTS" },
+            { value: "60%", label: "FASTER" },
+            { value: "3x", label: "CONCEPTS" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <span className="text-xl sm:text-2xl md:text-3xl font-bold text-[#E9F056] block">{stat.value}</span>
-              <span className="text-[10px] sm:text-xs text-white/40">{stat.label}</span>
+              <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#E9F056] block tracking-tight">{stat.value}</span>
+              <span className="text-[10px] sm:text-xs text-white/40 tracking-[0.2em] font-medium">{stat.label}</span>
             </div>
           ))}
         </motion.div>
@@ -540,9 +540,10 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
     <ContentSection scrollStart={0.28} scrollEnd={0.40}>
       <div className="w-full" style={{ perspective: "1200px" }}>
         <div className="text-center mb-6 sm:mb-12 px-4 sm:px-6">
+          <span className="text-[#AEB8A0] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-3 block">Services</span>
           <TextReveal
             as="h2"
-            className="text-2xl sm:text-3xl md:text-4xl font-bold text-white"
+            className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white uppercase tracking-tight"
             type="words"
             stagger={0.05}
           >
@@ -837,23 +838,25 @@ function AIDifferentiatorSection() {
       <div className="px-4 sm:px-6 max-w-5xl w-full overflow-y-auto max-h-[80vh]">
         <motion.div className="text-center mb-6 sm:mb-12">
           <motion.p
-            className="text-[#E9F056] text-xs sm:text-sm tracking-[0.2em] uppercase mb-2 sm:mb-4"
+            className="text-[#E9F056] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-2 sm:mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
             The DT+C Difference
           </motion.p>
-          <TextReveal
-            as="h2"
-            className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-4"
-            type="words"
-            stagger={0.05}
-          >
-            AI-Augmented Creative
-          </TextReveal>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-2 sm:mb-4 tracking-tight">
+            <TextReveal type="words" stagger={0.05}>
+              AI-Augmented
+            </TextReveal>{" "}
+            <span className="italic text-[#E9F056]">
+              <TextReveal type="words" stagger={0.05} delay={0.15}>
+                Creative
+              </TextReveal>
+            </span>
+          </h2>
           <FadeReveal delay={0.2}>
-            <p className="text-sm sm:text-base text-white/50 max-w-2xl mx-auto px-4">
-              We don&apos;t replace creativity with AI—we multiply it. Our workflow lets us explore
+            <p className="text-sm sm:text-base text-white/50 max-w-2xl mx-auto px-4 font-light leading-relaxed">
+              We don&apos;t replace creativity with AI—<span className="text-white/70 font-medium">we multiply it.</span> Our workflow lets us explore
               more ideas, iterate faster, and deliver higher quality at a fraction of traditional timelines.
             </p>
           </FadeReveal>
@@ -936,20 +939,22 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
       <div className="w-full">
         <motion.div className="text-center mb-6 sm:mb-12 px-4 sm:px-6">
           <motion.p
-            className="text-[#FF5C34] text-xs sm:text-sm tracking-[0.2em] uppercase mb-2 sm:mb-4"
+            className="text-[#FF5C34] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-2 sm:mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
             Selected Work
           </motion.p>
-          <TextReveal
-            as="h2"
-            className="text-2xl sm:text-3xl md:text-5xl font-bold text-white"
-            type="words"
-            stagger={0.05}
-          >
-            Projects that move the needle
-          </TextReveal>
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white tracking-tight">
+            <TextReveal type="words" stagger={0.05}>
+              Projects that
+            </TextReveal>{" "}
+            <span className="italic underline decoration-[#FF5C34] decoration-2 underline-offset-4">
+              <TextReveal type="words" stagger={0.05} delay={0.15}>
+                move the needle
+              </TextReveal>
+            </span>
+          </h2>
         </motion.div>
 
         {/* Mobile: Horizontal scroll carousel */}
@@ -1109,16 +1114,17 @@ function ProcessSection() {
   return (
     <ContentSection scrollStart={0.60} scrollEnd={0.75}>
       <div className="px-4 sm:px-6 max-w-5xl text-center">
+        <span className="text-[#D7EFFF] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-3 block">Our Process</span>
         <TextReveal
           as="h2"
-          className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-4"
+          className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-2 sm:mb-4 uppercase tracking-tight"
           type="words"
           stagger={0.05}
         >
           How we work
         </TextReveal>
         <FadeReveal delay={0.2} className="mb-8 sm:mb-16">
-          <p className="text-white/50 text-sm sm:text-lg">
+          <p className="text-white/50 text-sm sm:text-lg font-light italic">
             A proven process that delivers results
           </p>
         </FadeReveal>
@@ -1133,16 +1139,16 @@ function ProcessSection() {
               transition={{ delay: i * 0.15 }}
             >
               <motion.span
-                className="text-3xl sm:text-5xl md:text-6xl font-bold text-[#FF5C34] block mb-2 sm:mb-4"
+                className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-[#FF5C34] block mb-2 sm:mb-4 tracking-tighter font-mono"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
                 {step.num}
               </motion.span>
-              <h3 className="text-base sm:text-xl font-semibold text-white mb-1 sm:mb-2 group-hover:text-[#FF5C34] transition-colors">
+              <h3 className="text-base sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-[#FF5C34] transition-colors uppercase tracking-wide">
                 {step.title}
               </h3>
-              <p className="text-white/40 text-xs sm:text-sm">{step.desc}</p>
+              <p className="text-white/40 text-xs sm:text-sm font-light">{step.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -1163,7 +1169,8 @@ function CTASection() {
   return (
     <ContentSection scrollStart={0.73} scrollEnd={1}>
       <div className="px-4 sm:px-6 text-center max-w-3xl pointer-events-auto">
-        <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6">
+        <span className="text-[#E9F056] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-4 block">Let&apos;s Talk</span>
+        <h2 className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-white mb-4 sm:mb-6 tracking-tight">
           <TextReveal type="words" stagger={0.04}>
             Ready to build
           </TextReveal>
@@ -1171,15 +1178,15 @@ function CTASection() {
           <TextReveal type="words" stagger={0.04} delay={0.2}>
             something
           </TextReveal>{" "}
-          <span className="text-[#FF5C34]">
+          <span className="text-[#FF5C34] italic">
             <TextReveal type="words" stagger={0.04} delay={0.4}>
               extraordinary?
             </TextReveal>
           </span>
         </h2>
         <FadeReveal delay={0.5} className="mb-6 sm:mb-10">
-          <p className="text-sm sm:text-lg text-white/50">
-            One strategy call can replace months of trial and error.
+          <p className="text-sm sm:text-lg text-white/50 font-light">
+            One strategy call can replace <span className="text-white/70 font-medium underline decoration-[#FF5C34]/50 underline-offset-2">months</span> of trial and error.
           </p>
         </FadeReveal>
         <motion.div
@@ -1190,7 +1197,7 @@ function CTASection() {
         >
           <MagneticButton
             onClick={() => setContactOpen(true)}
-            className="px-6 py-3 sm:px-8 sm:py-4 bg-[#FF5C34] rounded-full text-black text-sm sm:text-base font-semibold hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
+            className="px-6 py-3 sm:px-8 sm:py-4 bg-[#FF5C34] rounded-full text-black text-sm sm:text-base font-bold uppercase tracking-wide hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
             strength={0.3}
           >
             Book a Strategy Call
@@ -1198,7 +1205,7 @@ function CTASection() {
           <MagneticButton
             as="a"
             href="mailto:david@davidturkcreative.com"
-            className="px-6 py-3 sm:px-8 sm:py-4 border border-white/20 rounded-full text-white text-sm sm:text-base font-medium hover:bg-white/10 hover:border-white/40 transition-all inline-flex items-center justify-center"
+            className="px-6 py-3 sm:px-8 sm:py-4 border border-white/20 rounded-full text-white text-sm sm:text-base font-medium tracking-wide hover:bg-white/10 hover:border-white/40 transition-all inline-flex items-center justify-center"
             strength={0.3}
           >
             Email Me
