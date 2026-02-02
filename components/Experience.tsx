@@ -14,10 +14,11 @@ const DARK_BURGUNDY = "#351E28";
 const LIME_YELLOW = "#E9F056";
 const CORAL_ORANGE = "#FF5C34";
 
-// Floating particles that react to mouse
+// Floating particles that react to mouse and scroll
 function ParticleField() {
   const points = useRef<THREE.Points>(null);
   const mousePosition = useStore((state) => state.mousePosition);
+  const scroll = useStore((state) => state.scroll);
 
   const particleCount = 300;
   const positions = useMemo(() => {
@@ -33,8 +34,18 @@ function ParticleField() {
   useFrame((state) => {
     if (!points.current) return;
     const time = state.clock.elapsedTime;
-    points.current.rotation.y = time * 0.05 + mousePosition.x * 0.5;
+
+    // Particles spread out as user scrolls
+    const scrollScale = 1 + scroll * 2;
+    points.current.scale.setScalar(scrollScale);
+
+    // Rotation speeds up slightly with scroll
+    const rotationSpeed = 1 + scroll * 0.5;
+    points.current.rotation.y = time * 0.05 * rotationSpeed + mousePosition.x * 0.5;
     points.current.rotation.x = Math.sin(time * 0.03) * 0.1 + mousePosition.y * 0.3;
+
+    // Particles drift upward as you scroll
+    points.current.position.y = scroll * 2;
   });
 
   return (
@@ -69,26 +80,38 @@ function GlassSphere() {
     if (!groupRef.current) return;
     const time = state.clock.elapsedTime;
 
-    // Smooth mouse following
-    const targetX = mousePosition.x * 0.6;
-    const targetY = mousePosition.y * 0.4;
+    // Smooth mouse following - reduced influence as user scrolls
+    const mouseInfluence = 1 - scroll * 0.7;
+    const targetX = mousePosition.x * 0.6 * mouseInfluence;
+    const targetY = mousePosition.y * 0.4 * mouseInfluence;
 
     groupRef.current.rotation.x += (targetY * 0.3 - groupRef.current.rotation.x) * 0.02;
     groupRef.current.rotation.y += (targetX * 0.5 + time * 0.1 - groupRef.current.rotation.y) * 0.02;
-    groupRef.current.position.x += (targetX * 0.3 - groupRef.current.position.x) * 0.03;
-    groupRef.current.position.y += (Math.sin(time * 0.5) * 0.15 + targetY * 0.2 - groupRef.current.position.y) * 0.03;
 
-    // Scale based on scroll - slower/gentler scaling
-    const baseScale = 2.0 - scroll * 0.15;
+    // Sphere drifts down and back as user scrolls (creates depth)
+    const scrollPosX = targetX * 0.3 + Math.sin(scroll * Math.PI) * 0.5;
+    const scrollPosY = Math.sin(time * 0.5) * 0.15 + targetY * 0.2 - scroll * 1.5;
+    const scrollPosZ = -scroll * 2; // Push back into scene
+
+    groupRef.current.position.x += (scrollPosX - groupRef.current.position.x) * 0.03;
+    groupRef.current.position.y += (scrollPosY - groupRef.current.position.y) * 0.03;
+    groupRef.current.position.z += (scrollPosZ - groupRef.current.position.z) * 0.02;
+
+    // Scale grows slightly as camera zooms out to maintain visual presence
+    const baseScale = 2.0 + scroll * 0.8;
     groupRef.current.scale.setScalar(baseScale);
 
     if (innerRef.current) {
-      innerRef.current.rotation.x = time * 0.3;
-      innerRef.current.rotation.y = time * 0.4;
+      // Core spins faster as you scroll
+      const spinSpeed = 1 + scroll * 2;
+      innerRef.current.rotation.x = time * 0.3 * spinSpeed;
+      innerRef.current.rotation.y = time * 0.4 * spinSpeed;
     }
 
     if (glowRef.current) {
-      glowRef.current.scale.setScalar(1.8 + Math.sin(time * 2) * 0.05);
+      // Glow pulses more intensely as you scroll
+      const pulseIntensity = 0.05 + scroll * 0.1;
+      glowRef.current.scale.setScalar(1.8 + Math.sin(time * 2) * pulseIntensity);
     }
   });
 
@@ -155,8 +178,15 @@ function OrbitingOrbs() {
   useFrame((state) => {
     if (!groupRef.current) return;
     const time = state.clock.elapsedTime;
-    groupRef.current.rotation.y = time * 0.3 + mousePosition.x * 0.5;
-    groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.3 + mousePosition.y * 0.3 + scroll * 0.1;
+
+    // Orbits expand as user scrolls
+    const scrollScale = 1 + scroll * 1.8;
+    groupRef.current.scale.setScalar(scrollScale);
+
+    // Rotation speeds up with scroll
+    const rotationSpeed = 1 + scroll * 0.5;
+    groupRef.current.rotation.y = time * 0.3 * rotationSpeed + mousePosition.x * 0.5;
+    groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.3 + mousePosition.y * 0.3 + scroll * 0.5;
   });
 
   const orbs = [
@@ -256,17 +286,23 @@ function OrbitalRings() {
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
+    // Rings expand outward as user scrolls
+    const scrollScale = 1 + scroll * 1.5;
+
     if (ring1Ref.current) {
       ring1Ref.current.rotation.y = time * 0.2 + mousePosition.x * 0.3;
-      ring1Ref.current.rotation.x = 0.5 + mousePosition.y * 0.2 + scroll * 0.1;
+      ring1Ref.current.rotation.x = 0.5 + mousePosition.y * 0.2 + scroll * 0.5;
+      ring1Ref.current.scale.setScalar(scrollScale);
     }
     if (ring2Ref.current) {
       ring2Ref.current.rotation.y = -time * 0.15 + mousePosition.x * 0.2;
-      ring2Ref.current.rotation.z = time * 0.1;
+      ring2Ref.current.rotation.z = time * 0.1 + scroll * 0.3;
+      ring2Ref.current.scale.setScalar(scrollScale * 1.1);
     }
     if (ring3Ref.current) {
       ring3Ref.current.rotation.y = time * 0.1 + mousePosition.x * 0.15;
-      ring3Ref.current.rotation.x = -0.3 + mousePosition.y * 0.15;
+      ring3Ref.current.rotation.x = -0.3 + mousePosition.y * 0.15 + scroll * 0.4;
+      ring3Ref.current.scale.setScalar(scrollScale * 1.2);
     }
   });
 
@@ -297,21 +333,35 @@ function OrbitalRings() {
   );
 }
 
-// Camera controller
+// Camera controller with dramatic scroll zoom
 function CameraController() {
   const { camera } = useThree();
   const scroll = useStore((state) => state.scroll);
   const mousePosition = useStore((state) => state.mousePosition);
-  const targetPos = useRef({ x: 0, y: 0, z: 5 });
+  const targetPos = useRef({ x: 0, y: 0, z: 3 });
+  const targetRotation = useRef({ x: 0, y: 0 });
 
   useFrame(() => {
-    const targetX = mousePosition.x * 0.5;
-    const targetY = mousePosition.y * 0.3;
-    const targetZ = 5 + scroll * 1.5;
+    // Dramatic zoom: starts close (z=3), zooms out far (z=14) as you scroll
+    // Uses easing curve for more cinematic feel
+    const scrollEased = Math.pow(scroll, 0.8); // Ease out curve
+    const targetZ = 3 + scrollEased * 11;
 
-    targetPos.current.x += (targetX - targetPos.current.x) * 0.05;
-    targetPos.current.y += (targetY - targetPos.current.y) * 0.05;
-    targetPos.current.z += (targetZ - targetPos.current.z) * 0.02;
+    // Vertical movement: camera rises slightly as you scroll
+    const targetY = mousePosition.y * 0.3 + scroll * 2;
+
+    // Horizontal follows mouse more at close range, less when zoomed out
+    const mouseInfluence = 1 - scroll * 0.5;
+    const targetX = mousePosition.x * 0.5 * mouseInfluence;
+
+    // Smooth interpolation
+    targetPos.current.x += (targetX - targetPos.current.x) * 0.04;
+    targetPos.current.y += (targetY - targetPos.current.y) * 0.03;
+    targetPos.current.z += (targetZ - targetPos.current.z) * 0.025;
+
+    // Subtle camera rotation based on scroll
+    targetRotation.current.x = scroll * 0.15;
+    targetRotation.current.y = Math.sin(scroll * Math.PI) * 0.1;
 
     camera.position.set(
       targetPos.current.x,
@@ -319,7 +369,8 @@ function CameraController() {
       targetPos.current.z
     );
 
-    camera.lookAt(0, 0, 0);
+    // Look slightly above center as we zoom out
+    camera.lookAt(0, scroll * 0.5, 0);
   });
 
   return null;
