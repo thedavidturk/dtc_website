@@ -1,6 +1,6 @@
 <svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="300" fill="#351E28"/>
-  <rect x="40" y="40" width="320" height="220" rx="8" fill="#D7EFFF" fill-opacity="0.1"/>
-  <text x="200" y="145" text-anchor="middle" font-family="system-ui" font-size="24" font-weight="600" fill="#D7EFFF" fill-opacity="0.5">PROJECT 5</text>
-  <text x="200" y="175" text-anchor="middle" font-family="system-ui" font-size="14" fill="#D7EFFF" fill-opacity="0.3">AI / Experimental</text>
+  <rect width="400" height="300" fill="#4A3B33"/>
+  <rect x="40" y="40" width="320" height="220" rx="8" fill="#A8E6CF" fill-opacity="0.1"/>
+  <text x="200" y="145" text-anchor="middle" font-family="system-ui" font-size="24" font-weight="600" fill="#A8E6CF" fill-opacity="0.5">PROJECT 5</text>
+  <text x="200" y="175" text-anchor="middle" font-family="system-ui" font-size="14" fill="#A8E6CF" fill-opacity="0.3">AI / Experimental</text>
 </svg>

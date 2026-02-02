@@ -114,7 +114,7 @@ function CinematicVideoPlayer({ videoUrl, title, color }: { videoUrl: string; ti
             animate={{ rotate: 360 }}
             transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
           />
-          <div className="absolute inset-[1px] rounded-2xl bg-[#351E28]" />
+          <div className="absolute inset-[1px] rounded-2xl bg-[#4A3B33]" />
         </div>
 
         {/* Main video container */}
@@ -154,7 +154,7 @@ function CinematicVideoPlayer({ videoUrl, title, color }: { videoUrl: string; ti
               <div
                 className="absolute inset-0 pointer-events-none opacity-30"
                 style={{
-                  boxShadow: `inset 3px 0 10px ${color}40, inset -3px 0 10px #D7EFFF40`,
+                  boxShadow: `inset 3px 0 10px ${color}40, inset -3px 0 10px #A8E6CF40`,
                 }}
               />
 
@@ -347,8 +347,8 @@ function CinematicVideoPlayer({ videoUrl, title, color }: { videoUrl: string; ti
             style={{
               width: particle.size,
               height: particle.size,
-              backgroundColor: i % 2 === 0 ? color : '#D7EFFF',
-              boxShadow: `0 0 ${particle.size * 2}px ${i % 2 === 0 ? color : '#D7EFFF'}`,
+              backgroundColor: i % 2 === 0 ? color : '#A8E6CF',
+              boxShadow: `0 0 ${particle.size * 2}px ${i % 2 === 0 ? color : '#A8E6CF'}`,
               left: '50%',
               top: '50%',
               transform: `translateZ(${20 + i * 5}px)`,
@@ -685,11 +685,11 @@ function InteractiveCamera() {
 }
 
 // Brand colors
-const LIGHT_BLUE = "#D7EFFF";
-const SAGE_GREEN = "#AEB8A0";
-const DARK_BURGUNDY = "#351E28";
-const LIME_YELLOW = "#E9F056";
-const CORAL_ORANGE = "#FF5C34";
+const LIGHT_BLUE = "#A8E6CF";
+const SAGE_GREEN = "#E3D3C5";
+const DARK_BURGUNDY = "#4A3B33";
+const LIME_YELLOW = "#2F6364";
+const CORAL_ORANGE = "#FF7F6B";
 
 // Helper to get secondary color for a primary color
 function getSecondaryColor(color: string): string {
@@ -913,7 +913,7 @@ export default function ProjectModal3D({ project, onClose }: ProjectModal3DProps
                     {project.challenge && (
                       <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10">
                         <div className="flex items-center gap-3 mb-3">
-                          <div className="w-3 h-3 rounded-full bg-[#FF5C34]" />
+                          <div className="w-3 h-3 rounded-full bg-[#FF7F6B]" />
                           <h3 className="text-lg font-semibold text-white">The Challenge</h3>
                         </div>
                         <p className="text-white/50 leading-relaxed">{project.challenge}</p>
@@ -922,7 +922,7 @@ export default function ProjectModal3D({ project, onClose }: ProjectModal3DProps
                     {project.solution && (
                       <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10">
                         <div className="flex items-center gap-3 mb-3">
-                          <div className="w-3 h-3 rounded-full bg-[#AEB8A0]" />
+                          <div className="w-3 h-3 rounded-full bg-[#E3D3C5]" />
                           <h3 className="text-lg font-semibold text-white">Our Solution</h3>
                         </div>
                         <p className="text-white/50 leading-relaxed">{project.solution}</p>
@@ -1085,7 +1085,7 @@ export default function ProjectModal3D({ project, onClose }: ProjectModal3DProps
                   className="flex flex-col sm:flex-row gap-4"
                 >
                   <MagneticButton
-                    className="flex-1 py-4 px-8 rounded-full text-white font-semibold text-center hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
+                    className="flex-1 py-4 px-8 rounded-full text-white font-semibold text-center hover:shadow-lg hover:shadow-[#FF7F6B]/25 transition-shadow"
                     style={{ backgroundColor: project.color }}
                     strength={0.2}
                   >

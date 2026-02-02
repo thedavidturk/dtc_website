@@ -162,18 +162,18 @@ export default function CustomCursor() {
   const getCursorColor = () => {
     switch (cursorState) {
       case "play":
-        return "bg-[#FF5C34]";
+        return "bg-[#FF7F6B]";
       case "view":
-        return "bg-[#E9F056]";
+        return "bg-[#2F6364]";
       case "drag":
-        return "bg-white/90";
+        return "bg-[#E3D3C5]";
       case "expand":
-        return "bg-[#D7EFFF]";
+        return "bg-[#A8E6CF]";
       case "click":
       case "link":
-        return "bg-white";
+        return "bg-[#F9F5F0]";
       default:
-        return "bg-white";
+        return "bg-[#F9F5F0]";
     }
   };
 
@@ -357,7 +357,7 @@ export default function CustomCursor() {
           }}
         >
           <motion.div
-            className="relative -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-[#FF5C34]"
+            className="relative -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-[#FF7F6B]"
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 0.3, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}

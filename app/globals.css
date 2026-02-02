@@ -1,13 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  /* Dark burgundy */
-  --background: #351E28;
-  --foreground: #ffffff;
+  /* New Brand Palette */
+  --cream: #F9F5F0;
+  --sandstone: #E3D3C5;
+  --cocoa-brown: #4A3B33;
+  --teal: #2F6364;
+  --persimmon: #FF7F6B;
+  --neo-mint: #A8E6CF;
+
+  /* Semantic mappings */
+  --background: var(--cream);
+  --background-dark: var(--cocoa-brown);
+  --foreground: var(--cocoa-brown);
+  --foreground-light: var(--cream);
 
   /* Brand colors */
-  --accent: #FF5C34;
-  --accent-glow: rgba(255, 92, 52, 0.3);
+  --accent: var(--persimmon);
+  --accent-hover: var(--teal);
+  --accent-glow: rgba(255, 127, 107, 0.3);
+  --heading: var(--teal);
+  --success: var(--neo-mint);
 }
 
 @theme inline {

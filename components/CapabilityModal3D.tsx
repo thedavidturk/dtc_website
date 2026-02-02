@@ -287,11 +287,11 @@ function InteractiveCamera() {
 }
 
 // Brand colors
-const LIGHT_BLUE = "#D7EFFF";
-const SAGE_GREEN = "#AEB8A0";
-const DARK_BURGUNDY = "#351E28";
-const LIME_YELLOW = "#E9F056";
-const CORAL_ORANGE = "#FF5C34";
+const LIGHT_BLUE = "#A8E6CF";
+const SAGE_GREEN = "#E3D3C5";
+const DARK_BURGUNDY = "#4A3B33";
+const LIME_YELLOW = "#2F6364";
+const CORAL_ORANGE = "#FF7F6B";
 
 // Helper to get secondary color for a primary color
 function getSecondaryColor(color: string): string {
@@ -585,7 +585,7 @@ export default function CapabilityModal3D({ capability, onClose, onContact }: Ca
                       onClose();
                       onContact();
                     }}
-                    className="flex-1 py-4 px-8 rounded-full text-white font-semibold text-center hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
+                    className="flex-1 py-4 px-8 rounded-full text-white font-semibold text-center hover:shadow-lg hover:shadow-[#FF7F6B]/25 transition-shadow"
                     style={{ backgroundColor: capability.color }}
                     strength={0.2}
                   >

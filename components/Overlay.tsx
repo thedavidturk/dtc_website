@@ -22,10 +22,10 @@ function ScrollProgressBar() {
 
   // Calculate color based on scroll position (brand color journey)
   const getProgressColor = () => {
-    if (scroll < 0.25) return "#FF5C34"; // Coral Orange - Hero
-    if (scroll < 0.5) return "#E9F056";  // Lime Yellow - Capabilities
-    if (scroll < 0.75) return "#D7EFFF"; // Light Blue - Projects
-    return "#AEB8A0";                     // Sage Green - Contact
+    if (scroll < 0.25) return "#FF7F6B"; // Persimmon Pop - Hero
+    if (scroll < 0.5) return "#2F6364";  // Transformative Teal - Capabilities
+    if (scroll < 0.75) return "#A8E6CF"; // Neo-Mint - Projects
+    return "#E3D3C5";                     // Sandstone - Contact
   };
 
   return (
@@ -77,7 +77,7 @@ function ScrollIndicator() {
               scale: Math.abs(scroll - section.position) < 0.15 ? 1.5 : 1,
               backgroundColor:
                 Math.abs(scroll - section.position) < 0.15
-                  ? "#FF5C34"
+                  ? "#FF7F6B"
                   : "transparent",
             }}
             transition={{ duration: 0.3 }}
@@ -107,7 +107,7 @@ function Navigation({ onNavigate }: { onNavigate: (position: number) => void }) 
       className="fixed top-0 left-0 right-0 z-50 px-6 lg:px-12 py-6"
     >
       <motion.div
-        className="absolute inset-0 bg-[#351E28]/80 backdrop-blur-md"
+        className="absolute inset-0 bg-[#4A3B33]/80 backdrop-blur-md"
         initial={{ opacity: 0 }}
         animate={{ opacity: scroll > 0.05 ? 1 : 0 }}
         transition={{ duration: 0.3 }}
@@ -130,14 +130,14 @@ function Navigation({ onNavigate }: { onNavigate: (position: number) => void }) 
               strength={0.15}
             >
               {item.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#FF5C34] group-hover:w-full transition-all duration-300" />
+              <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#FF7F6B] group-hover:w-full transition-all duration-300" />
             </MagneticButton>
           ))}
         </div>
 
         <MagneticButton
           onClick={() => setContactOpen(true)}
-          className="px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-xs md:text-sm text-white hover:bg-white/20 hover:border-[#FF5C34]/50 transition-all"
+          className="px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-xs md:text-sm text-white hover:bg-white/20 hover:border-[#FF7F6B]/50 transition-all"
           strength={0.25}
         >
           <span className="hidden sm:inline">Start a Project</span>
@@ -169,7 +169,7 @@ function IntroSection() {
     >
       {/* Dark vignette overlay */}
       <div
-        className="absolute inset-0 bg-[#351E28]"
+        className="absolute inset-0 bg-[#4A3B33]"
         style={{ opacity: 0.85 - introProgress * 0.5 }}
       />
 
@@ -181,7 +181,7 @@ function IntroSection() {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="mb-8"
         >
-          <span className="text-[#E9F056] text-6xl md:text-8xl font-bold tracking-tighter">
+          <span className="text-[#2F6364] text-6xl md:text-8xl font-bold tracking-tighter">
             DT+C
           </span>
         </motion.div>
@@ -207,11 +207,11 @@ function IntroSection() {
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
             className="flex flex-col items-center gap-2"
           >
-            <div className="w-px h-16 bg-gradient-to-b from-transparent via-[#E9F056]/50 to-[#E9F056]" />
+            <div className="w-px h-16 bg-gradient-to-b from-transparent via-[#2F6364]/50 to-[#2F6364]" />
             <motion.div
               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="w-2 h-2 rounded-full bg-[#E9F056]"
+              className="w-2 h-2 rounded-full bg-[#2F6364]"
             />
           </motion.div>
         </motion.div>
@@ -268,14 +268,14 @@ function HeroSection() {
             transform: `translateY(${(1 - revealProgress) * 30}px)`
           }}
         >
-          <span className="text-[#FF5C34] text-xs font-medium tracking-[0.4em] uppercase mb-6 inline-block border-b border-[#FF5C34]/30 pb-1">
+          <span className="text-[#FF7F6B] text-xs font-medium tracking-[0.4em] uppercase mb-6 inline-block border-b border-[#FF7F6B]/30 pb-1">
             Creative Studio
           </span>
         </motion.div>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[0.9] tracking-[-0.03em] mb-8 overflow-hidden">
           <motion.span
-            className="block text-[#E9F056]"
+            className="block text-[#2F6364]"
             style={{
               opacity: Math.min(1, revealProgress * 1.5),
               transform: `translateY(${(1 - Math.min(1, revealProgress * 1.5)) * 60}px)`
@@ -284,7 +284,7 @@ function HeroSection() {
             We build
           </motion.span>
           <motion.span
-            className="block text-[#FF5C34] italic"
+            className="block text-[#FF7F6B] italic"
             style={{
               opacity: Math.min(1, Math.max(0, revealProgress - 0.3) * 1.8),
               transform: `translateY(${(1 - Math.min(1, Math.max(0, revealProgress - 0.3) * 1.8)) * 60}px)`
@@ -321,7 +321,7 @@ function HeroSection() {
             { value: "3x", label: "CONCEPTS" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#E9F056] block tracking-tight">{stat.value}</span>
+              <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#2F6364] block tracking-tight">{stat.value}</span>
               <span className="text-[10px] sm:text-xs text-white/40 tracking-[0.2em] font-medium">{stat.label}</span>
             </div>
           ))}
@@ -336,7 +336,7 @@ function HeroSection() {
         >
           <MagneticButton
             onClick={() => setContactOpen(true)}
-            className="px-6 py-3 sm:px-8 sm:py-4 bg-[#FF5C34] rounded-full text-white text-sm sm:text-base font-semibold hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
+            className="px-6 py-3 sm:px-8 sm:py-4 bg-[#FF7F6B] rounded-full text-white text-sm sm:text-base font-semibold hover:shadow-lg hover:shadow-[#FF7F6B]/25 transition-shadow"
             strength={0.3}
           >
             Start a Project
@@ -347,7 +347,7 @@ function HeroSection() {
             strength={0.3}
             cursorType="play"
           >
-            <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-[#FF5C34] transition-colors">
+            <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-[#FF7F6B] transition-colors">
               <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor" className="ml-0.5">
                 <path d="M0 0v10l8-5z" />
               </svg>
@@ -366,7 +366,7 @@ function HeroSection() {
             (tag) => (
               <span
                 key={tag}
-                className="px-3 py-1.5 sm:px-4 sm:py-2 border border-white/10 rounded-full text-[10px] sm:text-xs text-white/40 tracking-wide hover:border-[#FF5C34]/30 hover:text-white/60 transition-all cursor-default"
+                className="px-3 py-1.5 sm:px-4 sm:py-2 border border-white/10 rounded-full text-[10px] sm:text-xs text-white/40 tracking-wide hover:border-[#FF7F6B]/30 hover:text-white/60 transition-all cursor-default"
               >
                 {tag}
               </span>
@@ -384,8 +384,8 @@ function HeroSection() {
           <p className="text-xs text-white/30 text-center mb-4 tracking-widest uppercase">Trusted by</p>
           <div className="relative overflow-hidden">
             {/* Fade edges */}
-            <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#351E28] to-transparent z-10" />
-            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#351E28] to-transparent z-10" />
+            <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#4A3B33] to-transparent z-10" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#4A3B33] to-transparent z-10" />
 
             {/* Scrolling logos */}
             <motion.div
@@ -484,7 +484,7 @@ const CAPABILITIES: Capability[] = [
     title: "AI Creative Strategy",
     description: "Research-driven ideation and systems design that amplifies your creative output",
     icon: "01",
-    color: "#FF5C34",
+    color: "#FF7F6B",
     services: [
       "AI-driven ideation & concept development",
       "Deep research & marketing intelligence",
@@ -508,7 +508,7 @@ const CAPABILITIES: Capability[] = [
     title: "Story & Pre-Production",
     description: "Pitch decks, storyboards, and concept validation before expensive production",
     icon: "02",
-    color: "#D7EFFF",
+    color: "#A8E6CF",
     services: [
       "Strategy-first pitch decks",
       "Brand & campaign storytelling",
@@ -532,7 +532,7 @@ const CAPABILITIES: Capability[] = [
     title: "AI-Enhanced Production",
     description: "Video, animation, and photography accelerated by intelligent workflows",
     icon: "03",
-    color: "#E9F056",
+    color: "#2F6364",
     services: [
       "Video production",
       "Advanced animation (2D/3D/hybrid)",
@@ -556,7 +556,7 @@ const CAPABILITIES: Capability[] = [
     title: "Motion & Visual Systems",
     description: "Scalable brand worlds and design systems that maintain consistency",
     icon: "04",
-    color: "#AEB8A0",
+    color: "#E3D3C5",
     services: [
       "Motion systems for ads & social",
       "Brand worlds & visual universes",
@@ -583,7 +583,7 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
     <ContentSection scrollStart={0.28} scrollEnd={0.40}>
       <div className="w-full" style={{ perspective: "1200px" }}>
         <div className="text-center mb-6 sm:mb-12 px-4 sm:px-6">
-          <span className="text-[#AEB8A0] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-3 block">Services</span>
+          <span className="text-[#E3D3C5] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-3 block">Services</span>
           <TextReveal
             as="h2"
             className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white uppercase tracking-tight"
@@ -758,7 +758,7 @@ const PROJECTS: Project[] = [
     title: "New Era Cap",
     category: "Virtual Production + 3D Animation",
     description: "Space-themed 'Out of This World' campaign featuring immersive 3D environments and cinematic product showcases.",
-    color: "#D7EFFF",
+    color: "#A8E6CF",
     tags: ["3D Animation", "VFX", "Unreal Engine"],
     challenge: "Create a visually stunning campaign that differentiates New Era in a competitive market while conveying the excitement of space exploration.",
     solution: "Built immersive space environments in Unreal Engine 5 featuring planets, stars, and galaxies. Combined 3D animation with live model photography and cinematic post-production for multi-platform deployment.",
@@ -780,7 +780,7 @@ const PROJECTS: Project[] = [
     title: "SeaWorld Orlando",
     category: "Cinematic Campaign",
     description: "SEAQuest announcement campaign featuring a theatrical teaser trailer and hero visuals for the new dark ride attraction.",
-    color: "#E9F056",
+    color: "#2F6364",
     tags: ["Unreal Engine", "Trailer", "VFX"],
     videoUrl: "https://www.youtube.com/watch?v=pNLW1Tx5IAE",
     challenge: "United Parks needed a cinematic teaser trailer and hero visuals to generate excitement across digital platforms while maintaining tight production deadlines.",
@@ -803,7 +803,7 @@ const PROJECTS: Project[] = [
     title: "New Era Sprouted",
     category: "Digital Animation + Virtual Production",
     description: "Immersive campaign for New Era's 'Sprouted' collection featuring lush 3D environments and cinematic product storytelling.",
-    color: "#FF5C34",
+    color: "#FF7F6B",
     tags: ["Unreal Engine", "3D Animation", "VFX"],
     challenge: "Create a visually stunning campaign that would stand out in a crowded marketplace while conveying wonder in a foliage-filled world.",
     solution: "Built immersive environments in Unreal Engine 5—forests, mushroom hilltops, cityscapes—with carefully crafted visuals and audio to highlight product features through cinematic storytelling.",
@@ -825,7 +825,7 @@ const PROJECTS: Project[] = [
     title: "Meridian Studios",
     category: "Content Engine",
     description: "Scalable content system producing 40+ branded assets per month with AI assistance.",
-    color: "#AEB8A0",
+    color: "#E3D3C5",
     tags: ["AI", "Systems", "Content"],
     challenge: "Meridian was drowning in content requests from multiple brands but couldn't afford to scale their team proportionally.",
     solution: "We designed and implemented a content production system with AI-assisted ideation, templated design systems, and automated quality checks—all managed through a custom dashboard.",
@@ -857,28 +857,28 @@ function AIDifferentiatorSection() {
       traditional: "Weeks of manual research",
       aiPowered: "Deep AI analysis in hours",
       icon: "🔍",
-      color: "#D7EFFF",
+      color: "#A8E6CF",
     },
     {
       phase: "Ideation",
       traditional: "Limited concepts due to time",
       aiPowered: "100+ concepts explored rapidly",
       icon: "💡",
-      color: "#E9F056",
+      color: "#2F6364",
     },
     {
       phase: "Prototyping",
       traditional: "Expensive test shoots",
       aiPowered: "AI-generated previews first",
       icon: "🎬",
-      color: "#FF5C34",
+      color: "#FF7F6B",
     },
     {
       phase: "Production",
       traditional: "Fixed deliverables",
       aiPowered: "Iterate until perfect",
       icon: "✨",
-      color: "#AEB8A0",
+      color: "#E3D3C5",
     },
   ];
 
@@ -887,7 +887,7 @@ function AIDifferentiatorSection() {
       <div className="px-4 sm:px-6 max-w-5xl w-full overflow-y-auto max-h-[80vh]">
         <motion.div className="text-center mb-6 sm:mb-12">
           <motion.p
-            className="text-[#E9F056] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-2 sm:mb-4"
+            className="text-[#2F6364] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-2 sm:mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
@@ -897,7 +897,7 @@ function AIDifferentiatorSection() {
             <TextReveal type="words" stagger={0.05}>
               AI-Augmented
             </TextReveal>{" "}
-            <span className="italic text-[#E9F056]">
+            <span className="italic text-[#2F6364]">
               <TextReveal type="words" stagger={0.05} delay={0.15}>
                 Creative
               </TextReveal>
@@ -942,7 +942,7 @@ function AIDifferentiatorSection() {
                     <span className="text-white/40 text-[10px] sm:text-sm line-through">{step.traditional}</span>
                   </div>
                   <div className="flex items-start gap-1 sm:gap-2">
-                    <span className="text-[#E9F056] text-[10px] sm:text-xs mt-0.5 font-semibold">NEW</span>
+                    <span className="text-[#2F6364] text-[10px] sm:text-xs mt-0.5 font-semibold">NEW</span>
                     <span className="text-white/70 text-[10px] sm:text-sm">{step.aiPowered}</span>
                   </div>
                 </div>
@@ -970,7 +970,7 @@ function AIDifferentiatorSection() {
             { value: "0", label: "Compromise" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#FF5C34] block">
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#FF7F6B] block">
                 {stat.value}
               </span>
               <span className="text-white/40 text-[10px] sm:text-sm">{stat.label}</span>
@@ -988,7 +988,7 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
       <div className="w-full">
         <motion.div className="text-center mb-6 sm:mb-12 px-4 sm:px-6">
           <motion.p
-            className="text-[#FF5C34] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-2 sm:mb-4"
+            className="text-[#FF7F6B] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-2 sm:mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
@@ -998,7 +998,7 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
             <TextReveal type="words" stagger={0.05}>
               Projects that
             </TextReveal>{" "}
-            <span className="italic underline decoration-[#FF5C34] decoration-2 underline-offset-4">
+            <span className="italic underline decoration-[#FF7F6B] decoration-2 underline-offset-4">
               <TextReveal type="words" stagger={0.05} delay={0.15}>
                 move the needle
               </TextReveal>
@@ -1110,7 +1110,7 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
                         </h3>
                       </div>
                       <motion.div
-                        className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#FF5C34]/50 group-hover:bg-[#FF5C34]/10 transition-all flex-shrink-0 ml-2"
+                        className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#FF7F6B]/50 group-hover:bg-[#FF7F6B]/10 transition-all flex-shrink-0 ml-2"
                         whileHover={{ scale: 1.1, rotate: 45 }}
                       >
                         <svg
@@ -1120,7 +1120,7 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2"
-                          className="text-white/50 group-hover:text-[#FF5C34] transition-colors"
+                          className="text-white/50 group-hover:text-[#FF7F6B] transition-colors"
                         >
                           <path d="M7 17L17 7M17 7H7M17 7V17" />
                         </svg>
@@ -1169,7 +1169,7 @@ function ProcessSection() {
   return (
     <ContentSection scrollStart={0.60} scrollEnd={0.75}>
       <div className="px-4 sm:px-6 max-w-5xl text-center">
-        <span className="text-[#D7EFFF] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-3 block">Our Process</span>
+        <span className="text-[#A8E6CF] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-3 block">Our Process</span>
         <TextReveal
           as="h2"
           className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-2 sm:mb-4 uppercase tracking-tight"
@@ -1194,13 +1194,13 @@ function ProcessSection() {
               transition={{ delay: i * 0.15 }}
             >
               <motion.span
-                className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-[#FF5C34] block mb-2 sm:mb-4 tracking-tighter font-mono"
+                className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-[#FF7F6B] block mb-2 sm:mb-4 tracking-tighter font-mono"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
                 {step.num}
               </motion.span>
-              <h3 className="text-base sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-[#FF5C34] transition-colors uppercase tracking-wide">
+              <h3 className="text-base sm:text-xl font-bold text-white mb-1 sm:mb-2 group-hover:text-[#FF7F6B] transition-colors uppercase tracking-wide">
                 {step.title}
               </h3>
               <p className="text-white/40 text-xs sm:text-sm font-light">{step.desc}</p>
@@ -1209,7 +1209,7 @@ function ProcessSection() {
         </div>
 
         <FadeReveal delay={0.6} className="mt-8 sm:mt-16">
-          <div className="inline-block px-4 py-2 sm:px-6 sm:py-3 border border-white/10 rounded-full hover:border-[#FF5C34]/30 transition-colors">
+          <div className="inline-block px-4 py-2 sm:px-6 sm:py-3 border border-white/10 rounded-full hover:border-[#FF7F6B]/30 transition-colors">
             <span className="text-white/60 italic text-sm sm:text-base">We&apos;re a partner, not a vendor.</span>
           </div>
         </FadeReveal>
@@ -1224,7 +1224,7 @@ function CTASection() {
   return (
     <ContentSection scrollStart={0.73} scrollEnd={1}>
       <div className="px-4 sm:px-6 text-center max-w-3xl pointer-events-auto">
-        <span className="text-[#E9F056] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-4 block">Let&apos;s Talk</span>
+        <span className="text-[#2F6364] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-4 block">Let&apos;s Talk</span>
         <h2 className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-white mb-4 sm:mb-6 tracking-tight">
           <TextReveal type="words" stagger={0.04}>
             Ready to build
@@ -1233,7 +1233,7 @@ function CTASection() {
           <TextReveal type="words" stagger={0.04} delay={0.2}>
             something
           </TextReveal>{" "}
-          <span className="text-[#FF5C34] italic">
+          <span className="text-[#FF7F6B] italic">
             <TextReveal type="words" stagger={0.04} delay={0.4}>
               extraordinary?
             </TextReveal>
@@ -1241,7 +1241,7 @@ function CTASection() {
         </h2>
         <FadeReveal delay={0.5} className="mb-6 sm:mb-10">
           <p className="text-sm sm:text-lg text-white/50 font-light">
-            One strategy call can replace <span className="text-white/70 font-medium underline decoration-[#FF5C34]/50 underline-offset-2">months</span> of trial and error.
+            One strategy call can replace <span className="text-white/70 font-medium underline decoration-[#FF7F6B]/50 underline-offset-2">months</span> of trial and error.
           </p>
         </FadeReveal>
         <motion.div
@@ -1252,7 +1252,7 @@ function CTASection() {
         >
           <MagneticButton
             onClick={() => setContactOpen(true)}
-            className="px-6 py-3 sm:px-8 sm:py-4 bg-[#FF5C34] rounded-full text-black text-sm sm:text-base font-bold uppercase tracking-wide hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
+            className="px-6 py-3 sm:px-8 sm:py-4 bg-[#FF7F6B] rounded-full text-black text-sm sm:text-base font-bold uppercase tracking-wide hover:shadow-lg hover:shadow-[#FF7F6B]/25 transition-shadow"
             strength={0.3}
           >
             Book a Strategy Call
@@ -1299,7 +1299,7 @@ function ClosingSection({ onRestart }: { onRestart: () => void }) {
     >
       {/* Vignette overlay */}
       <div
-        className="absolute inset-0 bg-[#351E28]"
+        className="absolute inset-0 bg-[#4A3B33]"
         style={{ opacity: closingOpacity * 0.6 }}
       />
 
@@ -1325,8 +1325,8 @@ function ClosingSection({ onRestart }: { onRestart: () => void }) {
           whileTap={{ scale: 0.95 }}
         >
           {/* Button background with glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#FF5C34] via-[#E9F056] to-[#FF5C34] opacity-80 group-hover:opacity-100 transition-opacity" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#FF5C34] via-[#E9F056] to-[#FF5C34] blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FF7F6B] via-[#2F6364] to-[#FF7F6B] opacity-80 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FF7F6B] via-[#2F6364] to-[#FF7F6B] blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
 
           {/* Button content */}
           <span className="relative flex items-center gap-3 text-black font-bold uppercase tracking-wide">
@@ -1376,7 +1376,7 @@ function ReturnAnimation() {
       <motion.div
         className="absolute inset-0"
         style={{
-          background: `radial-gradient(circle at center, transparent ${(1 - returnProgress) * 100}%, #351E28 ${(1 - returnProgress) * 100 + 20}%)`,
+          background: `radial-gradient(circle at center, transparent ${(1 - returnProgress) * 100}%, #4A3B33 ${(1 - returnProgress) * 100 + 20}%)`,
         }}
       />
 
@@ -1384,7 +1384,7 @@ function ReturnAnimation() {
       <motion.div
         className="w-32 h-32 rounded-full"
         style={{
-          background: `radial-gradient(circle, #FF5C34 0%, #E9F056 50%, transparent 70%)`,
+          background: `radial-gradient(circle, #FF7F6B 0%, #2F6364 50%, transparent 70%)`,
           opacity: returnProgress,
           transform: `scale(${1 + returnProgress * 2})`,
           filter: `blur(${returnProgress * 20}px)`,
@@ -1394,7 +1394,7 @@ function ReturnAnimation() {
       {/* Logo flash at the end */}
       {returnProgress > 0.8 && (
         <motion.span
-          className="absolute text-[#E9F056] text-6xl md:text-8xl font-bold tracking-tighter"
+          className="absolute text-[#2F6364] text-6xl md:text-8xl font-bold tracking-tighter"
           initial={{ opacity: 0, scale: 1.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
@@ -1507,21 +1507,21 @@ function ContactModal() {
                   placeholder="Name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] transition-colors"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF7F6B] transition-colors"
                 />
                 <input
                   type="email"
                   placeholder="Email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] transition-colors"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF7F6B] transition-colors"
                 />
                 <textarea
                   placeholder="Tell us about your project..."
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] resize-none transition-colors"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF7F6B] resize-none transition-colors"
                 />
                 {status === "error" && (
                   <p className="text-red-400 text-sm">Something went wrong. Please try again.</p>
@@ -1530,7 +1530,7 @@ function ContactModal() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={status === "submitting" || !formData.name || !formData.email || !formData.message}
-                  className="w-full py-4 bg-[#FF5C34] rounded-lg text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="w-full py-4 bg-[#FF7F6B] rounded-lg text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   {status === "submitting" ? (
                     <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -1639,7 +1639,7 @@ function ShowreelModal() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                className="w-12 h-12 border-2 border-white/20 border-t-[#FF5C34] rounded-full"
+                className="w-12 h-12 border-2 border-white/20 border-t-[#FF7F6B] rounded-full"
               />
             </div>
           )}
@@ -1653,7 +1653,7 @@ function ShowreelModal() {
             style={{ aspectRatio: "16/9" }}
           >
             {/* Outer glow */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-[#FF5C34]/20 via-[#E9F056]/10 to-[#FF5C34]/20 blur-2xl opacity-50" />
+            <div className="absolute -inset-4 bg-gradient-to-r from-[#FF7F6B]/20 via-[#2F6364]/10 to-[#FF7F6B]/20 blur-2xl opacity-50" />
 
             {/* Video frame */}
             <div className="relative w-full h-full rounded-lg overflow-hidden border border-white/10 shadow-2xl shadow-black/50">
@@ -1667,10 +1667,10 @@ function ShowreelModal() {
             </div>
 
             {/* Corner accents */}
-            <div className="absolute -top-2 -left-2 w-8 h-8 border-l-2 border-t-2 border-[#FF5C34]/50" />
-            <div className="absolute -top-2 -right-2 w-8 h-8 border-r-2 border-t-2 border-[#FF5C34]/50" />
-            <div className="absolute -bottom-2 -left-2 w-8 h-8 border-l-2 border-b-2 border-[#FF5C34]/50" />
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 border-r-2 border-b-2 border-[#FF5C34]/50" />
+            <div className="absolute -top-2 -left-2 w-8 h-8 border-l-2 border-t-2 border-[#FF7F6B]/50" />
+            <div className="absolute -top-2 -right-2 w-8 h-8 border-r-2 border-t-2 border-[#FF7F6B]/50" />
+            <div className="absolute -bottom-2 -left-2 w-8 h-8 border-l-2 border-b-2 border-[#FF7F6B]/50" />
+            <div className="absolute -bottom-2 -right-2 w-8 h-8 border-r-2 border-b-2 border-[#FF7F6B]/50" />
           </motion.div>
 
           {/* Skip hint */}
@@ -1742,7 +1742,7 @@ function LoadingScreen() {
     >
       {/* Semi-transparent overlay that reveals the 3D scene */}
       <motion.div
-        className="absolute inset-0 bg-[#351E28]"
+        className="absolute inset-0 bg-[#4A3B33]"
         style={{ opacity: phase === "waiting" ? 1 : 0.85 - introProgress * 0.85 }}
       />
 
@@ -1764,7 +1764,7 @@ function LoadingScreen() {
       >
         {/* Glowing backdrop for logo */}
         <motion.div
-          className="absolute inset-0 -m-20 rounded-full bg-[#FF5C34]"
+          className="absolute inset-0 -m-20 rounded-full bg-[#FF7F6B]"
           style={{ filter: "blur(80px)", opacity: 0.3 - introProgress * 0.3 }}
         />
 
@@ -1775,7 +1775,7 @@ function LoadingScreen() {
               <motion.span
                 key={i}
                 className={`text-6xl sm:text-7xl md:text-8xl font-bold ${
-                  letter === "+" ? "text-[#FF5C34]" : "text-white"
+                  letter === "+" ? "text-[#FF7F6B]" : "text-white"
                 }`}
                 initial={{ opacity: 0, y: 30, rotateX: -90 }}
                 animate={{ opacity: 1, y: 0, rotateX: 0 }}
@@ -1806,7 +1806,7 @@ function LoadingScreen() {
 
         {/* Animated line */}
         <motion.div
-          className="mt-8 mx-auto h-px bg-gradient-to-r from-transparent via-[#FF5C34] to-transparent"
+          className="mt-8 mx-auto h-px bg-gradient-to-r from-transparent via-[#FF7F6B] to-transparent"
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: 200, opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.8 }}
@@ -1855,7 +1855,7 @@ function BackgroundDimmer() {
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-[2] bg-[#351E28]"
+      className="fixed inset-0 pointer-events-none z-[2] bg-[#4A3B33]"
       style={{ opacity: dimOpacity }}
     />
   );
@@ -1874,7 +1874,7 @@ function ScrollToTopButton({ onScrollToTop }: { onScrollToTop: () => void }) {
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
           transition={{ duration: 0.2 }}
           onClick={onScrollToTop}
-          className="fixed bottom-6 right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#FF5C34] text-white shadow-lg shadow-[#FF5C34]/25 flex items-center justify-center hover:bg-[#ff7a5a] active:scale-95 transition-all"
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#FF7F6B] text-white shadow-lg shadow-[#FF7F6B]/25 flex items-center justify-center hover:bg-[#ff7a5a] active:scale-95 transition-all"
           aria-label="Scroll to top"
         >
           <svg

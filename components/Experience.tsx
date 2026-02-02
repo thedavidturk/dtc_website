@@ -7,12 +7,13 @@ import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useStore } from "@/store/useStore";
 
-// Colors - website brand palette
-const LIGHT_BLUE = "#D7EFFF";
-const SAGE_GREEN = "#AEB8A0";
-const DARK_BURGUNDY = "#351E28";
-const LIME_YELLOW = "#E9F056";
-const CORAL_ORANGE = "#FF5C34";
+// Colors - new brand palette
+const CREAM = "#F9F5F0";
+const SANDSTONE = "#E3D3C5";
+const COCOA_BROWN = "#4A3B33";
+const TEAL = "#2F6364";
+const PERSIMMON = "#FF7F6B";
+const NEO_MINT = "#A8E6CF";
 
 // Floating particles that react to mouse and scroll
 function ParticleField() {
@@ -58,7 +59,7 @@ function ParticleField() {
       </bufferGeometry>
       <pointsMaterial
         size={0.04}
-        color={LIME_YELLOW}
+        color={TEAL}
         transparent
         opacity={0.7}
         sizeAttenuation
@@ -122,8 +123,8 @@ function GlassSphere() {
         <mesh ref={innerRef} scale={0.35}>
           <sphereGeometry args={[1, 64, 64]} />
           <meshStandardMaterial
-            color={CORAL_ORANGE}
-            emissive={CORAL_ORANGE}
+            color={PERSIMMON}
+            emissive={PERSIMMON}
             emissiveIntensity={2}
             toneMapped={false}
           />
@@ -133,7 +134,7 @@ function GlassSphere() {
         <mesh scale={1.2}>
           <sphereGeometry args={[1, 128, 128]} />
           <meshPhysicalMaterial
-            color={LIGHT_BLUE}
+            color={NEO_MINT}
             roughness={0.05}
             metalness={0.1}
             transmission={0.95}
@@ -147,7 +148,7 @@ function GlassSphere() {
         <mesh ref={glowRef} scale={1.8}>
           <sphereGeometry args={[1, 64, 64]} />
           <meshBasicMaterial
-            color={LIME_YELLOW}
+            color={TEAL}
             transparent
             opacity={0.08}
             side={THREE.BackSide}
@@ -158,7 +159,7 @@ function GlassSphere() {
         <mesh scale={2.2}>
           <sphereGeometry args={[1, 32, 32]} />
           <meshBasicMaterial
-            color={SAGE_GREEN}
+            color={SANDSTONE}
             transparent
             opacity={0.05}
             side={THREE.BackSide}
@@ -190,10 +191,10 @@ function OrbitingOrbs() {
   });
 
   const orbs = [
-    { angle: 0, radius: 2.5, speed: 1, color: CORAL_ORANGE, size: 0.08 },
-    { angle: Math.PI * 0.5, radius: 2.8, speed: 0.8, color: LIME_YELLOW, size: 0.07 },
-    { angle: Math.PI, radius: 2.3, speed: 1.2, color: LIGHT_BLUE, size: 0.06 },
-    { angle: Math.PI * 1.5, radius: 2.6, speed: 0.9, color: SAGE_GREEN, size: 0.05 },
+    { angle: 0, radius: 2.5, speed: 1, color: PERSIMMON, size: 0.08 },
+    { angle: Math.PI * 0.5, radius: 2.8, speed: 0.8, color: TEAL, size: 0.07 },
+    { angle: Math.PI, radius: 2.3, speed: 1.2, color: NEO_MINT, size: 0.06 },
+    { angle: Math.PI * 1.5, radius: 2.6, speed: 0.9, color: SANDSTONE, size: 0.05 },
   ];
 
   return (
@@ -313,21 +314,21 @@ function OrbitalRings() {
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[ring1Positions, 3]} />
         </bufferGeometry>
-        <pointsMaterial size={0.05} color={CORAL_ORANGE} transparent opacity={0.9} sizeAttenuation blending={THREE.AdditiveBlending} />
+        <pointsMaterial size={0.05} color={PERSIMMON} transparent opacity={0.9} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
       {/* Middle ring - light blue */}
       <points ref={ring2Ref}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[ring2Positions, 3]} />
         </bufferGeometry>
-        <pointsMaterial size={0.04} color={LIGHT_BLUE} transparent opacity={0.7} sizeAttenuation blending={THREE.AdditiveBlending} />
+        <pointsMaterial size={0.04} color={NEO_MINT} transparent opacity={0.7} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
       {/* Outer ring - sage green */}
       <points ref={ring3Ref}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[ring3Positions, 3]} />
         </bufferGeometry>
-        <pointsMaterial size={0.03} color={SAGE_GREEN} transparent opacity={0.5} sizeAttenuation blending={THREE.AdditiveBlending} />
+        <pointsMaterial size={0.03} color={SANDSTONE} transparent opacity={0.5} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
     </group>
   );
@@ -434,20 +435,20 @@ function Effects() {
 function Scene() {
   return (
     <>
-      <color attach="background" args={[DARK_BURGUNDY]} />
-      <fog attach="fog" args={[DARK_BURGUNDY, 8, 25]} />
+      <color attach="background" args={[COCOA_BROWN]} />
+      <fog attach="fog" args={[COCOA_BROWN, 8, 25]} />
 
       {/* Subtle ambient */}
       <ambientLight intensity={0.1} />
 
       {/* Key lights using brand colors */}
-      <pointLight position={[5, 5, 5]} intensity={1.5} color={CORAL_ORANGE} distance={25} />
-      <pointLight position={[-5, -3, 5]} intensity={1.2} color={LIGHT_BLUE} distance={20} />
-      <pointLight position={[0, 5, -5]} intensity={1} color={LIME_YELLOW} distance={20} />
-      <pointLight position={[-3, 0, 8]} intensity={0.8} color={SAGE_GREEN} distance={15} />
+      <pointLight position={[5, 5, 5]} intensity={1.5} color={PERSIMMON} distance={25} />
+      <pointLight position={[-5, -3, 5]} intensity={1.2} color={NEO_MINT} distance={20} />
+      <pointLight position={[0, 5, -5]} intensity={1} color={TEAL} distance={20} />
+      <pointLight position={[-3, 0, 8]} intensity={0.8} color={SANDSTONE} distance={15} />
 
       {/* Rim light */}
-      <pointLight position={[3, 0, -5]} intensity={0.6} color={LIGHT_BLUE} distance={15} />
+      <pointLight position={[3, 0, -5]} intensity={0.6} color={NEO_MINT} distance={15} />
 
       <CameraController />
       <GlassSphere />
@@ -456,9 +457,9 @@ function Scene() {
       <ParticleField />
 
       {/* Sparkles with brand colors */}
-      <Sparkles count={80} scale={12} size={1.5} speed={0.3} opacity={0.5} color={LIME_YELLOW} />
-      <Sparkles count={60} scale={14} size={1.2} speed={0.25} opacity={0.4} color={CORAL_ORANGE} />
-      <Sparkles count={50} scale={16} size={1} speed={0.2} opacity={0.3} color={LIGHT_BLUE} />
+      <Sparkles count={80} scale={12} size={1.5} speed={0.3} opacity={0.5} color={TEAL} />
+      <Sparkles count={60} scale={14} size={1.2} speed={0.25} opacity={0.4} color={PERSIMMON} />
+      <Sparkles count={50} scale={16} size={1} speed={0.2} opacity={0.3} color={NEO_MINT} />
 
       <Effects />
     </>
@@ -488,7 +489,7 @@ export default function Experience() {
         width: "100%",
         height: "100%",
         zIndex: 1,
-        backgroundColor: DARK_BURGUNDY,
+        backgroundColor: COCOA_BROWN,
       }}
     >
       <Scene />

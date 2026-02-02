@@ -10,8 +10,8 @@ function generateParticleData(particleCount: number) {
   const positions = new Float32Array(particleCount * 3);
   const colors = new Float32Array(particleCount * 3);
 
-  const accentColor = new THREE.Color("#FF5C34");
-  const slateColor = new THREE.Color("#AEB8A0");
+  const accentColor = new THREE.Color("#FF7F6B");
+  const slateColor = new THREE.Color("#E3D3C5");
 
   for (let i = 0; i < particleCount; i++) {
     const i3 = i * 3;
@@ -62,8 +62,8 @@ function AbstractShape({ scrollProgress }: { scrollProgress: number }) {
       <mesh ref={meshRef} scale={scale}>
         <icosahedronGeometry args={[1, 4]} />
         <MeshDistortMaterial
-          color="#FF5C34"
-          emissive="#FF5C34"
+          color="#FF7F6B"
+          emissive="#FF7F6B"
           emissiveIntensity={0.15}
           roughness={0.4}
           metalness={0.8}
@@ -123,7 +123,7 @@ function Scene({ scrollProgress }: { scrollProgress: number }) {
     <>
       <ambientLight intensity={0.3} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} />
-      <pointLight position={[-5, -5, -5]} intensity={0.4} color="#AEB8A0" />
+      <pointLight position={[-5, -5, -5]} intensity={0.4} color="#E3D3C5" />
 
       <AbstractShape scrollProgress={scrollProgress} />
       <ParticleField scrollProgress={scrollProgress} />

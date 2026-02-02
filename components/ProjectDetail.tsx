@@ -161,8 +161,8 @@ export default function ProjectDetail({ project, onClose }: ProjectDetailProps) 
                           transition={{ delay: 0.35 }}
                           className="p-5 rounded-xl bg-white/5 border border-white/10"
                         >
-                          <h4 className="text-[#FF5C34] font-semibold mb-2 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-[#FF5C34]" />
+                          <h4 className="text-[#FF7F6B] font-semibold mb-2 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-[#FF7F6B]" />
                             The Challenge
                           </h4>
                           <p className="text-white/50 text-sm leading-relaxed">{project.challenge}</p>
@@ -175,8 +175,8 @@ export default function ProjectDetail({ project, onClose }: ProjectDetailProps) 
                           transition={{ delay: 0.4 }}
                           className="p-5 rounded-xl bg-white/5 border border-white/10"
                         >
-                          <h4 className="text-[#AEB8A0] font-semibold mb-2 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-[#AEB8A0]" />
+                          <h4 className="text-[#E3D3C5] font-semibold mb-2 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-[#E3D3C5]" />
                             Our Solution
                           </h4>
                           <p className="text-white/50 text-sm leading-relaxed">{project.solution}</p>
