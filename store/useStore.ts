@@ -9,6 +9,8 @@ interface StoreState {
   setMousePosition: (x: number, y: number) => void;
   isContactOpen: boolean;
   setContactOpen: (open: boolean) => void;
+  isShowreelOpen: boolean;
+  setShowreelOpen: (open: boolean) => void;
   isLoaded: boolean;
   setLoaded: (loaded: boolean) => void;
 }
@@ -22,6 +24,8 @@ export const useStore = create<StoreState>((set) => ({
   setMousePosition: (x, y) => set({ mousePosition: { x, y } }),
   isContactOpen: false,
   setContactOpen: (open) => set({ isContactOpen: open }),
+  isShowreelOpen: false,
+  setShowreelOpen: (open) => set({ isShowreelOpen: open }),
   isLoaded: false,
   setLoaded: (loaded) => set({ isLoaded: loaded }),
 }));

@@ -188,6 +188,7 @@ function IntroSection() {
 function HeroSection() {
   const scroll = useStore((state) => state.scroll);
   const setContactOpen = useStore((state) => state.setContactOpen);
+  const setShowreelOpen = useStore((state) => state.setShowreelOpen);
 
   // Hero appears after intro and stays longer
   const revealStart = 0.05;
@@ -306,10 +307,16 @@ function HeroSection() {
             Start a Project
           </MagneticButton>
           <MagneticButton
-            className="px-6 py-3 sm:px-8 sm:py-4 border border-white/20 rounded-full text-white text-sm sm:text-base font-medium hover:bg-white/10 hover:border-white/40 transition-all"
+            onClick={() => setShowreelOpen(true)}
+            className="group px-6 py-3 sm:px-8 sm:py-4 border border-white/20 rounded-full text-white text-sm sm:text-base font-medium hover:bg-white/10 hover:border-white/40 transition-all flex items-center gap-2"
             strength={0.3}
           >
-            View Our Work
+            <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-[#FF5C34] transition-colors">
+              <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor" className="ml-0.5">
+                <path d="M0 0v10l8-5z" />
+              </svg>
+            </span>
+            Watch Showreel
           </MagneticButton>
         </motion.div>
 
@@ -1297,6 +1304,121 @@ function ContactModal() {
   );
 }
 
+// Showreel video URL - replace with your actual showreel
+const SHOWREEL_URL = "https://www.youtube.com/embed/pNLW1Tx5IAE?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1";
+
+function ShowreelModal() {
+  const isShowreelOpen = useStore((state) => state.isShowreelOpen);
+  const setShowreelOpen = useStore((state) => state.setShowreelOpen);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowreelOpen(false);
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [setShowreelOpen]);
+
+  useEffect(() => {
+    if (isShowreelOpen) {
+      setIsLoading(true);
+    }
+  }, [isShowreelOpen]);
+
+  return (
+    <AnimatePresence>
+      {isShowreelOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-[200] bg-black flex items-center justify-center"
+        >
+          {/* Cinematic letterbox bars */}
+          <div className="absolute top-0 left-0 right-0 h-[8%] bg-black z-10" />
+          <div className="absolute bottom-0 left-0 right-0 h-[8%] bg-black z-10" />
+
+          {/* Close button */}
+          <motion.button
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            onClick={() => setShowreelOpen(false)}
+            className="absolute top-6 right-6 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:border-white/40 transition-all group"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:rotate-90 transition-transform">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </motion.button>
+
+          {/* Title overlay */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="absolute bottom-[12%] left-8 z-20"
+          >
+            <span className="text-white/40 text-xs font-medium tracking-[0.3em] uppercase">DT+C</span>
+            <h3 className="text-white text-xl sm:text-2xl font-bold tracking-tight">Showreel 2024</h3>
+          </motion.div>
+
+          {/* Loading state */}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center z-5">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                className="w-12 h-12 border-2 border-white/20 border-t-[#FF5C34] rounded-full"
+              />
+            </div>
+          )}
+
+          {/* Video container with cinematic frame */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+            className="relative w-full h-full max-w-[90vw] max-h-[84vh] mx-auto"
+            style={{ aspectRatio: "16/9" }}
+          >
+            {/* Outer glow */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-[#FF5C34]/20 via-[#E9F056]/10 to-[#FF5C34]/20 blur-2xl opacity-50" />
+
+            {/* Video frame */}
+            <div className="relative w-full h-full rounded-lg overflow-hidden border border-white/10 shadow-2xl shadow-black/50">
+              <iframe
+                src={SHOWREEL_URL}
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                onLoad={() => setIsLoading(false)}
+              />
+            </div>
+
+            {/* Corner accents */}
+            <div className="absolute -top-2 -left-2 w-8 h-8 border-l-2 border-t-2 border-[#FF5C34]/50" />
+            <div className="absolute -top-2 -right-2 w-8 h-8 border-r-2 border-t-2 border-[#FF5C34]/50" />
+            <div className="absolute -bottom-2 -left-2 w-8 h-8 border-l-2 border-b-2 border-[#FF5C34]/50" />
+            <div className="absolute -bottom-2 -right-2 w-8 h-8 border-r-2 border-b-2 border-[#FF5C34]/50" />
+          </motion.div>
+
+          {/* Skip hint */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/30 text-xs tracking-wide z-20"
+          >
+            Press ESC to close
+          </motion.p>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 function LoadingScreen() {
   const isLoaded = useStore((state) => state.isLoaded);
   const setLoaded = useStore((state) => state.setLoaded);
@@ -1493,6 +1615,7 @@ export default function Overlay() {
       <CTASection />
 
       <ContactModal />
+      <ShowreelModal />
       <ProjectModal3D
         project={selectedProject}
         onClose={() => setSelectedProject(null)}
