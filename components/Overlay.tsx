@@ -1506,6 +1506,29 @@ function ContactModal() {
                     "Send Message"
                   )}
                 </button>
+
+                {/* Divider */}
+                <div className="flex items-center gap-4 my-2">
+                  <div className="flex-1 h-px bg-white/10" />
+                  <span className="text-white/30 text-sm">or</span>
+                  <div className="flex-1 h-px bg-white/10" />
+                </div>
+
+                {/* Calendly link */}
+                <a
+                  href="https://calendly.com/david-davidturkcreative/meeting-with-david-turk-creative"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-4 border border-white/20 rounded-lg text-white font-semibold hover:bg-white/5 hover:border-white/40 transition-all flex items-center justify-center gap-2"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  Book a Call Instead
+                </a>
               </div>
             )}
           </motion.div>
