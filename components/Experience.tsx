@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Sparkles, Trail } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { Float, Sparkles, Trail, Text, Center } from "@react-three/drei";
+import { EffectComposer, Bloom, Vignette, ChromaticAberration } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 import { useStore } from "@/store/useStore";
 
@@ -14,6 +15,282 @@ const COCOA_BROWN = "#4A3B33";
 const TEAL = "#2F6364";
 const PERSIMMON = "#FF7F6B";
 const NEO_MINT = "#A8E6CF";
+
+// Cursor-following light
+function CursorLight() {
+  const lightRef = useRef<THREE.PointLight>(null);
+  const mousePosition = useStore((state) => state.mousePosition);
+  const targetPos = useRef({ x: 0, y: 0 });
+
+  useFrame(() => {
+    if (!lightRef.current) return;
+
+    // Smooth follow
+    targetPos.current.x += (mousePosition.x * 5 - targetPos.current.x) * 0.05;
+    targetPos.current.y += (mousePosition.y * 3 - targetPos.current.y) * 0.05;
+
+    lightRef.current.position.x = targetPos.current.x;
+    lightRef.current.position.y = targetPos.current.y;
+    lightRef.current.position.z = 4;
+  });
+
+  return (
+    <pointLight
+      ref={lightRef}
+      intensity={3}
+      color={PERSIMMON}
+      distance={12}
+      decay={2}
+    />
+  );
+}
+
+// 3D Logo that's part of the scene
+function Logo3D() {
+  const groupRef = useRef<THREE.Group>(null);
+  const scroll = useStore((state) => state.scroll);
+  const introProgress = useStore((state) => state.introProgress);
+  const isIntroComplete = useStore((state) => state.isIntroComplete);
+
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    const time = state.clock.elapsedTime;
+
+    // Logo fades and moves back as you scroll
+    const fadeStart = 0.05;
+    const fadeEnd = 0.25;
+    const opacity = scroll < fadeStart ? 1 : scroll > fadeEnd ? 0 : 1 - (scroll - fadeStart) / (fadeEnd - fadeStart);
+
+    groupRef.current.visible = opacity > 0.01;
+
+    // Subtle float animation
+    groupRef.current.position.y = Math.sin(time * 0.5) * 0.1;
+    groupRef.current.position.z = -1 - scroll * 5;
+
+    // Slight rotation
+    groupRef.current.rotation.y = Math.sin(time * 0.3) * 0.05;
+
+    // Scale based on intro progress
+    const introScale = isIntroComplete ? 1 : introProgress;
+    groupRef.current.scale.setScalar(0.8 * introScale);
+  });
+
+  return (
+    <group ref={groupRef} position={[0, 0, -1]}>
+      <Center>
+        {/* D */}
+        <Text
+          position={[-1.8, 0, 0]}
+          fontSize={1.5}
+          anchorX="center"
+          anchorY="middle"
+          fontWeight="bold"
+        >
+          D
+          <meshStandardMaterial
+            color={CREAM}
+            emissive={CREAM}
+            emissiveIntensity={0.5}
+            metalness={0.3}
+            roughness={0.4}
+          />
+        </Text>
+
+        {/* T */}
+        <Text
+          position={[-0.6, 0, 0]}
+          fontSize={1.5}
+          anchorX="center"
+          anchorY="middle"
+          fontWeight="bold"
+        >
+          T
+          <meshStandardMaterial
+            color={CREAM}
+            emissive={CREAM}
+            emissiveIntensity={0.5}
+            metalness={0.3}
+            roughness={0.4}
+          />
+        </Text>
+
+        {/* + */}
+        <Text
+          position={[0.4, 0, 0]}
+          fontSize={1.5}
+          anchorX="center"
+          anchorY="middle"
+          fontWeight="bold"
+        >
+          +
+          <meshStandardMaterial
+            color={PERSIMMON}
+            emissive={PERSIMMON}
+            emissiveIntensity={2}
+            metalness={0.3}
+            roughness={0.4}
+            toneMapped={false}
+          />
+        </Text>
+
+        {/* C */}
+        <Text
+          position={[1.5, 0, 0]}
+          fontSize={1.5}
+          anchorX="center"
+          anchorY="middle"
+          fontWeight="bold"
+        >
+          C
+          <meshStandardMaterial
+            color={CREAM}
+            emissive={CREAM}
+            emissiveIntensity={0.5}
+            metalness={0.3}
+            roughness={0.4}
+          />
+        </Text>
+      </Center>
+
+      {/* Glow behind logo */}
+      <mesh position={[0, 0, -0.5]} scale={[6, 2, 1]}>
+        <planeGeometry />
+        <meshBasicMaterial
+          color={PERSIMMON}
+          transparent
+          opacity={0.15}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+// Reactive burst particles that explode on first scroll
+function BurstParticles() {
+  const points = useRef<THREE.Points>(null);
+  const scroll = useStore((state) => state.scroll);
+  const prevScroll = useRef(0);
+  const burstTriggered = useRef(false);
+  const burstProgress = useRef(0);
+  const particleVelocities = useRef<Float32Array | null>(null);
+
+  const particleCount = 500;
+
+  const { positions, originalPositions } = useMemo(() => {
+    const pos = new Float32Array(particleCount * 3);
+    const origPos = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i++) {
+      // Start clustered near center
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = Math.random() * 0.5;
+
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i * 3 + 2] = r * Math.cos(phi);
+
+      // Original positions (where they'll return to)
+      origPos[i * 3] = (Math.random() - 0.5) * 8;
+      origPos[i * 3 + 1] = (Math.random() - 0.5) * 8;
+      origPos[i * 3 + 2] = (Math.random() - 0.5) * 6 - 2;
+    }
+
+    return { positions: pos, originalPositions: origPos };
+  }, []);
+
+  // Initialize velocities
+  useEffect(() => {
+    const velocities = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const speed = 0.5 + Math.random() * 1.5;
+
+      velocities[i * 3] = speed * Math.sin(phi) * Math.cos(theta);
+      velocities[i * 3 + 1] = speed * Math.sin(phi) * Math.sin(theta);
+      velocities[i * 3 + 2] = speed * Math.cos(phi);
+    }
+    particleVelocities.current = velocities;
+  }, []);
+
+  useFrame((state, delta) => {
+    if (!points.current || !particleVelocities.current) return;
+
+    const geometry = points.current.geometry;
+    const posAttr = geometry.attributes.position as THREE.BufferAttribute;
+    const posArray = posAttr.array as Float32Array;
+
+    // Detect first scroll to trigger burst
+    if (!burstTriggered.current && scroll > 0.01 && prevScroll.current < 0.01) {
+      burstTriggered.current = true;
+    }
+    prevScroll.current = scroll;
+
+    // Burst animation
+    if (burstTriggered.current && burstProgress.current < 1) {
+      burstProgress.current = Math.min(1, burstProgress.current + delta * 0.8);
+    }
+
+    const burst = burstProgress.current;
+    const velocities = particleVelocities.current;
+
+    for (let i = 0; i < particleCount; i++) {
+      const i3 = i * 3;
+
+      if (burst < 0.5) {
+        // Explosion phase
+        const explosionPhase = burst * 2;
+        const eased = 1 - Math.pow(1 - explosionPhase, 3);
+
+        posArray[i3] = positions[i3] + velocities[i3] * eased * 3;
+        posArray[i3 + 1] = positions[i3 + 1] + velocities[i3 + 1] * eased * 3;
+        posArray[i3 + 2] = positions[i3 + 2] + velocities[i3 + 2] * eased * 3;
+      } else {
+        // Reform phase - lerp to original positions
+        const reformPhase = (burst - 0.5) * 2;
+        const eased = reformPhase * reformPhase * (3 - 2 * reformPhase);
+
+        const explosionX = positions[i3] + velocities[i3] * 3;
+        const explosionY = positions[i3 + 1] + velocities[i3 + 1] * 3;
+        const explosionZ = positions[i3 + 2] + velocities[i3 + 2] * 3;
+
+        posArray[i3] = explosionX + (originalPositions[i3] - explosionX) * eased;
+        posArray[i3 + 1] = explosionY + (originalPositions[i3 + 1] - explosionY) * eased;
+        posArray[i3 + 2] = explosionZ + (originalPositions[i3 + 2] - explosionZ) * eased;
+      }
+    }
+
+    posAttr.needsUpdate = true;
+
+    // After burst, continue normal animation
+    if (burst >= 1) {
+      const time = state.clock.elapsedTime;
+      points.current.rotation.y = time * 0.02;
+      points.current.rotation.x = Math.sin(time * 0.01) * 0.1;
+    }
+  });
+
+  return (
+    <points ref={points}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          args={[positions, 3]}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.06}
+        color={NEO_MINT}
+        transparent
+        opacity={0.9}
+        sizeAttenuation
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
+  );
+}
 
 // Floating particles that react to mouse and scroll
 function ParticleField() {
@@ -36,16 +313,13 @@ function ParticleField() {
     if (!points.current) return;
     const time = state.clock.elapsedTime;
 
-    // Particles spread out as user scrolls
     const scrollScale = 1 + scroll * 2;
     points.current.scale.setScalar(scrollScale);
 
-    // Rotation speeds up slightly with scroll
     const rotationSpeed = 1 + scroll * 0.5;
     points.current.rotation.y = time * 0.05 * rotationSpeed + mousePosition.x * 0.5;
     points.current.rotation.x = Math.sin(time * 0.03) * 0.1 + mousePosition.y * 0.3;
 
-    // Particles drift upward as you scroll
     points.current.position.y = scroll * 2;
   });
 
@@ -81,7 +355,6 @@ function GlassSphere() {
     if (!groupRef.current) return;
     const time = state.clock.elapsedTime;
 
-    // Smooth mouse following - reduced influence as user scrolls
     const mouseInfluence = 1 - scroll * 0.7;
     const targetX = mousePosition.x * 0.6 * mouseInfluence;
     const targetY = mousePosition.y * 0.4 * mouseInfluence;
@@ -89,28 +362,24 @@ function GlassSphere() {
     groupRef.current.rotation.x += (targetY * 0.3 - groupRef.current.rotation.x) * 0.02;
     groupRef.current.rotation.y += (targetX * 0.5 + time * 0.1 - groupRef.current.rotation.y) * 0.02;
 
-    // Sphere drifts down and back as user scrolls (creates depth)
     const scrollPosX = targetX * 0.3 + Math.sin(scroll * Math.PI) * 0.5;
     const scrollPosY = Math.sin(time * 0.5) * 0.15 + targetY * 0.2 - scroll * 1.5;
-    const scrollPosZ = -scroll * 2; // Push back into scene
+    const scrollPosZ = -scroll * 2;
 
     groupRef.current.position.x += (scrollPosX - groupRef.current.position.x) * 0.03;
     groupRef.current.position.y += (scrollPosY - groupRef.current.position.y) * 0.03;
     groupRef.current.position.z += (scrollPosZ - groupRef.current.position.z) * 0.02;
 
-    // Scale grows slightly as camera zooms out to maintain visual presence
     const baseScale = 2.0 + scroll * 0.8;
     groupRef.current.scale.setScalar(baseScale);
 
     if (innerRef.current) {
-      // Core spins faster as you scroll
       const spinSpeed = 1 + scroll * 2;
       innerRef.current.rotation.x = time * 0.3 * spinSpeed;
       innerRef.current.rotation.y = time * 0.4 * spinSpeed;
     }
 
     if (glowRef.current) {
-      // Glow pulses more intensely as you scroll
       const pulseIntensity = 0.15 + scroll * 0.2;
       glowRef.current.scale.setScalar(1.8 + Math.sin(time * 2) * pulseIntensity);
     }
@@ -119,7 +388,6 @@ function GlassSphere() {
   return (
     <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
       <group ref={groupRef}>
-        {/* Inner glowing core - persimmon */}
         <mesh ref={innerRef} scale={0.4}>
           <sphereGeometry args={[1, 64, 64]} />
           <meshStandardMaterial
@@ -130,7 +398,6 @@ function GlassSphere() {
           />
         </mesh>
 
-        {/* Secondary inner glow - teal */}
         <mesh scale={0.55}>
           <sphereGeometry args={[1, 48, 48]} />
           <meshStandardMaterial
@@ -143,7 +410,6 @@ function GlassSphere() {
           />
         </mesh>
 
-        {/* Main glass sphere - neo mint tint */}
         <mesh scale={1.2}>
           <sphereGeometry args={[1, 128, 128]} />
           <meshPhysicalMaterial
@@ -159,7 +425,6 @@ function GlassSphere() {
           />
         </mesh>
 
-        {/* Inner glow layer */}
         <mesh scale={1.4}>
           <sphereGeometry args={[1, 64, 64]} />
           <meshBasicMaterial
@@ -170,7 +435,6 @@ function GlassSphere() {
           />
         </mesh>
 
-        {/* Outer fresnel glow - teal */}
         <mesh ref={glowRef} scale={1.8}>
           <sphereGeometry args={[1, 64, 64]} />
           <meshBasicMaterial
@@ -181,7 +445,6 @@ function GlassSphere() {
           />
         </mesh>
 
-        {/* Soft ambient glow - neo mint */}
         <mesh scale={2.4}>
           <sphereGeometry args={[1, 32, 32]} />
           <meshBasicMaterial
@@ -192,7 +455,6 @@ function GlassSphere() {
           />
         </mesh>
 
-        {/* Outer atmosphere */}
         <mesh scale={3}>
           <sphereGeometry args={[1, 32, 32]} />
           <meshBasicMaterial
@@ -207,7 +469,7 @@ function GlassSphere() {
   );
 }
 
-// Orbiting light orbs with trails - using full color palette
+// Orbiting light orbs with trails
 function OrbitingOrbs() {
   const groupRef = useRef<THREE.Group>(null);
   const scroll = useStore((state) => state.scroll);
@@ -217,11 +479,9 @@ function OrbitingOrbs() {
     if (!groupRef.current) return;
     const time = state.clock.elapsedTime;
 
-    // Orbits expand as user scrolls
     const scrollScale = 1 + scroll * 1.8;
     groupRef.current.scale.setScalar(scrollScale);
 
-    // Rotation speeds up with scroll
     const rotationSpeed = 1 + scroll * 0.5;
     groupRef.current.rotation.y = time * 0.3 * rotationSpeed + mousePosition.x * 0.5;
     groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.3 + mousePosition.y * 0.3 + scroll * 0.5;
@@ -285,7 +545,6 @@ function OrbWithTrail({ angle, radius, speed, color, size, index }: {
           />
         </mesh>
       </Trail>
-      {/* Inner glow */}
       <mesh ref={glowRef}>
         <sphereGeometry args={[size * 4, 16, 16]} />
         <meshBasicMaterial
@@ -294,20 +553,11 @@ function OrbWithTrail({ angle, radius, speed, color, size, index }: {
           opacity={0.35}
         />
       </mesh>
-      {/* Outer glow */}
-      <mesh position={meshRef.current?.position || [0, 0, 0]}>
-        <sphereGeometry args={[size * 8, 16, 16]} />
-        <meshBasicMaterial
-          color={color}
-          transparent
-          opacity={0.1}
-        />
-      </mesh>
     </>
   );
 }
 
-// Multiple orbital rings with brand colors
+// Multiple orbital rings
 function OrbitalRings() {
   const ring1Ref = useRef<THREE.Points>(null);
   const ring2Ref = useRef<THREE.Points>(null);
@@ -333,7 +583,6 @@ function OrbitalRings() {
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
-    // Rings expand outward as user scrolls
     const scrollScale = 1 + scroll * 1.5;
 
     if (ring1Ref.current) {
@@ -355,21 +604,18 @@ function OrbitalRings() {
 
   return (
     <group>
-      {/* Inner ring - persimmon */}
       <points ref={ring1Ref}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[ring1Positions, 3]} />
         </bufferGeometry>
         <pointsMaterial size={0.1} color={PERSIMMON} transparent opacity={1} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
-      {/* Middle ring - neo mint */}
       <points ref={ring2Ref}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[ring2Positions, 3]} />
         </bufferGeometry>
         <pointsMaterial size={0.08} color={NEO_MINT} transparent opacity={0.9} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
-      {/* Outer ring - teal */}
       <points ref={ring3Ref}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[ring3Positions, 3]} />
@@ -380,7 +626,7 @@ function OrbitalRings() {
   );
 }
 
-// Camera controller with dramatic scroll zoom and return animation
+// Camera controller
 function CameraController() {
   const { camera } = useThree();
   const scroll = useStore((state) => state.scroll);
@@ -389,19 +635,15 @@ function CameraController() {
   const returnProgress = useStore((state) => state.returnProgress);
   const introProgress = useStore((state) => state.introProgress);
   const isIntroComplete = useStore((state) => state.isIntroComplete);
-  const targetPos = useRef({ x: 0, y: 0, z: 0.8 }); // Start very close
-  const initialRotation = useRef({ x: 0, y: 0 });
+  const targetPos = useRef({ x: 0, y: 0, z: 0.8 });
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
 
-    // During intro animation - dramatic pull-back from inside the sphere
     if (!isIntroComplete) {
-      // Intro: camera starts at z=0.8 (inside/very close) and pulls back to z=3
-      const introEased = 1 - Math.pow(1 - introProgress, 3); // Ease out cubic
-      const introZ = 0.8 + introEased * 2.2; // 0.8 -> 3.0
+      const introEased = 1 - Math.pow(1 - introProgress, 3);
+      const introZ = 0.8 + introEased * 2.2;
 
-      // Slight spiral during intro
       const spiralAngle = introProgress * Math.PI * 0.5;
       const introX = Math.sin(spiralAngle) * 0.3 * (1 - introProgress);
       const introY = Math.cos(spiralAngle) * 0.2 * (1 - introProgress);
@@ -416,12 +658,10 @@ function CameraController() {
         targetPos.current.z
       );
 
-      // Slight rotation during intro
       camera.lookAt(0, 0, 0);
       return;
     }
 
-    // Normal behavior after intro completes
     let effectiveScroll = scroll;
     let interpolationSpeed = 0.025;
 
@@ -433,18 +673,12 @@ function CameraController() {
       targetPos.current.x += Math.sin(time * 3) * spiralIntensity * 0.1;
     }
 
-    // Dramatic zoom: starts close (z=3), zooms out far (z=14) as you scroll
     const scrollEased = Math.pow(effectiveScroll, 0.8);
     const targetZ = 3 + scrollEased * 11;
-
-    // Vertical movement: camera rises slightly as you scroll
     const targetY = mousePosition.y * 0.3 + effectiveScroll * 2;
-
-    // Horizontal follows mouse more at close range, less when zoomed out
     const mouseInfluence = 1 - effectiveScroll * 0.5;
     const targetX = mousePosition.x * 0.5 * mouseInfluence;
 
-    // Smooth interpolation
     targetPos.current.x += (targetX - targetPos.current.x) * 0.04;
     targetPos.current.y += (targetY - targetPos.current.y) * 0.03;
     targetPos.current.z += (targetZ - targetPos.current.z) * interpolationSpeed;
@@ -455,15 +689,30 @@ function CameraController() {
       targetPos.current.z
     );
 
-    // Look slightly above center as we zoom out
     camera.lookAt(0, effectiveScroll * 0.5, 0);
   });
 
   return null;
 }
 
-// Post-processing effects - enhanced for more glow
-function Effects() {
+// Chromatic aberration that reacts to scroll speed
+function DynamicEffects() {
+  const scroll = useStore((state) => state.scroll);
+  const prevScroll = useRef(0);
+  const scrollSpeed = useRef(0);
+  const [offset, setOffset] = useState(new THREE.Vector2(0, 0));
+
+  useFrame(() => {
+    // Calculate scroll speed
+    const speed = Math.abs(scroll - prevScroll.current) * 50;
+    scrollSpeed.current += (speed - scrollSpeed.current) * 0.1;
+    prevScroll.current = scroll;
+
+    // Update chromatic aberration based on scroll speed
+    const aberrationStrength = Math.min(0.015, scrollSpeed.current * 0.5);
+    setOffset(new THREE.Vector2(aberrationStrength, aberrationStrength * 0.5));
+  });
+
   return (
     <EffectComposer>
       <Bloom
@@ -473,49 +722,53 @@ function Effects() {
         mipmapBlur
         radius={0.8}
       />
+      <ChromaticAberration
+        blendFunction={BlendFunction.NORMAL}
+        offset={offset}
+        radialModulation={true}
+        modulationOffset={0.5}
+      />
       <Vignette offset={0.3} darkness={0.6} />
     </EffectComposer>
   );
 }
 
-// Main scene with brand colors - enhanced glow
+// Main scene
 function Scene() {
   return (
     <>
       <color attach="background" args={[COCOA_BROWN]} />
       <fog attach="fog" args={[COCOA_BROWN, 12, 35]} />
 
-      {/* Ambient light - boosted */}
       <ambientLight intensity={0.15} />
 
-      {/* Key lights using brand colors - significantly boosted */}
       <pointLight position={[5, 5, 5]} intensity={3} color={PERSIMMON} distance={30} />
       <pointLight position={[-5, -3, 5]} intensity={2.5} color={NEO_MINT} distance={25} />
       <pointLight position={[0, 5, -5]} intensity={2} color={TEAL} distance={25} />
       <pointLight position={[-3, 0, 8]} intensity={1.5} color={CREAM} distance={20} />
 
-      {/* Additional accent lights for more glow */}
       <pointLight position={[0, 0, 3]} intensity={2} color={PERSIMMON} distance={15} />
       <pointLight position={[3, 3, 0]} intensity={1.5} color={NEO_MINT} distance={18} />
       <pointLight position={[-3, -2, 2]} intensity={1.5} color={TEAL} distance={18} />
 
-      {/* Rim lights */}
       <pointLight position={[3, 0, -5]} intensity={1.2} color={NEO_MINT} distance={20} />
       <pointLight position={[-3, 0, -5]} intensity={1} color={PERSIMMON} distance={20} />
 
+      <CursorLight />
       <CameraController />
+      <Logo3D />
       <GlassSphere />
       <OrbitingOrbs />
       <OrbitalRings />
       <ParticleField />
+      <BurstParticles />
 
-      {/* Sparkles with brand colors - more and brighter */}
       <Sparkles count={120} scale={12} size={2.5} speed={0.4} opacity={0.7} color={PERSIMMON} />
       <Sparkles count={100} scale={14} size={2} speed={0.3} opacity={0.6} color={TEAL} />
       <Sparkles count={80} scale={16} size={1.8} speed={0.25} opacity={0.5} color={NEO_MINT} />
       <Sparkles count={60} scale={18} size={1.5} speed={0.2} opacity={0.4} color={CREAM} />
 
-      <Effects />
+      <DynamicEffects />
     </>
   );
 }
