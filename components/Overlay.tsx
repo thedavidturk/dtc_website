@@ -1690,160 +1690,149 @@ function ShowreelModal() {
 
 function LoadingScreen() {
   const isLoaded = useStore((state) => state.isLoaded);
-  const setLoaded = useStore((state) => state.setLoaded);
-  const [loadProgress, setLoadProgress] = useState(0);
-  const [showTagline, setShowTagline] = useState(false);
+  const introProgress = useStore((state) => state.introProgress);
+  const setIntroProgress = useStore((state) => state.setIntroProgress);
+  const isIntroComplete = useStore((state) => state.isIntroComplete);
+  const setIntroComplete = useStore((state) => state.setIntroComplete);
+  const [phase, setPhase] = useState<"waiting" | "animating" | "done">("waiting");
 
   useEffect(() => {
-    // Simulate loading progress
-    const progressInterval = setInterval(() => {
-      setLoadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        // Variable speed - faster at start, slower near end
-        const increment = prev < 70 ? Math.random() * 15 + 5 : Math.random() * 5 + 1;
-        return Math.min(100, prev + increment);
-      });
-    }, 150);
+    if (!isLoaded) return;
 
-    // Show tagline after logo appears
-    const taglineTimeout = setTimeout(() => setShowTagline(true), 800);
+    // Three.js is ready, start the intro animation
+    setPhase("animating");
 
-    // Set loaded after progress completes
-    const loadTimeout = setTimeout(() => setLoaded(true), 3500);
+    // Animate intro progress over 2.5 seconds
+    const duration = 2500;
+    const startTime = Date.now();
 
-    return () => {
-      clearInterval(progressInterval);
-      clearTimeout(taglineTimeout);
-      clearTimeout(loadTimeout);
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1, elapsed / duration);
+
+      setIntroProgress(progress);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        // Intro complete
+        setTimeout(() => {
+          setIntroComplete(true);
+          setPhase("done");
+        }, 300);
+      }
     };
-  }, [setLoaded]);
+
+    // Small delay before starting camera animation
+    setTimeout(() => {
+      requestAnimationFrame(animate);
+    }, 500);
+  }, [isLoaded, setIntroProgress, setIntroComplete]);
+
+  // Calculate overlay opacity - fades out as intro progresses
+  const overlayOpacity = phase === "waiting" ? 1 : Math.max(0, 1 - introProgress * 1.5);
+  const logoOpacity = phase === "waiting" ? 1 : Math.max(0, 1 - introProgress * 2);
+
+  if (phase === "done") return null;
 
   return (
-    <AnimatePresence>
-      {!isLoaded && (
+    <motion.div
+      className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
+      style={{ opacity: overlayOpacity }}
+    >
+      {/* Semi-transparent overlay that reveals the 3D scene */}
+      <motion.div
+        className="absolute inset-0 bg-[#351E28]"
+        style={{ opacity: phase === "waiting" ? 1 : 0.85 - introProgress * 0.85 }}
+      />
+
+      {/* Vignette effect */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse at center, transparent 0%, rgba(53, 30, 40, ${0.8 - introProgress * 0.8}) 100%)`,
+        }}
+      />
+
+      {/* Logo content */}
+      <motion.div
+        className="relative z-10 text-center"
+        style={{ opacity: logoOpacity }}
+        initial={{ scale: 1 }}
+        animate={{ scale: phase === "animating" ? 1.1 : 1 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+      >
+        {/* Glowing backdrop for logo */}
         <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1, ease: [0.43, 0.13, 0.23, 0.96] }}
-          className="fixed inset-0 bg-[#351E28] z-[200] flex items-center justify-center overflow-hidden"
-        >
-          {/* Animated background elements */}
-          <motion.div
-            className="absolute inset-0 opacity-20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.1 }}
-            transition={{ duration: 2 }}
-          >
-            <motion.div
-              className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-[#FF5C34]"
-              style={{ filter: "blur(120px)" }}
-              animate={{
-                scale: [1, 1.2, 1],
-                x: [0, 50, 0],
-                y: [0, -30, 0],
-              }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-[#E9F056]"
-              style={{ filter: "blur(100px)" }}
-              animate={{
-                scale: [1.2, 1, 1.2],
-                x: [0, -40, 0],
-                y: [0, 40, 0],
-              }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            />
-          </motion.div>
+          className="absolute inset-0 -m-20 rounded-full bg-[#FF5C34]"
+          style={{ filter: "blur(80px)", opacity: 0.3 - introProgress * 0.3 }}
+        />
 
-          {/* Content */}
-          <div className="relative z-10 text-center">
-            {/* Logo with staggered letter animation */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-              className="mb-6"
-            >
-              <div className="flex items-center justify-center gap-1">
-                {["D", "T", "+", "C"].map((letter, i) => (
-                  <motion.span
-                    key={i}
-                    className={`text-5xl sm:text-6xl font-bold ${
-                      letter === "+" ? "text-[#FF5C34]" : "text-white"
-                    }`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.2 + i * 0.1,
-                      duration: 0.5,
-                      ease: [0.43, 0.13, 0.23, 0.96],
-                    }}
-                  >
-                    {letter}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Tagline */}
-            <AnimatePresence>
-              {showTagline && (
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-white/50 text-sm sm:text-base tracking-[0.2em] uppercase mb-10"
-                >
-                  AI-Powered Creative
-                </motion.p>
-              )}
-            </AnimatePresence>
-
-            {/* Progress bar */}
-            <div className="w-56 sm:w-72 mx-auto">
-              <div className="h-0.5 bg-white/10 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-[#FF5C34] to-[#E9F056]"
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${loadProgress}%` }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
-              <motion.div
-                className="mt-4 flex justify-between text-xs text-white/30"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
+        {/* Logo */}
+        <motion.div className="relative mb-4">
+          <div className="flex items-center justify-center gap-1">
+            {["D", "T", "+", "C"].map((letter, i) => (
+              <motion.span
+                key={i}
+                className={`text-6xl sm:text-7xl md:text-8xl font-bold ${
+                  letter === "+" ? "text-[#FF5C34]" : "text-white"
+                }`}
+                initial={{ opacity: 0, y: 30, rotateX: -90 }}
+                animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                transition={{
+                  delay: 0.1 + i * 0.1,
+                  duration: 0.6,
+                  ease: [0.34, 1.56, 0.64, 1],
+                }}
+                style={{
+                  textShadow: letter === "+" ? "0 0 40px rgba(255, 92, 52, 0.5)" : "none",
+                }}
               >
-                <span>Loading experience</span>
-                <span>{Math.round(loadProgress)}%</span>
-              </motion.div>
-            </div>
+                {letter}
+              </motion.span>
+            ))}
           </div>
-
-          {/* Cinematic top/bottom bars that will expand on exit */}
-          <motion.div
-            className="absolute top-0 left-0 right-0 h-16 bg-black"
-            initial={{ scaleY: 0 }}
-            exit={{ scaleY: 8 }}
-            style={{ transformOrigin: "top" }}
-            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-          />
-          <motion.div
-            className="absolute bottom-0 left-0 right-0 h-16 bg-black"
-            initial={{ scaleY: 0 }}
-            exit={{ scaleY: 8 }}
-            style={{ transformOrigin: "bottom" }}
-            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-          />
         </motion.div>
-      )}
-    </AnimatePresence>
+
+        {/* Tagline */}
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="text-white/60 text-sm sm:text-base tracking-[0.25em] uppercase"
+        >
+          AI-Powered Creative
+        </motion.p>
+
+        {/* Animated line */}
+        <motion.div
+          className="mt-8 mx-auto h-px bg-gradient-to-r from-transparent via-[#FF5C34] to-transparent"
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: 200, opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.8 }}
+        />
+
+        {/* "Entering" text */}
+        {phase === "animating" && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            transition={{ delay: 0.5 }}
+            className="mt-6 text-white/30 text-xs tracking-[0.3em] uppercase"
+          >
+            Entering Experience
+          </motion.p>
+        )}
+      </motion.div>
+
+      {/* Scan lines effect */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)",
+        }}
+      />
+    </motion.div>
   );
 }
 

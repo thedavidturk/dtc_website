@@ -340,22 +340,48 @@ function CameraController() {
   const mousePosition = useStore((state) => state.mousePosition);
   const isReturning = useStore((state) => state.isReturning);
   const returnProgress = useStore((state) => state.returnProgress);
-  const targetPos = useRef({ x: 0, y: 0, z: 3 });
+  const introProgress = useStore((state) => state.introProgress);
+  const isIntroComplete = useStore((state) => state.isIntroComplete);
+  const targetPos = useRef({ x: 0, y: 0, z: 0.8 }); // Start very close
+  const initialRotation = useRef({ x: 0, y: 0 });
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
 
-    // During return animation, use returnProgress for dramatic zoom-in effect
+    // During intro animation - dramatic pull-back from inside the sphere
+    if (!isIntroComplete) {
+      // Intro: camera starts at z=0.8 (inside/very close) and pulls back to z=3
+      const introEased = 1 - Math.pow(1 - introProgress, 3); // Ease out cubic
+      const introZ = 0.8 + introEased * 2.2; // 0.8 -> 3.0
+
+      // Slight spiral during intro
+      const spiralAngle = introProgress * Math.PI * 0.5;
+      const introX = Math.sin(spiralAngle) * 0.3 * (1 - introProgress);
+      const introY = Math.cos(spiralAngle) * 0.2 * (1 - introProgress);
+
+      targetPos.current.x = introX;
+      targetPos.current.y = introY;
+      targetPos.current.z = introZ;
+
+      camera.position.set(
+        targetPos.current.x,
+        targetPos.current.y,
+        targetPos.current.z
+      );
+
+      // Slight rotation during intro
+      camera.lookAt(0, 0, 0);
+      return;
+    }
+
+    // Normal behavior after intro completes
     let effectiveScroll = scroll;
     let interpolationSpeed = 0.025;
 
     if (isReturning) {
-      // Reverse the scroll based on return progress
       effectiveScroll = 1 - returnProgress;
-      // Faster interpolation during return for snappier feel
       interpolationSpeed = 0.08;
 
-      // Add dramatic spiral/rotation during return
       const spiralIntensity = Math.sin(returnProgress * Math.PI) * 0.5;
       targetPos.current.x += Math.sin(time * 3) * spiralIntensity * 0.1;
     }

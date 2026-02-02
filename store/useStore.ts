@@ -17,6 +17,10 @@ interface StoreState {
   setReturning: (returning: boolean) => void;
   returnProgress: number;
   setReturnProgress: (progress: number) => void;
+  introProgress: number;
+  setIntroProgress: (progress: number) => void;
+  isIntroComplete: boolean;
+  setIntroComplete: (complete: boolean) => void;
 }
 
 export const useStore = create<StoreState>((set) => ({
@@ -36,4 +40,8 @@ export const useStore = create<StoreState>((set) => ({
   setReturning: (returning) => set({ isReturning: returning }),
   returnProgress: 0,
   setReturnProgress: (progress) => set({ returnProgress: progress }),
+  introProgress: 0,
+  setIntroProgress: (progress) => set({ introProgress: progress }),
+  isIntroComplete: false,
+  setIntroComplete: (complete) => set({ isIntroComplete: complete }),
 }));
