@@ -57,6 +57,16 @@ body {
   background: transparent;
 }
 
+/* Utility class to hide scrollbars on horizontal carousels */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Focus styles */
 *:focus-visible {
   outline: 2px solid var(--accent);

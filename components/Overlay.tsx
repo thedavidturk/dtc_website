@@ -538,8 +538,8 @@ const CAPABILITIES: Capability[] = [
 function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: Capability) => void }) {
   return (
     <ContentSection scrollStart={0.28} scrollEnd={0.40}>
-      <div className="px-4 sm:px-6 max-w-6xl w-full overflow-y-auto max-h-[80vh]" style={{ perspective: "1200px" }}>
-        <div className="text-center mb-6 sm:mb-12">
+      <div className="w-full" style={{ perspective: "1200px" }}>
+        <div className="text-center mb-6 sm:mb-12 px-4 sm:px-6">
           <TextReveal
             as="h2"
             className="text-2xl sm:text-3xl md:text-4xl font-bold text-white"
@@ -549,7 +549,83 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
             What we do
           </TextReveal>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pointer-events-auto pb-4">
+
+        {/* Mobile: Horizontal scroll carousel */}
+        <div className="md:hidden pointer-events-auto">
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory px-4 pb-4 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+            {CAPABILITIES.map((cap, i) => (
+              <motion.div
+                key={cap.title}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="flex-shrink-0 w-[85vw] snap-center"
+              >
+                <div
+                  onClick={() => onCapabilityClick(cap)}
+                  className="p-5 h-full border border-white/10 rounded-2xl bg-zinc-900/80 backdrop-blur-sm relative active:scale-[0.98] transition-transform"
+                >
+                  {/* Accent line */}
+                  <div
+                    className="absolute top-0 left-5 right-5 h-px opacity-50"
+                    style={{ backgroundColor: cap.color }}
+                  />
+
+                  {/* Icon */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold text-white shadow-lg"
+                      style={{ backgroundColor: cap.color }}
+                    >
+                      {cap.icon}
+                    </div>
+                    <div
+                      className="h-px flex-1 opacity-20"
+                      style={{ backgroundColor: cap.color }}
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    {cap.title}
+                  </h3>
+                  <p className="text-sm text-white/50 leading-relaxed mb-3">
+                    {cap.description}
+                  </p>
+
+                  {/* Service preview tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {cap.services.slice(0, 3).map((service) => (
+                      <span
+                        key={service}
+                        className="px-2 py-1 text-xs rounded-md bg-white/5 text-white/40 border border-white/5"
+                      >
+                        {service.split(" ").slice(0, 2).join(" ")}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Tap indicator */}
+                  <div className="absolute bottom-4 right-4 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/50">
+                      <path d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          {/* Scroll indicator */}
+          <div className="flex justify-center gap-1.5 mt-3">
+            {CAPABILITIES.map((_, i) => (
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/20" />
+            ))}
+          </div>
+          <p className="text-center text-white/30 text-xs mt-2">Swipe to explore</p>
+        </div>
+
+        {/* Desktop: Grid layout */}
+        <div className="hidden md:grid md:grid-cols-2 gap-6 pointer-events-auto px-6 max-w-6xl mx-auto">
           {CAPABILITIES.map((cap, i) => (
             <motion.div
               key={cap.title}
@@ -562,17 +638,17 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
                 glowColor={`${cap.color}66`}
                 className="h-full rounded-2xl"
               >
-                <div className="p-4 sm:p-8 h-full border border-white/10 rounded-2xl bg-zinc-900/80 backdrop-blur-sm group">
+                <div className="p-8 h-full border border-white/10 rounded-2xl bg-zinc-900/80 backdrop-blur-sm group">
                   {/* Accent line */}
                   <div
-                    className="absolute top-0 left-4 right-4 sm:left-8 sm:right-8 h-px opacity-50"
+                    className="absolute top-0 left-8 right-8 h-px opacity-50"
                     style={{ backgroundColor: cap.color }}
                   />
 
                   {/* Icon */}
-                  <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                  <div className="flex items-center gap-4 mb-4">
                     <div
-                      className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-lg sm:text-2xl font-bold text-white shadow-lg"
+                      className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold text-white shadow-lg"
                       style={{ backgroundColor: cap.color }}
                     >
                       {cap.icon}
@@ -584,10 +660,10 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 transition-all">
+                  <h3 className="text-xl font-semibold text-white mb-3 transition-all">
                     {cap.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-white/50 leading-relaxed mb-3 sm:mb-4 group-hover:text-white/70 transition-colors">
+                  <p className="text-white/50 leading-relaxed mb-4 group-hover:text-white/70 transition-colors">
                     {cap.description}
                   </p>
 
@@ -857,8 +933,8 @@ function AIDifferentiatorSection() {
 function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project) => void }) {
   return (
     <ContentSection scrollStart={0.50} scrollEnd={0.62}>
-      <div className="px-4 sm:px-6 max-w-6xl w-full overflow-y-auto max-h-[80vh]">
-        <motion.div className="text-center mb-6 sm:mb-12">
+      <div className="w-full">
+        <motion.div className="text-center mb-6 sm:mb-12 px-4 sm:px-6">
           <motion.p
             className="text-[#FF5C34] text-xs sm:text-sm tracking-[0.2em] uppercase mb-2 sm:mb-4"
             initial={{ opacity: 0, y: 10 }}
@@ -876,7 +952,81 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
           </TextReveal>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pointer-events-auto pb-4">
+        {/* Mobile: Horizontal scroll carousel */}
+        <div className="md:hidden pointer-events-auto">
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory px-4 pb-4 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+            {PROJECTS.map((project, i) => (
+              <motion.div
+                key={project.title}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="flex-shrink-0 w-[85vw] snap-center"
+              >
+                <div
+                  onClick={() => onProjectClick(project)}
+                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm active:scale-[0.98] transition-transform"
+                >
+                  {/* Content */}
+                  <div className="relative p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="text-white/40 text-xs mb-1">{project.category}</p>
+                        <h3 className="text-xl font-bold text-white">
+                          {project.title}
+                        </h3>
+                      </div>
+                      <div className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center flex-shrink-0 ml-2">
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="text-white/50"
+                        >
+                          <path d="M7 17L17 7M17 7H7M17 7V17" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-white/50 leading-relaxed mb-4 line-clamp-3">
+                      {project.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-0.5 text-[10px] rounded-full border border-white/10 text-white/40"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Bottom accent line */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-1"
+                    style={{ backgroundColor: project.color }}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          {/* Scroll indicator */}
+          <div className="flex justify-center gap-1.5 mt-3">
+            {PROJECTS.map((_, i) => (
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/20" />
+            ))}
+          </div>
+          <p className="text-center text-white/30 text-xs mt-2">Swipe to explore</p>
+        </div>
+
+        {/* Desktop: Grid layout */}
+        <div className="hidden md:grid md:grid-cols-2 gap-6 pointer-events-auto px-6 max-w-6xl mx-auto">
           {PROJECTS.map((project, i) => (
             <motion.div
               key={project.title}
@@ -887,25 +1037,25 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
               <LiquidGlass
                 onClick={() => onProjectClick(project)}
                 glowColor={`${project.color}66`}
-                className="rounded-xl sm:rounded-2xl"
+                className="rounded-2xl"
               >
-                <div className="group relative overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
+                <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
                   {/* Content */}
-                  <div className="relative p-4 sm:p-8">
-                    <div className="flex items-start justify-between mb-3 sm:mb-6">
+                  <div className="relative p-8">
+                    <div className="flex items-start justify-between mb-6">
                       <div>
-                        <p className="text-white/40 text-xs sm:text-sm mb-1">{project.category}</p>
-                        <h3 className="text-lg sm:text-2xl font-bold text-white transition-all">
+                        <p className="text-white/40 text-sm mb-1">{project.category}</p>
+                        <h3 className="text-2xl font-bold text-white transition-all">
                           {project.title}
                         </h3>
                       </div>
                       <motion.div
-                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#FF5C34]/50 group-hover:bg-[#FF5C34]/10 transition-all flex-shrink-0 ml-2"
+                        className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#FF5C34]/50 group-hover:bg-[#FF5C34]/10 transition-all flex-shrink-0 ml-2"
                         whileHover={{ scale: 1.1, rotate: 45 }}
                       >
                         <svg
-                          width="14"
-                          height="14"
+                          width="16"
+                          height="16"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -917,15 +1067,15 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
                       </motion.div>
                     </div>
 
-                    <p className="text-sm sm:text-base text-white/50 leading-relaxed mb-3 sm:mb-6 group-hover:text-white/70 transition-colors line-clamp-2 sm:line-clamp-none">
+                    <p className="text-white/50 leading-relaxed mb-6 group-hover:text-white/70 transition-colors">
                       {project.description}
                     </p>
 
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    <div className="flex flex-wrap gap-2">
                       {project.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs rounded-full border border-white/10 text-white/40 group-hover:border-white/20 group-hover:text-white/60 transition-all"
+                          className="px-3 py-1 text-xs rounded-full border border-white/10 text-white/40 group-hover:border-white/20 group-hover:text-white/60 transition-all"
                         >
                           {tag}
                         </span>
