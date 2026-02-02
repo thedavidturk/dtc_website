@@ -167,10 +167,10 @@ function IntroSection() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1, delay: 0.5 }}
     >
-      {/* Dark vignette overlay */}
+      {/* Subtle vignette overlay - lets Three.js show through */}
       <div
-        className="absolute inset-0 bg-[#4A3B33]"
-        style={{ opacity: 0.85 - introProgress * 0.5 }}
+        className="absolute inset-0 bg-[#0a0908]"
+        style={{ opacity: 0.3 - introProgress * 0.2 }}
       />
 
       {/* Centered scroll prompt */}
@@ -1788,22 +1788,22 @@ function LoadingScreen() {
 function BackgroundDimmer() {
   const scroll = useStore((state) => state.scroll);
 
-  // Lighter dimming to let Three.js shine through
+  // Very light dimming - Three.js should always be visible
   let dimOpacity = 0;
 
   if (scroll < 0.05) {
-    dimOpacity = scroll * 2; // 0 to 0.1
+    dimOpacity = 0; // No dimming at start
   } else if (scroll < 0.32) {
-    // During hero - moderate dim for readability
-    dimOpacity = 0.4;
+    // During hero - very light dim for text readability
+    dimOpacity = 0.15;
   } else {
-    // After hero - very light dim to show Three.js
-    dimOpacity = Math.max(0.25, 0.4 - (scroll - 0.32) * 0.3);
+    // After hero - slightly more dim for content sections
+    dimOpacity = 0.2;
   }
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-[2] bg-[#4A3B33]"
+      className="fixed inset-0 pointer-events-none z-[2] bg-[#0a0908]"
       style={{ opacity: dimOpacity }}
     />
   );
