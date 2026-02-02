@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef, useMemo, useState, useEffect } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Sparkles, Trail, Text, Center } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette, ChromaticAberration } from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useStore } from "@/store/useStore";
 
@@ -695,24 +694,8 @@ function CameraController() {
   return null;
 }
 
-// Chromatic aberration that reacts to scroll speed
+// Post-processing effects
 function DynamicEffects() {
-  const scroll = useStore((state) => state.scroll);
-  const prevScroll = useRef(0);
-  const scrollSpeed = useRef(0);
-  const [offset, setOffset] = useState(new THREE.Vector2(0, 0));
-
-  useFrame(() => {
-    // Calculate scroll speed
-    const speed = Math.abs(scroll - prevScroll.current) * 50;
-    scrollSpeed.current += (speed - scrollSpeed.current) * 0.1;
-    prevScroll.current = scroll;
-
-    // Update chromatic aberration based on scroll speed
-    const aberrationStrength = Math.min(0.015, scrollSpeed.current * 0.5);
-    setOffset(new THREE.Vector2(aberrationStrength, aberrationStrength * 0.5));
-  });
-
   return (
     <EffectComposer>
       <Bloom
@@ -721,12 +704,6 @@ function DynamicEffects() {
         luminanceSmoothing={0.95}
         mipmapBlur
         radius={0.8}
-      />
-      <ChromaticAberration
-        blendFunction={BlendFunction.NORMAL}
-        offset={offset}
-        radialModulation={true}
-        modulationOffset={0.5}
       />
       <Vignette offset={0.3} darkness={0.6} />
     </EffectComposer>
