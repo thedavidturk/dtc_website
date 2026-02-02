@@ -21,6 +21,9 @@ interface StoreState {
   setIntroProgress: (progress: number) => void;
   isIntroComplete: boolean;
   setIntroComplete: (complete: boolean) => void;
+  // Card hover state for Three.js integration
+  hoveredCard: { type: 'service' | 'project' | null; index: number; color: string | null };
+  setHoveredCard: (type: 'service' | 'project' | null, index: number, color: string | null) => void;
 }
 
 export const useStore = create<StoreState>((set) => ({
@@ -44,4 +47,7 @@ export const useStore = create<StoreState>((set) => ({
   setIntroProgress: (progress) => set({ introProgress: progress }),
   isIntroComplete: false,
   setIntroComplete: (complete) => set({ isIntroComplete: complete }),
+  // Card hover state for Three.js integration
+  hoveredCard: { type: null, index: -1, color: null },
+  setHoveredCard: (type, index, color) => set({ hoveredCard: { type, index, color } }),
 }));

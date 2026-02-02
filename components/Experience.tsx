@@ -19,7 +19,10 @@ const NEO_MINT = "#A8E6CF";
 function CursorLight() {
   const lightRef = useRef<THREE.PointLight>(null);
   const mousePosition = useStore((state) => state.mousePosition);
+  const hoveredCard = useStore((state) => state.hoveredCard);
   const targetPos = useRef({ x: 0, y: 0 });
+  const currentColor = useRef(new THREE.Color(PERSIMMON));
+  const targetColor = useRef(new THREE.Color(PERSIMMON));
 
   useFrame(() => {
     if (!lightRef.current) return;
@@ -31,6 +34,19 @@ function CursorLight() {
     lightRef.current.position.x = targetPos.current.x;
     lightRef.current.position.y = targetPos.current.y;
     lightRef.current.position.z = 4;
+
+    // React to card hover with color change
+    if (hoveredCard.color) {
+      targetColor.current.set(hoveredCard.color);
+    } else {
+      targetColor.current.set(PERSIMMON);
+    }
+    currentColor.current.lerp(targetColor.current, 0.08);
+    lightRef.current.color.copy(currentColor.current);
+
+    // Increase intensity when hovering
+    const targetIntensity = hoveredCard.color ? 8 : 3;
+    lightRef.current.intensity += (targetIntensity - lightRef.current.intensity) * 0.1;
   });
 
   return (
@@ -38,9 +54,68 @@ function CursorLight() {
       ref={lightRef}
       intensity={3}
       color={PERSIMMON}
-      distance={12}
+      distance={15}
       decay={2}
     />
+  );
+}
+
+// Card hover reactive element - creates a glowing orb that appears when hovering cards
+function CardReactiveOrb() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
+  const hoveredCard = useStore((state) => state.hoveredCard);
+  const currentColor = useRef(new THREE.Color(PERSIMMON));
+  const targetScale = useRef(0);
+  const currentScale = useRef(0);
+
+  useFrame((state) => {
+    if (!meshRef.current || !glowRef.current) return;
+    const time = state.clock.elapsedTime;
+
+    // Target scale based on hover state
+    targetScale.current = hoveredCard.color ? 1.5 : 0;
+    currentScale.current += (targetScale.current - currentScale.current) * 0.1;
+
+    meshRef.current.scale.setScalar(currentScale.current);
+    glowRef.current.scale.setScalar(currentScale.current * 2);
+
+    // Color transition
+    if (hoveredCard.color) {
+      currentColor.current.lerp(new THREE.Color(hoveredCard.color), 0.1);
+    }
+
+    // Pulsing animation
+    const pulse = 1 + Math.sin(time * 3) * 0.1;
+    meshRef.current.scale.multiplyScalar(pulse);
+
+    // Rotation
+    meshRef.current.rotation.y = time * 0.5;
+    meshRef.current.rotation.x = Math.sin(time * 0.3) * 0.2;
+  });
+
+  return (
+    <group position={[0, 0, 2]}>
+      <mesh ref={meshRef}>
+        <icosahedronGeometry args={[0.5, 1]} />
+        <meshStandardMaterial
+          color={currentColor.current}
+          emissive={currentColor.current}
+          emissiveIntensity={3}
+          wireframe
+          toneMapped={false}
+        />
+      </mesh>
+      <mesh ref={glowRef}>
+        <sphereGeometry args={[0.6, 32, 32]} />
+        <meshBasicMaterial
+          color={currentColor.current}
+          transparent
+          opacity={0.2}
+          side={THREE.BackSide}
+        />
+      </mesh>
+    </group>
   );
 }
 
@@ -612,6 +687,7 @@ function Scene() {
 
       <CursorLight />
       <CameraController />
+      <CardReactiveOrb />
       <GlassSphere />
       <OrbitingOrbs />
       <OrbitalRings />
