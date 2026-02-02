@@ -13,6 +13,41 @@ import LiquidGlass from "./LiquidGlass";
 import { Capability } from "./CapabilityDetail";
 import CapabilityModal3D from "./CapabilityModal3D";
 
+function ScrollProgressBar() {
+  const scroll = useStore((state) => state.scroll);
+  const isLoaded = useStore((state) => state.isLoaded);
+
+  // Don't show until loaded
+  if (!isLoaded) return null;
+
+  // Calculate color based on scroll position (brand color journey)
+  const getProgressColor = () => {
+    if (scroll < 0.25) return "#FF5C34"; // Coral Orange - Hero
+    if (scroll < 0.5) return "#E9F056";  // Lime Yellow - Capabilities
+    if (scroll < 0.75) return "#D7EFFF"; // Light Blue - Projects
+    return "#AEB8A0";                     // Sage Green - Contact
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5, duration: 0.5 }}
+      className="fixed top-0 left-0 right-0 z-[60] h-1 bg-white/5"
+    >
+      <motion.div
+        className="h-full origin-left"
+        style={{
+          backgroundColor: getProgressColor(),
+          width: `${scroll * 100}%`,
+          boxShadow: `0 0 20px ${getProgressColor()}40`,
+        }}
+        transition={{ duration: 0.1 }}
+      />
+    </motion.div>
+  );
+}
+
 function ScrollIndicator() {
   const scroll = useStore((state) => state.scroll);
 
@@ -1656,10 +1691,34 @@ function ShowreelModal() {
 function LoadingScreen() {
   const isLoaded = useStore((state) => state.isLoaded);
   const setLoaded = useStore((state) => state.setLoaded);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [showTagline, setShowTagline] = useState(false);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setLoaded(true), 5000);
-    return () => clearTimeout(timeout);
+    // Simulate loading progress
+    const progressInterval = setInterval(() => {
+      setLoadProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        // Variable speed - faster at start, slower near end
+        const increment = prev < 70 ? Math.random() * 15 + 5 : Math.random() * 5 + 1;
+        return Math.min(100, prev + increment);
+      });
+    }, 150);
+
+    // Show tagline after logo appears
+    const taglineTimeout = setTimeout(() => setShowTagline(true), 800);
+
+    // Set loaded after progress completes
+    const loadTimeout = setTimeout(() => setLoaded(true), 3500);
+
+    return () => {
+      clearInterval(progressInterval);
+      clearTimeout(taglineTimeout);
+      clearTimeout(loadTimeout);
+    };
   }, [setLoaded]);
 
   return (
@@ -1668,34 +1727,120 @@ function LoadingScreen() {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="fixed inset-0 bg-[#351E28] z-[200] flex items-center justify-center"
+          transition={{ duration: 1, ease: [0.43, 0.13, 0.23, 0.96] }}
+          className="fixed inset-0 bg-[#351E28] z-[200] flex items-center justify-center overflow-hidden"
         >
-          <div className="text-center">
+          {/* Animated background elements */}
+          <motion.div
+            className="absolute inset-0 opacity-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.1 }}
+            transition={{ duration: 2 }}
+          >
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="mb-8"
+              className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-[#FF5C34]"
+              style={{ filter: "blur(120px)" }}
+              animate={{
+                scale: [1, 1.2, 1],
+                x: [0, 50, 0],
+                y: [0, -30, 0],
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-[#E9F056]"
+              style={{ filter: "blur(100px)" }}
+              animate={{
+                scale: [1.2, 1, 1.2],
+                x: [0, -40, 0],
+                y: [0, 40, 0],
+              }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </motion.div>
+
+          {/* Content */}
+          <div className="relative z-10 text-center">
+            {/* Logo with staggered letter animation */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+              className="mb-6"
             >
-              <motion.span
-                className="text-4xl font-bold text-white"
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                DT+C
-              </motion.span>
+              <div className="flex items-center justify-center gap-1">
+                {["D", "T", "+", "C"].map((letter, i) => (
+                  <motion.span
+                    key={i}
+                    className={`text-5xl sm:text-6xl font-bold ${
+                      letter === "+" ? "text-[#FF5C34]" : "text-white"
+                    }`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: 0.2 + i * 0.1,
+                      duration: 0.5,
+                      ease: [0.43, 0.13, 0.23, 0.96],
+                    }}
+                  >
+                    {letter}
+                  </motion.span>
+                ))}
+              </div>
             </motion.div>
-            <motion.div
-              className="w-48 h-0.5 bg-white/10 rounded-full overflow-hidden"
-            >
+
+            {/* Tagline */}
+            <AnimatePresence>
+              {showTagline && (
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-white/50 text-sm sm:text-base tracking-[0.2em] uppercase mb-10"
+                >
+                  AI-Powered Creative
+                </motion.p>
+              )}
+            </AnimatePresence>
+
+            {/* Progress bar */}
+            <div className="w-56 sm:w-72 mx-auto">
+              <div className="h-0.5 bg-white/10 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-[#FF5C34] to-[#E9F056]"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${loadProgress}%` }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
               <motion.div
-                className="h-full bg-[#FF5C34]"
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 2, ease: "easeInOut" }}
-              />
-            </motion.div>
+                className="mt-4 flex justify-between text-xs text-white/30"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <span>Loading experience</span>
+                <span>{Math.round(loadProgress)}%</span>
+              </motion.div>
+            </div>
           </div>
+
+          {/* Cinematic top/bottom bars that will expand on exit */}
+          <motion.div
+            className="absolute top-0 left-0 right-0 h-16 bg-black"
+            initial={{ scaleY: 0 }}
+            exit={{ scaleY: 8 }}
+            style={{ transformOrigin: "top" }}
+            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          />
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-16 bg-black"
+            initial={{ scaleY: 0 }}
+            exit={{ scaleY: 8 }}
+            style={{ transformOrigin: "bottom" }}
+            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          />
         </motion.div>
       )}
     </AnimatePresence>
@@ -1869,6 +2014,7 @@ export default function Overlay() {
       <CustomCursor />
       <LoadingScreen />
       <BackgroundDimmer />
+      <ScrollProgressBar />
       <Navigation onNavigate={scrollToPosition} />
       <ScrollIndicator />
       <ScrollToTopButton onScrollToTop={() => scrollToPosition(0)} />
