@@ -39,9 +39,7 @@ function ParticleField({ color }: { color: string }) {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={particleCount}
-          array={positions}
-          itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -261,13 +259,13 @@ function OrbitalRings({ color1, color2 }: { color1: string; color2: string }) {
     <group position={[2.5, 0, -1]}>
       <points ref={ring1Ref}>
         <bufferGeometry>
-          <bufferAttribute attach="attributes-position" count={150} array={ring1Positions} itemSize={3} />
+          <bufferAttribute attach="attributes-position" args={[ring1Positions, 3]} />
         </bufferGeometry>
         <pointsMaterial size={0.05} color={color1} transparent opacity={0.9} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
       <points ref={ring2Ref}>
         <bufferGeometry>
-          <bufferAttribute attach="attributes-position" count={100} array={ring2Positions} itemSize={3} />
+          <bufferAttribute attach="attributes-position" args={[ring2Positions, 3]} />
         </bufferGeometry>
         <pointsMaterial size={0.03} color={color2} transparent opacity={0.6} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
