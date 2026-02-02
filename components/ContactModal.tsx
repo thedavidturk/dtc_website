@@ -44,21 +44,37 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     e.preventDefault();
     setStatus("submitting");
 
-    // Simulate API call - replace with actual endpoint
+    // Formspree endpoint - replace YOUR_FORM_ID with your actual Formspree form ID
+    // Get your form ID at https://formspree.io
+    const FORMSPREE_ENDPOINT = "https://formspree.io/f/meezzwjl";
+
     try {
-      // Placeholder for actual form submission
-      // await fetch('/api/contact', { method: 'POST', body: JSON.stringify(formData) });
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          message: formData.message,
+          _subject: `New inquiry from ${formData.name} - DT+C Website`,
+        }),
+      });
 
-      // For now, simulate success after delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setStatus("success");
-
-      // Reset form after success
-      setTimeout(() => {
-        setFormData({ name: "", email: "", company: "", message: "" });
-        setStatus("idle");
-        onClose();
-      }, 2000);
+      if (response.ok) {
+        setStatus("success");
+        // Reset form after success
+        setTimeout(() => {
+          setFormData({ name: "", email: "", company: "", message: "" });
+          setStatus("idle");
+          onClose();
+        }, 2000);
+      } else {
+        throw new Error("Form submission failed");
+      }
     } catch {
       setStatus("error");
     }

@@ -4,7 +4,7 @@ export const siteContent = {
     description:
       "Strategy, story, and production systems—powered by AI to increase output, reduce friction, and sharpen messaging. Miami-based creative agency working globally.",
     url: "https://davidturkcreative.com",
-    image: "/og-image.jpg",
+    image: "/og-image.svg",
     twitterHandle: "@davidturk",
   },
 
@@ -26,7 +26,7 @@ export const siteContent = {
       "Strategy, story, and production systems—powered by AI to increase output, reduce friction, and sharpen messaging.",
     primaryCta: {
       label: "Book a Strategy Call",
-      href: "https://calendly.com/davidturk",
+      href: "https://calendly.com/david-davidturkcreative/meeting-with-david-turk-creative",
     },
     secondaryCta: {
       label: "Explore Capabilities",
@@ -193,12 +193,12 @@ export const siteContent = {
     workGallery: {
       buttonLabel: "View Work",
       items: [
-        { title: "Project 1", thumbnail: "/work/placeholder-1.jpg" },
-        { title: "Project 2", thumbnail: "/work/placeholder-2.jpg" },
-        { title: "Project 3", thumbnail: "/work/placeholder-3.jpg" },
-        { title: "Project 4", thumbnail: "/work/placeholder-4.jpg" },
-        { title: "Project 5", thumbnail: "/work/placeholder-5.jpg" },
-        { title: "Project 6", thumbnail: "/work/placeholder-6.jpg" },
+        { title: "Project 1", thumbnail: "/work/placeholder-1.svg" },
+        { title: "Project 2", thumbnail: "/work/placeholder-2.svg" },
+        { title: "Project 3", thumbnail: "/work/placeholder-3.svg" },
+        { title: "Project 4", thumbnail: "/work/placeholder-4.svg" },
+        { title: "Project 5", thumbnail: "/work/placeholder-5.svg" },
+        { title: "Project 6", thumbnail: "/work/placeholder-6.svg" },
       ],
     },
   },
@@ -232,7 +232,7 @@ export const siteContent = {
     subhead: "One strategy call can replace months of trial and error.",
     primaryCta: {
       label: "Book a Strategy Call",
-      href: "https://calendly.com/davidturk",
+      href: "https://calendly.com/david-davidturkcreative/meeting-with-david-turk-creative",
     },
     secondaryCta: {
       label: "Email Me",

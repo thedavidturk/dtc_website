@@ -1,0 +1,6 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#351E28"/>
+  <rect x="40" y="40" width="320" height="220" rx="8" fill="#E9F056" fill-opacity="0.1"/>
+  <text x="200" y="145" text-anchor="middle" font-family="system-ui" font-size="24" font-weight="600" fill="#E9F056" fill-opacity="0.5">PROJECT 6</text>
+  <text x="200" y="175" text-anchor="middle" font-family="system-ui" font-size="14" fill="#E9F056" fill-opacity="0.3">Audio / Voice</text>
+</svg>
