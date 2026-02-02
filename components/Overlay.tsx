@@ -310,6 +310,7 @@ function HeroSection() {
             onClick={() => setShowreelOpen(true)}
             className="group px-6 py-3 sm:px-8 sm:py-4 border border-white/20 rounded-full text-white text-sm sm:text-base font-medium hover:bg-white/10 hover:border-white/40 transition-all flex items-center gap-2"
             strength={0.3}
+            cursorType="play"
           >
             <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-[#FF5C34] transition-colors">
               <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor" className="ml-0.5">
@@ -571,6 +572,9 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
               >
                 <div
                   onClick={() => onCapabilityClick(cap)}
+                  data-card
+                  data-cursor="view"
+                  data-cursor-text="Explore"
                   className="p-5 h-full border border-white/10 rounded-2xl bg-zinc-900/80 backdrop-blur-sm relative active:scale-[0.98] transition-transform"
                 >
                   {/* Accent line */}
@@ -640,6 +644,9 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
               initial={{ opacity: 0, y: 30, rotateX: -10 }}
               whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
+              data-card
+              data-cursor="view"
+              data-cursor-text="Explore"
             >
               <LiquidGlass
                 onClick={() => onCapabilityClick(cap)}
@@ -977,6 +984,9 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
               >
                 <div
                   onClick={() => onProjectClick(project)}
+                  data-card
+                  data-cursor="view"
+                  data-cursor-text="View"
                   className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm active:scale-[0.98] transition-transform"
                 >
                   {/* Content */}
@@ -1045,6 +1055,9 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
+              data-card
+              data-cursor="view"
+              data-cursor-text="View"
             >
               <LiquidGlass
                 onClick={() => onProjectClick(project)}

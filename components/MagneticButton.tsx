@@ -11,6 +11,8 @@ interface MagneticButtonProps {
   strength?: number;
   as?: "button" | "a";
   style?: React.CSSProperties;
+  cursorType?: "click" | "play" | "view" | "drag" | "expand" | "link";
+  cursorText?: string;
 }
 
 export default function MagneticButton({
@@ -21,6 +23,8 @@ export default function MagneticButton({
   strength = 0.3,
   as = "button",
   style,
+  cursorType,
+  cursorText,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLButtonElement | HTMLAnchorElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -55,7 +59,8 @@ export default function MagneticButton({
       transition={{ type: "spring", stiffness: 350, damping: 15, mass: 0.5 }}
       className={className}
       style={style}
-      data-cursor
+      data-cursor={cursorType || true}
+      data-cursor-text={cursorText}
     >
       <motion.span
         className="block"
