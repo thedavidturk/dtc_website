@@ -13,6 +13,10 @@ interface StoreState {
   setShowreelOpen: (open: boolean) => void;
   isLoaded: boolean;
   setLoaded: (loaded: boolean) => void;
+  isReturning: boolean;
+  setReturning: (returning: boolean) => void;
+  returnProgress: number;
+  setReturnProgress: (progress: number) => void;
 }
 
 export const useStore = create<StoreState>((set) => ({
@@ -28,4 +32,8 @@ export const useStore = create<StoreState>((set) => ({
   setShowreelOpen: (open) => set({ isShowreelOpen: open }),
   isLoaded: false,
   setLoaded: (loaded) => set({ isLoaded: loaded }),
+  isReturning: false,
+  setReturning: (returning) => set({ isReturning: returning }),
+  returnProgress: 0,
+  setReturnProgress: (progress) => set({ returnProgress: progress }),
 }));

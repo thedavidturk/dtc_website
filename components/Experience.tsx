@@ -333,35 +333,48 @@ function OrbitalRings() {
   );
 }
 
-// Camera controller with dramatic scroll zoom
+// Camera controller with dramatic scroll zoom and return animation
 function CameraController() {
   const { camera } = useThree();
   const scroll = useStore((state) => state.scroll);
   const mousePosition = useStore((state) => state.mousePosition);
+  const isReturning = useStore((state) => state.isReturning);
+  const returnProgress = useStore((state) => state.returnProgress);
   const targetPos = useRef({ x: 0, y: 0, z: 3 });
-  const targetRotation = useRef({ x: 0, y: 0 });
 
-  useFrame(() => {
+  useFrame((state) => {
+    const time = state.clock.elapsedTime;
+
+    // During return animation, use returnProgress for dramatic zoom-in effect
+    let effectiveScroll = scroll;
+    let interpolationSpeed = 0.025;
+
+    if (isReturning) {
+      // Reverse the scroll based on return progress
+      effectiveScroll = 1 - returnProgress;
+      // Faster interpolation during return for snappier feel
+      interpolationSpeed = 0.08;
+
+      // Add dramatic spiral/rotation during return
+      const spiralIntensity = Math.sin(returnProgress * Math.PI) * 0.5;
+      targetPos.current.x += Math.sin(time * 3) * spiralIntensity * 0.1;
+    }
+
     // Dramatic zoom: starts close (z=3), zooms out far (z=14) as you scroll
-    // Uses easing curve for more cinematic feel
-    const scrollEased = Math.pow(scroll, 0.8); // Ease out curve
+    const scrollEased = Math.pow(effectiveScroll, 0.8);
     const targetZ = 3 + scrollEased * 11;
 
     // Vertical movement: camera rises slightly as you scroll
-    const targetY = mousePosition.y * 0.3 + scroll * 2;
+    const targetY = mousePosition.y * 0.3 + effectiveScroll * 2;
 
     // Horizontal follows mouse more at close range, less when zoomed out
-    const mouseInfluence = 1 - scroll * 0.5;
+    const mouseInfluence = 1 - effectiveScroll * 0.5;
     const targetX = mousePosition.x * 0.5 * mouseInfluence;
 
     // Smooth interpolation
     targetPos.current.x += (targetX - targetPos.current.x) * 0.04;
     targetPos.current.y += (targetY - targetPos.current.y) * 0.03;
-    targetPos.current.z += (targetZ - targetPos.current.z) * 0.025;
-
-    // Subtle camera rotation based on scroll
-    targetRotation.current.x = scroll * 0.15;
-    targetRotation.current.y = Math.sin(scroll * Math.PI) * 0.1;
+    targetPos.current.z += (targetZ - targetPos.current.z) * interpolationSpeed;
 
     camera.position.set(
       targetPos.current.x,
@@ -370,7 +383,7 @@ function CameraController() {
     );
 
     // Look slightly above center as we zoom out
-    camera.lookAt(0, scroll * 0.5, 0);
+    camera.lookAt(0, effectiveScroll * 0.5, 0);
   });
 
   return null;

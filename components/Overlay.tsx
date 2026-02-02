@@ -1232,6 +1232,132 @@ function CTASection() {
   );
 }
 
+// Closing section that appears at the very end
+function ClosingSection({ onRestart }: { onRestart: () => void }) {
+  const scroll = useStore((state) => state.scroll);
+  const isReturning = useStore((state) => state.isReturning);
+
+  // Only show when near the end (scroll > 0.92)
+  const showClosing = scroll > 0.92 && !isReturning;
+  const closingOpacity = Math.min(1, (scroll - 0.92) / 0.06);
+
+  if (!showClosing) return null;
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[48] flex items-center justify-center pointer-events-none"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: closingOpacity }}
+    >
+      {/* Vignette overlay */}
+      <div
+        className="absolute inset-0 bg-[#351E28]"
+        style={{ opacity: closingOpacity * 0.6 }}
+      />
+
+      {/* Restart prompt */}
+      <motion.div
+        className="relative z-10 text-center pointer-events-auto"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <motion.p
+          className="text-white/40 text-xs tracking-[0.3em] uppercase mb-6"
+          animate={{ opacity: [0.4, 0.7, 0.4] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+        >
+          End of journey
+        </motion.p>
+
+        <motion.button
+          onClick={onRestart}
+          className="group relative px-8 py-4 rounded-full overflow-hidden"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {/* Button background with glow */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FF5C34] via-[#E9F056] to-[#FF5C34] opacity-80 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FF5C34] via-[#E9F056] to-[#FF5C34] blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+
+          {/* Button content */}
+          <span className="relative flex items-center gap-3 text-black font-bold uppercase tracking-wide">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              className="rotate-180"
+            >
+              <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+            Restart Journey
+          </span>
+        </motion.button>
+
+        <motion.p
+          className="mt-8 text-white/30 text-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          Experience the void once more
+        </motion.p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Return animation overlay
+function ReturnAnimation() {
+  const isReturning = useStore((state) => state.isReturning);
+  const returnProgress = useStore((state) => state.returnProgress);
+
+  if (!isReturning) return null;
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[60] pointer-events-none flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {/* Radial warp effect */}
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(circle at center, transparent ${(1 - returnProgress) * 100}%, #351E28 ${(1 - returnProgress) * 100 + 20}%)`,
+        }}
+      />
+
+      {/* Center glow during return */}
+      <motion.div
+        className="w-32 h-32 rounded-full"
+        style={{
+          background: `radial-gradient(circle, #FF5C34 0%, #E9F056 50%, transparent 70%)`,
+          opacity: returnProgress,
+          transform: `scale(${1 + returnProgress * 2})`,
+          filter: `blur(${returnProgress * 20}px)`,
+        }}
+      />
+
+      {/* Logo flash at the end */}
+      {returnProgress > 0.8 && (
+        <motion.span
+          className="absolute text-[#E9F056] text-6xl md:text-8xl font-bold tracking-tighter"
+          initial={{ opacity: 0, scale: 1.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          DT+C
+        </motion.span>
+      )}
+    </motion.div>
+  );
+}
+
 function ContactModal() {
   const isContactOpen = useStore((state) => state.isContactOpen);
   const setContactOpen = useStore((state) => state.setContactOpen);
@@ -1533,6 +1659,8 @@ export default function Overlay() {
   const setScroll = useStore((state) => state.setScroll);
   const setMousePosition = useStore((state) => state.setMousePosition);
   const setContactOpen = useStore((state) => state.setContactOpen);
+  const setReturning = useStore((state) => state.setReturning);
+  const setReturnProgress = useStore((state) => state.setReturnProgress);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedCapability, setSelectedCapability] = useState<Capability | null>(null);
 
@@ -1541,6 +1669,45 @@ export default function Overlay() {
     const scrollHeight = containerRef.current.scrollHeight - window.innerHeight;
     lenisRef.current.scrollTo(position * scrollHeight, { duration: 1.5 });
   }, []);
+
+  // Restart journey with animated return
+  const handleRestart = useCallback(() => {
+    setReturning(true);
+    setReturnProgress(0);
+
+    // Animate the return progress over 2 seconds
+    const duration = 2000;
+    const startTime = Date.now();
+
+    const animateReturn = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1, elapsed / duration);
+
+      // Eased progress for smooth animation
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      setReturnProgress(easedProgress);
+
+      // Also animate scroll position back to 0
+      const currentScroll = 1 - easedProgress;
+      setScroll(currentScroll);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateReturn);
+      } else {
+        // Animation complete - reset everything
+        setTimeout(() => {
+          setReturning(false);
+          setReturnProgress(0);
+          // Physically scroll to top
+          if (lenisRef.current) {
+            lenisRef.current.scrollTo(0, { immediate: true });
+          }
+        }, 300);
+      }
+    };
+
+    requestAnimationFrame(animateReturn);
+  }, [setReturning, setReturnProgress, setScroll]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -1613,6 +1780,8 @@ export default function Overlay() {
       <ProjectsSection onProjectClick={setSelectedProject} />
       <ProcessSection />
       <CTASection />
+      <ClosingSection onRestart={handleRestart} />
+      <ReturnAnimation />
 
       <ContactModal />
       <ShowreelModal />
