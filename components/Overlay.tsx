@@ -9,7 +9,7 @@ import TextReveal, { FadeReveal } from "./TextReveal";
 import CustomCursor from "./CustomCursor";
 import { Project } from "./ProjectDetail";
 import ProjectModal3D from "./ProjectModal3D";
-import Card3D from "./Card3D";
+import LiquidGlass from "./LiquidGlass";
 import { Capability } from "./CapabilityDetail";
 import CapabilityModal3D from "./CapabilityModal3D";
 
@@ -18,10 +18,10 @@ function ScrollIndicator() {
 
   const sections = [
     { label: "Home", position: 0 },
-    { label: "Services", position: 0.12 },
-    { label: "Work", position: 0.35 },
-    { label: "Process", position: 0.58 },
-    { label: "Contact", position: 0.82 },
+    { label: "Services", position: 0.34 },
+    { label: "Work", position: 0.56 },
+    { label: "Process", position: 0.67 },
+    { label: "Contact", position: 0.86 },
   ];
 
   return (
@@ -42,7 +42,7 @@ function ScrollIndicator() {
               scale: Math.abs(scroll - section.position) < 0.15 ? 1.5 : 1,
               backgroundColor:
                 Math.abs(scroll - section.position) < 0.15
-                  ? "rgb(245, 158, 11)"
+                  ? "#FF5C34"
                   : "transparent",
             }}
             transition={{ duration: 0.3 }}
@@ -58,10 +58,10 @@ function Navigation({ onNavigate }: { onNavigate: (position: number) => void }) 
   const scroll = useStore((state) => state.scroll);
 
   const navItems = [
-    { label: "Services", position: 0.12 },
-    { label: "Work", position: 0.35 },
-    { label: "Process", position: 0.58 },
-    { label: "Contact", position: 0.82 },
+    { label: "Services", position: 0.34 },
+    { label: "Work", position: 0.56 },
+    { label: "Process", position: 0.67 },
+    { label: "Contact", position: 0.86 },
   ];
 
   return (
@@ -72,7 +72,7 @@ function Navigation({ onNavigate }: { onNavigate: (position: number) => void }) 
       className="fixed top-0 left-0 right-0 z-50 px-6 lg:px-12 py-6"
     >
       <motion.div
-        className="absolute inset-0 bg-[#030305]/80 backdrop-blur-md"
+        className="absolute inset-0 bg-[#351E28]/80 backdrop-blur-md"
         initial={{ opacity: 0 }}
         animate={{ opacity: scroll > 0.05 ? 1 : 0 }}
         transition={{ duration: 0.3 }}
@@ -95,14 +95,14 @@ function Navigation({ onNavigate }: { onNavigate: (position: number) => void }) 
               strength={0.15}
             >
               {item.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-px bg-amber-500 group-hover:w-full transition-all duration-300" />
+              <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#FF5C34] group-hover:w-full transition-all duration-300" />
             </MagneticButton>
           ))}
         </div>
 
         <MagneticButton
           onClick={() => setContactOpen(true)}
-          className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-sm text-white hover:bg-white/20 hover:border-amber-500/50 transition-all"
+          className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-sm text-white hover:bg-white/20 hover:border-[#FF5C34]/50 transition-all"
           strength={0.25}
         >
           Start a Project
@@ -112,17 +112,113 @@ function Navigation({ onNavigate }: { onNavigate: (position: number) => void }) 
   );
 }
 
+// Opening cinematic intro
+function IntroSection() {
+  const scroll = useStore((state) => state.scroll);
+  const isLoaded = useStore((state) => state.isLoaded);
+
+  // Intro fades out as user scrolls (0 to 0.08 scroll range)
+  const introProgress = Math.min(1, scroll / 0.08);
+  const introOpacity = Math.max(0, 1 - introProgress);
+
+  if (!isLoaded || introOpacity < 0.01) return null;
+
+  return (
+    <motion.section
+      className="fixed inset-0 z-[45] flex items-center justify-center pointer-events-none"
+      style={{ opacity: introOpacity }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1, delay: 0.5 }}
+    >
+      {/* Dark vignette overlay */}
+      <div
+        className="absolute inset-0 bg-[#351E28]"
+        style={{ opacity: 0.85 - introProgress * 0.5 }}
+      />
+
+      {/* Centered scroll prompt */}
+      <div className="relative z-10 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="mb-8"
+        >
+          <span className="text-[#E9F056] text-6xl md:text-8xl font-bold tracking-tighter">
+            DT+C
+          </span>
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+          className="text-white/40 text-sm tracking-[0.3em] uppercase mb-12"
+        >
+          Scroll to begin
+        </motion.p>
+
+        {/* Animated scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="flex flex-col items-center"
+        >
+          <motion.div
+            animate={{ y: [0, 12, 0] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            className="flex flex-col items-center gap-2"
+          >
+            <div className="w-px h-16 bg-gradient-to-b from-transparent via-[#E9F056]/50 to-[#E9F056]" />
+            <motion.div
+              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              className="w-2 h-2 rounded-full bg-[#E9F056]"
+            />
+          </motion.div>
+        </motion.div>
+      </div>
+    </motion.section>
+  );
+}
+
 function HeroSection() {
   const scroll = useStore((state) => state.scroll);
   const setContactOpen = useStore((state) => state.setContactOpen);
-  const opacity = Math.max(0, 1 - scroll * 5);
-  const scale = 1 - scroll * 0.2;
+
+  // Hero appears after intro and stays longer
+  const revealStart = 0.05;
+  const revealEnd = 0.15;
+  const fadeStart = 0.22;
+  const fadeEnd = 0.32;
+
+  let opacity = 0;
+  let revealProgress = 0;
+
+  if (scroll < revealStart) {
+    opacity = 0;
+  } else if (scroll < revealEnd) {
+    revealProgress = (scroll - revealStart) / (revealEnd - revealStart);
+    opacity = revealProgress;
+  } else if (scroll < fadeStart) {
+    opacity = 1;
+    revealProgress = 1;
+  } else if (scroll < fadeEnd) {
+    opacity = 1 - (scroll - fadeStart) / (fadeEnd - fadeStart);
+    revealProgress = 1;
+  } else {
+    opacity = 0;
+  }
+
+  const scale = 1 - Math.max(0, scroll - fadeStart) * 0.3;
 
   if (opacity < 0.01) return null;
 
   return (
     <motion.section
-      className="fixed inset-0 flex items-center justify-center pointer-events-none z-30"
+      className="fixed inset-0 flex items-center justify-center pointer-events-none z-[42]"
       style={{ opacity }}
     >
       <motion.div
@@ -130,42 +226,80 @@ function HeroSection() {
         style={{ scale }}
       >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          style={{
+            opacity: revealProgress,
+            transform: `translateY(${(1 - revealProgress) * 30}px)`
+          }}
         >
-          <span className="text-amber-500 text-sm tracking-[0.3em] uppercase mb-6 inline-block">
+          <span className="text-[#FF5C34] text-sm tracking-[0.3em] uppercase mb-6 inline-block">
             Creative Studio
           </span>
         </motion.div>
 
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[0.9] tracking-tight mb-8">
-          <TextReveal delay={0.5} stagger={0.04} type="words" className="block">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight mb-8 overflow-hidden">
+          <motion.span
+            className="block text-[#E9F056]"
+            style={{
+              opacity: Math.min(1, revealProgress * 1.5),
+              transform: `translateY(${(1 - Math.min(1, revealProgress * 1.5)) * 60}px)`
+            }}
+          >
             We build
-          </TextReveal>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500">
-            <TextReveal delay={0.7} stagger={0.04} type="words" className="block">
-              creative systems
-            </TextReveal>
-          </span>
+          </motion.span>
+          <motion.span
+            className="block text-[#FF5C34]"
+            style={{
+              opacity: Math.min(1, Math.max(0, revealProgress - 0.3) * 1.8),
+              transform: `translateY(${(1 - Math.min(1, Math.max(0, revealProgress - 0.3) * 1.8)) * 60}px)`
+            }}
+          >
+            creative systems
+          </motion.span>
         </h1>
 
-        <FadeReveal delay={0.9} className="mb-12">
+        <motion.div
+          style={{
+            opacity: Math.min(1, Math.max(0, revealProgress - 0.5) * 2.5),
+            transform: `translateY(${(1 - Math.min(1, Math.max(0, revealProgress - 0.5) * 2.5)) * 30}px)`
+          }}
+          className="mb-8"
+        >
           <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
             AI-powered strategy, story, and production for brands
             that refuse to blend in.
           </p>
-        </FadeReveal>
+        </motion.div>
+
+        {/* Hero Stats */}
+        <motion.div
+          style={{
+            opacity: Math.min(1, Math.max(0, revealProgress - 0.55) * 2.5),
+            transform: `translateY(${(1 - Math.min(1, Math.max(0, revealProgress - 0.55) * 2.5)) * 20}px)`
+          }}
+          className="flex justify-center gap-8 md:gap-12 mb-10"
+        >
+          {[
+            { value: "50+", label: "Projects Delivered" },
+            { value: "60%", label: "Faster Than Traditional" },
+            { value: "3x", label: "More Concepts" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <span className="text-2xl md:text-3xl font-bold text-[#E9F056] block">{stat.value}</span>
+              <span className="text-xs text-white/40">{stat.label}</span>
+            </div>
+          ))}
+        </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1 }}
+          style={{
+            opacity: Math.min(1, Math.max(0, revealProgress - 0.7) * 3.5),
+            transform: `translateY(${(1 - Math.min(1, Math.max(0, revealProgress - 0.7) * 3.5)) * 20}px)`
+          }}
           className="flex flex-col sm:flex-row gap-4 justify-center pointer-events-auto"
         >
           <MagneticButton
             onClick={() => setContactOpen(true)}
-            className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full text-black font-semibold hover:shadow-lg hover:shadow-amber-500/25 transition-shadow"
+            className="px-8 py-4 bg-[#FF5C34] rounded-full text-white font-semibold hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
             strength={0.3}
           >
             Start a Project
@@ -179,45 +313,87 @@ function HeroSection() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.3 }}
-          className="flex flex-wrap justify-center gap-3 mt-12"
+          style={{
+            opacity: Math.min(1, Math.max(0, revealProgress - 0.8) * 5),
+          }}
+          className="flex flex-wrap justify-center gap-3 mt-8"
         >
           {["AI Strategy", "Video Production", "Brand Systems", "Rapid Prototyping"].map(
-            (tag, i) => (
-              <motion.span
+            (tag) => (
+              <span
                 key={tag}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.3 + i * 0.1 }}
-                className="px-4 py-2 border border-white/10 rounded-full text-xs text-white/40 tracking-wide hover:border-amber-500/30 hover:text-white/60 transition-all cursor-default"
+                className="px-4 py-2 border border-white/10 rounded-full text-xs text-white/40 tracking-wide hover:border-[#FF5C34]/30 hover:text-white/60 transition-all cursor-default"
               >
                 {tag}
-              </motion.span>
+              </span>
             )
           )}
         </motion.div>
-      </motion.div>
 
-      {/* Scroll prompt */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <span className="text-xs text-white/30 tracking-widest uppercase">
-          Scroll to explore
-        </span>
+        {/* Client Logo Marquee */}
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-          className="w-5 h-8 border border-white/20 rounded-full flex items-start justify-center p-1"
+          style={{
+            opacity: Math.min(1, Math.max(0, revealProgress - 0.85) * 6),
+          }}
+          className="mt-16 w-full max-w-3xl mx-auto"
         >
-          <motion.div className="w-1 h-2 bg-white/40 rounded-full" />
+          <p className="text-xs text-white/30 text-center mb-4 tracking-widest uppercase">Trusted by</p>
+          <div className="relative overflow-hidden">
+            {/* Fade edges */}
+            <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#351E28] to-transparent z-10" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#351E28] to-transparent z-10" />
+
+            {/* Scrolling logos */}
+            <motion.div
+              className="flex gap-12 items-center"
+              animate={{ x: [0, -600] }}
+              transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+            >
+              {/* Logo placeholders - replace src with your actual logo files */}
+              {[
+                { name: "New Era", width: "80px" },
+                { name: "SeaWorld", width: "100px" },
+                { name: "United Parks", width: "90px" },
+                { name: "Meridian", width: "85px" },
+                { name: "New Era", width: "80px" },
+                { name: "SeaWorld", width: "100px" },
+                { name: "United Parks", width: "90px" },
+                { name: "Meridian", width: "85px" },
+              ].map((client, i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 h-8 flex items-center justify-center text-white/30 font-semibold text-sm tracking-wide"
+                  style={{ minWidth: client.width }}
+                >
+                  {/* Replace this div with <img src="/logos/client-name.svg" alt={client.name} className="h-6 w-auto opacity-40 hover:opacity-70 transition-opacity" /> */}
+                  {client.name}
+                </div>
+              ))}
+            </motion.div>
+          </div>
         </motion.div>
       </motion.div>
+
+      {/* Scroll prompt - only shows when hero is fully revealed */}
+      {revealProgress >= 1 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        >
+          <span className="text-xs text-white/30 tracking-widest uppercase">
+            Continue scrolling
+          </span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5 }}
+            className="w-5 h-8 border border-white/20 rounded-full flex items-start justify-center p-1"
+          >
+            <motion.div className="w-1 h-2 bg-white/40 rounded-full" />
+          </motion.div>
+        </motion.div>
+      )}
     </motion.section>
   );
 }
@@ -264,7 +440,7 @@ const CAPABILITIES: Capability[] = [
     title: "AI Creative Strategy",
     description: "Research-driven ideation and systems design that amplifies your creative output",
     icon: "01",
-    gradient: "from-amber-500 to-orange-500",
+    color: "#FF5C34",
     services: [
       "AI-driven ideation & concept development",
       "Deep research & marketing intelligence",
@@ -288,7 +464,7 @@ const CAPABILITIES: Capability[] = [
     title: "Story & Pre-Production",
     description: "Pitch decks, storyboards, and concept validation before expensive production",
     icon: "02",
-    gradient: "from-blue-500 to-cyan-400",
+    color: "#D7EFFF",
     services: [
       "Strategy-first pitch decks",
       "Brand & campaign storytelling",
@@ -312,7 +488,7 @@ const CAPABILITIES: Capability[] = [
     title: "AI-Enhanced Production",
     description: "Video, animation, and photography accelerated by intelligent workflows",
     icon: "03",
-    gradient: "from-purple-500 to-pink-500",
+    color: "#E9F056",
     services: [
       "Video production",
       "Advanced animation (2D/3D/hybrid)",
@@ -336,7 +512,7 @@ const CAPABILITIES: Capability[] = [
     title: "Motion & Visual Systems",
     description: "Scalable brand worlds and design systems that maintain consistency",
     icon: "04",
-    gradient: "from-emerald-500 to-teal-400",
+    color: "#AEB8A0",
     services: [
       "Motion systems for ads & social",
       "Brand worlds & visual universes",
@@ -360,7 +536,7 @@ const CAPABILITIES: Capability[] = [
 
 function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: Capability) => void }) {
   return (
-    <ContentSection scrollStart={0.06} scrollEnd={0.28}>
+    <ContentSection scrollStart={0.28} scrollEnd={0.40}>
       <div className="px-6 max-w-6xl w-full" style={{ perspective: "1200px" }}>
         <div className="text-center mb-12">
           <TextReveal
@@ -380,28 +556,34 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
               whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
             >
-              <Card3D
+              <LiquidGlass
                 onClick={() => onCapabilityClick(cap)}
-                glowColor={cap.gradient.includes("amber") ? "rgba(245, 158, 11, 0.4)" :
-                          cap.gradient.includes("blue") ? "rgba(59, 130, 246, 0.4)" :
-                          cap.gradient.includes("purple") ? "rgba(168, 85, 247, 0.4)" :
-                          "rgba(16, 185, 129, 0.4)"}
-                className="h-full"
+                glowColor={`${cap.color}66`}
+                className="h-full rounded-2xl"
               >
                 <div className="p-8 h-full border border-white/10 rounded-2xl bg-zinc-900/80 backdrop-blur-sm group">
-                  {/* Gradient accent line */}
-                  <div className={`absolute top-0 left-8 right-8 h-px bg-gradient-to-r ${cap.gradient} opacity-50`} />
+                  {/* Accent line */}
+                  <div
+                    className="absolute top-0 left-8 right-8 h-px opacity-50"
+                    style={{ backgroundColor: cap.color }}
+                  />
 
                   {/* Icon */}
                   <div className="flex items-center gap-4 mb-4">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${cap.gradient} flex items-center justify-center text-2xl font-bold text-white shadow-lg`}>
+                    <div
+                      className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold text-white shadow-lg"
+                      style={{ backgroundColor: cap.color }}
+                    >
                       {cap.icon}
                     </div>
-                    <div className={`h-px flex-1 bg-gradient-to-r ${cap.gradient} opacity-20`} />
+                    <div
+                      className="h-px flex-1 opacity-20"
+                      style={{ backgroundColor: cap.color }}
+                    />
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/70 transition-all">
+                  <h3 className="text-xl font-semibold text-white mb-3 transition-all">
                     {cap.title}
                   </h3>
                   <p className="text-white/50 leading-relaxed mb-4 group-hover:text-white/70 transition-colors">
@@ -435,7 +617,7 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
                     </svg>
                   </motion.div>
                 </div>
-              </Card3D>
+              </LiquidGlass>
             </motion.div>
           ))}
         </div>
@@ -446,67 +628,77 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
 
 const PROJECTS: Project[] = [
   {
-    title: "Luminary Health",
-    category: "Brand Identity + Video",
-    description: "Complete brand system and launch campaign for a wellness startup disrupting the longevity space.",
-    gradient: "from-blue-500 to-cyan-400",
-    tags: ["Strategy", "Video", "Brand"],
-    challenge: "Luminary needed to stand out in a crowded wellness market while communicating complex longevity science in an accessible way.",
-    solution: "We developed a visual language that balances scientific credibility with aspirational lifestyle imagery, supported by AI-generated content variations for rapid A/B testing.",
+    title: "New Era Cap",
+    category: "Virtual Production + 3D Animation",
+    description: "Space-themed 'Out of This World' campaign featuring immersive 3D environments and cinematic product showcases.",
+    color: "#D7EFFF",
+    tags: ["3D Animation", "VFX", "Unreal Engine"],
+    challenge: "Create a visually stunning campaign that differentiates New Era in a competitive market while conveying the excitement of space exploration.",
+    solution: "Built immersive space environments in Unreal Engine 5 featuring planets, stars, and galaxies. Combined 3D animation with live model photography and cinematic post-production for multi-platform deployment.",
     results: [
-      { metric: "340%", label: "Brand awareness lift" },
-      { metric: "2.1M", label: "Video views in 30 days" },
-      { metric: "45%", label: "Lower CAC vs. industry" },
+      { metric: "UE5", label: "Virtual Production" },
+      { metric: "Multi", label: "Platform Campaign" },
+      { metric: "3D", label: "Product Showcase" },
     ],
-    testimonial: {
-      quote: "DT+C didn't just give us a brand—they gave us a system that scales. Our content velocity tripled without sacrificing quality.",
-      author: "Sarah Chen",
-      role: "CEO, Luminary Health"
-    }
+    processSteps: [
+      { phase: "Discovery", description: "Explored space themes and New Era's brand positioning to define visual language" },
+      { phase: "Concept", description: "AI-generated mood boards and initial environment concepts in hours, not weeks" },
+      { phase: "Previs", description: "Built low-fidelity UE5 environments to test compositions before full production" },
+      { phase: "Production", description: "Created final environments, product animations, and post-production pipeline" },
+    ],
+    tools: ["Unreal Engine 5", "Cinema 4D", "After Effects", "DaVinci Resolve"],
+    deliverables: ["Hero campaign video", "Product showcase animations", "Social media cuts", "Key art visuals"],
   },
   {
-    title: "Neon Collective",
-    category: "AI-Enhanced Production",
-    description: "Music video production using AI workflows, cutting post-production time by 60%.",
-    gradient: "from-purple-500 to-pink-500",
-    tags: ["AI", "Video", "Motion"],
-    challenge: "The artist wanted a visually stunning music video but had a fraction of a typical production budget and an aggressive timeline.",
-    solution: "We integrated AI tools throughout the production pipeline—from storyboard generation to VFX compositing—creating a hybrid workflow that maximized creative output.",
+    title: "SeaWorld Orlando",
+    category: "Cinematic Campaign",
+    description: "SEAQuest announcement campaign featuring a theatrical teaser trailer and hero visuals for the new dark ride attraction.",
+    color: "#E9F056",
+    tags: ["Unreal Engine", "Trailer", "VFX"],
+    videoUrl: "https://www.youtube.com/watch?v=pNLW1Tx5IAE",
+    challenge: "United Parks needed a cinematic teaser trailer and hero visuals to generate excitement across digital platforms while maintaining tight production deadlines.",
+    solution: "Built immersive deep-sea environments in Unreal Engine, crafted a 30-second theatrical-style trailer, and developed hero visuals using AI-assisted enhancements. All assets optimized for multiple aspect ratios.",
     results: [
-      { metric: "60%", label: "Faster post-production" },
-      { metric: "5M+", label: "YouTube views" },
-      { metric: "$80K", label: "Saved vs. traditional" },
+      { metric: "30", label: "Day turnaround" },
+      { metric: "3", label: "Platform formats" },
+      { metric: "30s", label: "Cinematic trailer" },
     ],
-    testimonial: {
-      quote: "They showed us that AI isn't about replacing creativity—it's about amplifying it. The final product exceeded what we thought was possible.",
-      author: "Marcus Webb",
-      role: "Artist Manager"
-    }
+    processSteps: [
+      { phase: "Brief", description: "Rapid alignment on tone, audience, and platform requirements" },
+      { phase: "Design", description: "AI-assisted deep-sea environment exploration and creature concepting" },
+      { phase: "Build", description: "Unreal Engine environment construction with real-time iteration" },
+      { phase: "Deliver", description: "Final renders, color grade, and multi-format exports" },
+    ],
+    tools: ["Unreal Engine 5", "After Effects", "Midjourney", "DaVinci Resolve"],
+    deliverables: ["30-second teaser trailer", "Hero key art", "Instagram/TikTok formats", "Digital billboard assets"],
   },
   {
-    title: "Atlas Ventures",
-    category: "Pitch System",
-    description: "Investment deck and visual identity that helped close a $12M Series A.",
-    gradient: "from-amber-500 to-orange-500",
-    tags: ["Pitch Deck", "Brand", "Strategy"],
-    challenge: "Atlas had strong fundamentals but their deck wasn't conveying their differentiated approach to climate tech investing.",
-    solution: "We rebuilt their narrative from the ground up, creating a modular pitch system with data visualizations that told a compelling story at every stage of the investor conversation.",
+    title: "New Era Sprouted",
+    category: "Digital Animation + Virtual Production",
+    description: "Immersive campaign for New Era's 'Sprouted' collection featuring lush 3D environments and cinematic product storytelling.",
+    color: "#FF5C34",
+    tags: ["Unreal Engine", "3D Animation", "VFX"],
+    challenge: "Create a visually stunning campaign that would stand out in a crowded marketplace while conveying wonder in a foliage-filled world.",
+    solution: "Built immersive environments in Unreal Engine 5—forests, mushroom hilltops, cityscapes—with carefully crafted visuals and audio to highlight product features through cinematic storytelling.",
     results: [
-      { metric: "$12M", label: "Series A closed" },
-      { metric: "3 weeks", label: "From brief to close" },
-      { metric: "89%", label: "Meeting-to-next-step rate" },
+      { metric: "UE5", label: "Environment Design" },
+      { metric: "3D", label: "Product Animation" },
+      { metric: "Full", label: "Post-Production" },
     ],
-    testimonial: {
-      quote: "The deck paid for itself 1000x over. Every investor commented on how clear and compelling our story was.",
-      author: "James Morrison",
-      role: "Managing Partner, Atlas"
-    }
+    processSteps: [
+      { phase: "Research", description: "Nature-inspired visual research and collection theme alignment" },
+      { phase: "Worldbuild", description: "Created distinct environment zones: forest floor, mushroom peaks, urban garden" },
+      { phase: "Animate", description: "Product reveals and transitions designed for maximum visual impact" },
+      { phase: "Polish", description: "Color grading, sound design, and platform optimization" },
+    ],
+    tools: ["Unreal Engine 5", "Cinema 4D", "Houdini", "After Effects"],
+    deliverables: ["Hero campaign film", "Product reveal animations", "Behind-the-scenes content", "Social cuts"],
   },
   {
     title: "Meridian Studios",
     category: "Content Engine",
     description: "Scalable content system producing 40+ branded assets per month with AI assistance.",
-    gradient: "from-emerald-500 to-teal-400",
+    color: "#AEB8A0",
     tags: ["AI", "Systems", "Content"],
     challenge: "Meridian was drowning in content requests from multiple brands but couldn't afford to scale their team proportionally.",
     solution: "We designed and implemented a content production system with AI-assisted ideation, templated design systems, and automated quality checks—all managed through a custom dashboard.",
@@ -515,6 +707,14 @@ const PROJECTS: Project[] = [
       { metric: "4x", label: "Output increase" },
       { metric: "0", label: "Additional headcount" },
     ],
+    processSteps: [
+      { phase: "Audit", description: "Analyzed existing workflows and identified automation opportunities" },
+      { phase: "Design", description: "Created modular template systems and AI-assisted ideation tools" },
+      { phase: "Build", description: "Developed custom dashboard for request management and QA" },
+      { phase: "Train", description: "Enabled team to self-serve with documented processes" },
+    ],
+    tools: ["Figma", "After Effects", "ChatGPT", "Custom API integrations"],
+    deliverables: ["Template system", "AI ideation toolkit", "Production dashboard", "Team training"],
     testimonial: {
       quote: "We went from reactive to proactive. Now we're pitching content ideas to clients instead of just filling orders.",
       author: "Lisa Park",
@@ -523,13 +723,143 @@ const PROJECTS: Project[] = [
   },
 ];
 
+function AIDifferentiatorSection() {
+  const workflowSteps = [
+    {
+      phase: "Research",
+      traditional: "Weeks of manual research",
+      aiPowered: "Deep AI analysis in hours",
+      icon: "🔍",
+      color: "#D7EFFF",
+    },
+    {
+      phase: "Ideation",
+      traditional: "Limited concepts due to time",
+      aiPowered: "100+ concepts explored rapidly",
+      icon: "💡",
+      color: "#E9F056",
+    },
+    {
+      phase: "Prototyping",
+      traditional: "Expensive test shoots",
+      aiPowered: "AI-generated previews first",
+      icon: "🎬",
+      color: "#FF5C34",
+    },
+    {
+      phase: "Production",
+      traditional: "Fixed deliverables",
+      aiPowered: "Iterate until perfect",
+      icon: "✨",
+      color: "#AEB8A0",
+    },
+  ];
+
+  return (
+    <ContentSection scrollStart={0.42} scrollEnd={0.52}>
+      <div className="px-6 max-w-5xl w-full">
+        <motion.div className="text-center mb-12">
+          <motion.p
+            className="text-[#E9F056] text-sm tracking-[0.2em] uppercase mb-4"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+          >
+            The DT+C Difference
+          </motion.p>
+          <TextReveal
+            as="h2"
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
+            type="words"
+            stagger={0.05}
+          >
+            AI-Augmented Creative
+          </TextReveal>
+          <FadeReveal delay={0.2}>
+            <p className="text-white/50 max-w-2xl mx-auto">
+              We don&apos;t replace creativity with AI—we multiply it. Our workflow lets us explore
+              more ideas, iterate faster, and deliver higher quality at a fraction of traditional timelines.
+            </p>
+          </FadeReveal>
+        </motion.div>
+
+        {/* Workflow Comparison */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pointer-events-auto">
+          {workflowSteps.map((step, i) => (
+            <motion.div
+              key={step.phase}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="relative group"
+            >
+              <div className="p-6 rounded-2xl bg-zinc-900/80 border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all h-full">
+                {/* Icon */}
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4"
+                  style={{ backgroundColor: `${step.color}20` }}
+                >
+                  {step.icon}
+                </div>
+
+                {/* Phase */}
+                <h3 className="text-lg font-semibold text-white mb-4">
+                  {step.phase}
+                </h3>
+
+                {/* Comparison */}
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-white/30 text-xs mt-0.5">OLD</span>
+                    <span className="text-white/40 text-sm line-through">{step.traditional}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-[#E9F056] text-xs mt-0.5 font-semibold">NEW</span>
+                    <span className="text-white/70 text-sm">{step.aiPowered}</span>
+                  </div>
+                </div>
+
+                {/* Accent line */}
+                <div
+                  className="absolute bottom-0 left-4 right-4 h-px opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ backgroundColor: step.color }}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bottom stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-12 flex flex-wrap justify-center gap-8 md:gap-16"
+        >
+          {[
+            { value: "60%", label: "Faster delivery" },
+            { value: "3x", label: "More concepts" },
+            { value: "0", label: "Quality compromise" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <span className="text-3xl md:text-4xl font-bold text-[#FF5C34] block">
+                {stat.value}
+              </span>
+              <span className="text-white/40 text-sm">{stat.label}</span>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </ContentSection>
+  );
+}
+
 function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project) => void }) {
   return (
-    <ContentSection scrollStart={0.28} scrollEnd={0.52}>
+    <ContentSection scrollStart={0.50} scrollEnd={0.62}>
       <div className="px-6 max-w-6xl w-full">
         <motion.div className="text-center mb-12">
           <motion.p
-            className="text-amber-500 text-sm tracking-[0.2em] uppercase mb-4"
+            className="text-[#FF5C34] text-sm tracking-[0.2em] uppercase mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
@@ -549,68 +879,66 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
           {PROJECTS.map((project, i) => (
             <motion.div
               key={project.title}
-              onClick={() => onProjectClick(project)}
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm cursor-pointer"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              whileHover={{ scale: 1.02, y: -4 }}
-              whileTap={{ scale: 0.98 }}
-              data-cursor
-              data-cursor-text="View"
             >
-              {/* Gradient background */}
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
-              />
+              <LiquidGlass
+                onClick={() => onProjectClick(project)}
+                glowColor={`${project.color}66`}
+                className="rounded-2xl"
+              >
+                <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
+                  {/* Content */}
+                  <div className="relative p-8">
+                    <div className="flex items-start justify-between mb-6">
+                      <div>
+                        <p className="text-white/40 text-sm mb-1">{project.category}</p>
+                        <h3 className="text-2xl font-bold text-white transition-all">
+                          {project.title}
+                        </h3>
+                      </div>
+                      <motion.div
+                        className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#FF5C34]/50 group-hover:bg-[#FF5C34]/10 transition-all"
+                        whileHover={{ scale: 1.1, rotate: 45 }}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="text-white/50 group-hover:text-[#FF5C34] transition-colors"
+                        >
+                          <path d="M7 17L17 7M17 7H7M17 7V17" />
+                        </svg>
+                      </motion.div>
+                    </div>
 
-              {/* Content */}
-              <div className="relative p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <p className="text-white/40 text-sm mb-1">{project.category}</p>
-                    <h3 className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/60 transition-all">
-                      {project.title}
-                    </h3>
+                    <p className="text-white/50 leading-relaxed mb-6 group-hover:text-white/70 transition-colors">
+                      {project.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1 text-xs rounded-full border border-white/10 text-white/40 group-hover:border-white/20 group-hover:text-white/60 transition-all"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <motion.div
-                    className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-amber-500/50 group-hover:bg-amber-500/10 transition-all"
-                    whileHover={{ scale: 1.1, rotate: 45 }}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="text-white/50 group-hover:text-amber-500 transition-colors"
-                    >
-                      <path d="M7 17L17 7M17 7H7M17 7V17" />
-                    </svg>
-                  </motion.div>
+
+                  {/* Bottom accent line */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{ backgroundColor: project.color }}
+                  />
                 </div>
-
-                <p className="text-white/50 leading-relaxed mb-6 group-hover:text-white/70 transition-colors">
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 text-xs rounded-full border border-white/10 text-white/40 group-hover:border-white/20 group-hover:text-white/60 transition-all"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Bottom gradient line */}
-              <div
-                className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-              />
+              </LiquidGlass>
             </motion.div>
           ))}
         </div>
@@ -628,7 +956,7 @@ function ProcessSection() {
   ];
 
   return (
-    <ContentSection scrollStart={0.52} scrollEnd={0.72}>
+    <ContentSection scrollStart={0.60} scrollEnd={0.75}>
       <div className="px-6 max-w-5xl text-center">
         <TextReveal
           as="h2"
@@ -654,13 +982,13 @@ function ProcessSection() {
               transition={{ delay: i * 0.15 }}
             >
               <motion.span
-                className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 block mb-4"
+                className="text-5xl md:text-6xl font-bold text-[#FF5C34] block mb-4"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
                 {step.num}
               </motion.span>
-              <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-amber-500 transition-colors">
+              <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#FF5C34] transition-colors">
                 {step.title}
               </h3>
               <p className="text-white/40 text-sm">{step.desc}</p>
@@ -669,7 +997,7 @@ function ProcessSection() {
         </div>
 
         <FadeReveal delay={0.6} className="mt-16">
-          <div className="inline-block px-6 py-3 border border-white/10 rounded-full hover:border-amber-500/30 transition-colors">
+          <div className="inline-block px-6 py-3 border border-white/10 rounded-full hover:border-[#FF5C34]/30 transition-colors">
             <span className="text-white/60 italic">We&apos;re a partner, not a vendor.</span>
           </div>
         </FadeReveal>
@@ -682,7 +1010,7 @@ function CTASection() {
   const setContactOpen = useStore((state) => state.setContactOpen);
 
   return (
-    <ContentSection scrollStart={0.76} scrollEnd={1}>
+    <ContentSection scrollStart={0.73} scrollEnd={1}>
       <div className="px-6 text-center max-w-3xl pointer-events-auto">
         <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
           <TextReveal type="words" stagger={0.04}>
@@ -692,7 +1020,7 @@ function CTASection() {
           <TextReveal type="words" stagger={0.04} delay={0.2}>
             something
           </TextReveal>{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-rose-500">
+          <span className="text-[#FF5C34]">
             <TextReveal type="words" stagger={0.04} delay={0.4}>
               extraordinary?
             </TextReveal>
@@ -711,7 +1039,7 @@ function CTASection() {
         >
           <MagneticButton
             onClick={() => setContactOpen(true)}
-            className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full text-black font-semibold hover:shadow-lg hover:shadow-amber-500/25 transition-shadow"
+            className="px-8 py-4 bg-[#FF5C34] rounded-full text-black font-semibold hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
             strength={0.3}
           >
             Book a Strategy Call
@@ -785,20 +1113,20 @@ function ContactModal() {
               <input
                 type="text"
                 placeholder="Name"
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] transition-colors"
               />
               <input
                 type="email"
                 placeholder="Email"
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] transition-colors"
               />
               <textarea
                 placeholder="Tell us about your project..."
                 rows={4}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-amber-500 resize-none transition-colors"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-[#FF5C34] resize-none transition-colors"
               />
               <MagneticButton
-                className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"
+                className="w-full py-4 bg-[#FF5C34] rounded-lg text-black font-semibold hover:opacity-90 transition-opacity"
                 strength={0.15}
               >
                 Send Message
@@ -827,7 +1155,7 @@ function LoadingScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="fixed inset-0 bg-[#030305] z-[200] flex items-center justify-center"
+          className="fixed inset-0 bg-[#351E28] z-[200] flex items-center justify-center"
         >
           <div className="text-center">
             <motion.div
@@ -847,7 +1175,7 @@ function LoadingScreen() {
               className="w-48 h-0.5 bg-white/10 rounded-full overflow-hidden"
             >
               <motion.div
-                className="h-full bg-gradient-to-r from-amber-500 to-orange-500"
+                className="h-full bg-[#FF5C34]"
                 initial={{ width: "0%" }}
                 animate={{ width: "100%" }}
                 transition={{ duration: 2, ease: "easeInOut" }}
@@ -862,11 +1190,24 @@ function LoadingScreen() {
 
 function BackgroundDimmer() {
   const scroll = useStore((state) => state.scroll);
-  const dimOpacity = Math.min(0.6, Math.max(0, (scroll - 0.05) * 0.8));
+
+  // Dim more during hero section (0.05 to 0.32)
+  let dimOpacity = 0;
+
+  if (scroll < 0.05) {
+    // During intro - slight dim
+    dimOpacity = scroll * 4; // 0 to 0.2
+  } else if (scroll < 0.32) {
+    // During hero - strong dim for readability
+    dimOpacity = 0.75;
+  } else {
+    // After hero - gradual return
+    dimOpacity = Math.max(0.5, 0.75 - (scroll - 0.32) * 0.5);
+  }
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-[2] bg-[#030305]"
+      className="fixed inset-0 pointer-events-none z-[2] bg-[#351E28]"
       style={{ opacity: dimOpacity }}
     />
   );
@@ -894,13 +1235,13 @@ export default function Overlay() {
     const lenis = new Lenis({
       wrapper: container,
       content: container.firstChild as HTMLElement,
-      duration: 1.2,
+      duration: 1.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
+      wheelMultiplier: 0.6,
+      touchMultiplier: 1.2,
     });
 
     lenisRef.current = lenis;
@@ -947,8 +1288,10 @@ export default function Overlay() {
         <div className="h-[500vh]" />
       </div>
 
+      <IntroSection />
       <HeroSection />
       <CapabilitiesSection onCapabilityClick={setSelectedCapability} />
+      <AIDifferentiatorSection />
       <ProjectsSection onProjectClick={setSelectedProject} />
       <ProcessSection />
       <CTASection />

@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  /* Deep space black */
-  --background: #030305;
+  /* Dark burgundy */
+  --background: #351E28;
   --foreground: #ffffff;
 
-  /* Accent */
-  --accent: #f59e0b;
-  --accent-glow: rgba(245, 158, 11, 0.3);
+  /* Brand colors */
+  --accent: #FF5C34;
+  --accent-glow: rgba(255, 92, 52, 0.3);
 }
 
 @theme inline {

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, MeshDistortMaterial, Sparkles, Trail } from "@react-three/drei";
+import { Float, Sparkles, Trail, Environment, MeshTransmissionMaterial } from "@react-three/drei";
 import * as THREE from "three";
 import MagneticButton from "./MagneticButton";
 import { Capability } from "./CapabilityDetail";
@@ -56,78 +56,87 @@ function ParticleField({ color }: { color: string }) {
   );
 }
 
-// Interactive morphing blob
-function CapabilityBlob({ color1, color2 }: { color1: string; color2: string }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const glowRef = useRef<THREE.Mesh>(null);
+// Premium glass sphere with smooth surface
+function CapabilitySphere({ color1, color2 }: { color1: string; color2: string }) {
+  const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (!meshRef.current) return;
+    if (!groupRef.current) return;
     const time = state.clock.elapsedTime;
 
-    // React to mouse
-    const targetX = mouseX * 0.8;
-    const targetY = mouseY * 0.5;
+    // Smooth mouse following
+    const targetX = mouseX * 0.6;
+    const targetY = mouseY * 0.4;
 
-    meshRef.current.rotation.x = time * 0.1 + targetY;
-    meshRef.current.rotation.y = time * 0.15 + targetX;
-    meshRef.current.position.x = targetX * 0.5;
-    meshRef.current.position.y = Math.sin(time * 0.5) * 0.1 + targetY * 0.3;
-
-    if (glowRef.current) {
-      glowRef.current.rotation.copy(meshRef.current.rotation);
-      glowRef.current.position.copy(meshRef.current.position);
-    }
+    groupRef.current.rotation.x += (targetY * 0.3 - groupRef.current.rotation.x) * 0.02;
+    groupRef.current.rotation.y += (targetX * 0.5 + time * 0.1 - groupRef.current.rotation.y) * 0.02;
+    groupRef.current.position.x += (targetX * 0.3 - groupRef.current.position.x) * 0.03;
+    groupRef.current.position.y += (Math.sin(time * 0.5) * 0.15 + targetY * 0.2 - groupRef.current.position.y) * 0.03;
 
     if (innerRef.current) {
-      innerRef.current.rotation.x = -time * 0.2;
-      innerRef.current.rotation.y = -time * 0.25;
-      innerRef.current.position.copy(meshRef.current.position);
+      innerRef.current.rotation.x = time * 0.3;
+      innerRef.current.rotation.y = time * 0.4;
+    }
+
+    if (glowRef.current) {
+      glowRef.current.scale.setScalar(1.8 + Math.sin(time * 2) * 0.05);
     }
   });
 
   return (
-    <Float speed={2} rotationIntensity={0.3} floatIntensity={0.5}>
-      <group position={[2.5, 0, -1]}>
-        {/* Inner core */}
-        <mesh ref={innerRef} scale={0.5}>
-          <icosahedronGeometry args={[1, 3]} />
+    <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
+      <group ref={groupRef} position={[2.5, 0, -1]}>
+        {/* Inner glowing core */}
+        <mesh ref={innerRef} scale={0.35}>
+          <sphereGeometry args={[1, 64, 64]} />
           <meshStandardMaterial
             color={color2}
             emissive={color2}
-            emissiveIntensity={1}
+            emissiveIntensity={2}
             toneMapped={false}
           />
         </mesh>
 
-        {/* Main blob */}
-        <mesh ref={meshRef} scale={1.3}>
-          <icosahedronGeometry args={[1, 4]} />
-          <MeshDistortMaterial
+        {/* Main glass sphere */}
+        <mesh scale={1.2}>
+          <sphereGeometry args={[1, 128, 128]} />
+          <MeshTransmissionMaterial
+            backside
+            samples={16}
+            thickness={0.5}
+            chromaticAberration={0.1}
+            anisotropy={0.3}
+            distortion={0.2}
+            distortionScale={0.2}
+            temporalDistortion={0.1}
+            transmission={0.95}
+            roughness={0.05}
+            ior={1.5}
             color={color1}
-            distort={0.5}
-            speed={3}
-            roughness={0.1}
-            metalness={0.9}
-            emissive={color1}
-            emissiveIntensity={0.4}
           />
         </mesh>
 
-        {/* Outer glow */}
-        <mesh ref={glowRef} scale={1.6}>
-          <icosahedronGeometry args={[1, 4]} />
-          <MeshDistortMaterial
+        {/* Outer fresnel glow */}
+        <mesh ref={glowRef} scale={1.8}>
+          <sphereGeometry args={[1, 64, 64]} />
+          <meshBasicMaterial
             color={color2}
-            distort={0.6}
-            speed={2}
-            roughness={0.3}
-            metalness={0.5}
             transparent
-            opacity={0.12}
-            emissive={color2}
-            emissiveIntensity={0.6}
+            opacity={0.08}
+            side={THREE.BackSide}
+          />
+        </mesh>
+
+        {/* Soft ambient glow */}
+        <mesh scale={2.2}>
+          <sphereGeometry args={[1, 32, 32]} />
+          <meshBasicMaterial
+            color={color1}
+            transparent
+            opacity={0.04}
+            side={THREE.BackSide}
           />
         </mesh>
       </group>
@@ -170,6 +179,7 @@ function OrbWithTrail({ angle, radius, speed, color, size, index }: {
   index: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -178,25 +188,40 @@ function OrbWithTrail({ angle, radius, speed, color, size, index }: {
     meshRef.current.position.x = Math.cos(currentAngle) * radius;
     meshRef.current.position.z = Math.sin(currentAngle) * radius;
     meshRef.current.position.y = Math.sin(time * 2 + index) * 0.4;
+
+    if (glowRef.current) {
+      glowRef.current.position.copy(meshRef.current.position);
+    }
   });
 
   return (
-    <Trail
-      width={0.4}
-      length={6}
-      color={color}
-      attenuation={(t) => t * t}
-    >
-      <mesh ref={meshRef}>
-        <sphereGeometry args={[size, 16, 16]} />
-        <meshStandardMaterial
+    <>
+      <Trail
+        width={0.3}
+        length={8}
+        color={color}
+        attenuation={(t) => t * t * t}
+      >
+        <mesh ref={meshRef}>
+          <sphereGeometry args={[size, 32, 32]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            emissive={color}
+            emissiveIntensity={3}
+            toneMapped={false}
+          />
+        </mesh>
+      </Trail>
+      {/* Soft glow around orb */}
+      <mesh ref={glowRef}>
+        <sphereGeometry args={[size * 3, 16, 16]} />
+        <meshBasicMaterial
           color={color}
-          emissive={color}
-          emissiveIntensity={2}
-          toneMapped={false}
+          transparent
+          opacity={0.15}
         />
       </mesh>
-    </Trail>
+    </>
   );
 }
 
@@ -263,34 +288,55 @@ function InteractiveCamera() {
   return null;
 }
 
+// Brand colors
+const LIGHT_BLUE = "#D7EFFF";
+const SAGE_GREEN = "#AEB8A0";
+const DARK_BURGUNDY = "#351E28";
+const LIME_YELLOW = "#E9F056";
+const CORAL_ORANGE = "#FF5C34";
+
+// Helper to get secondary color for a primary color
+function getSecondaryColor(color: string): string {
+  if (color === LIGHT_BLUE) return SAGE_GREEN;
+  if (color === SAGE_GREEN) return LIGHT_BLUE;
+  if (color === LIME_YELLOW) return CORAL_ORANGE;
+  if (color === CORAL_ORANGE) return LIME_YELLOW;
+  return SAGE_GREEN;
+}
+
 // 3D Scene
-function ModalScene({ gradient }: { gradient: string }) {
+function ModalScene({ color }: { color: string }) {
   const colors = useMemo(() => {
-    if (gradient.includes("blue")) return { primary: "#3b82f6", secondary: "#22d3ee" };
-    if (gradient.includes("purple")) return { primary: "#a855f7", secondary: "#ec4899" };
-    if (gradient.includes("amber")) return { primary: "#f59e0b", secondary: "#f97316" };
-    if (gradient.includes("emerald")) return { primary: "#10b981", secondary: "#2dd4bf" };
-    return { primary: "#f59e0b", secondary: "#f97316" };
-  }, [gradient]);
+    return { primary: color, secondary: getSecondaryColor(color) };
+  }, [color]);
 
   return (
     <>
-      <color attach="background" args={["#030305"]} />
-      <fog attach="fog" args={["#030305", 5, 18]} />
+      <color attach="background" args={[DARK_BURGUNDY]} />
+      <fog attach="fog" args={[DARK_BURGUNDY, 6, 20]} />
 
-      <ambientLight intensity={0.1} />
-      <pointLight position={[5, 5, 5]} intensity={1.5} color={colors.primary} distance={20} />
-      <pointLight position={[-5, -5, 5]} intensity={1} color={colors.secondary} distance={15} />
-      <pointLight position={[0, 0, 5]} intensity={0.5} color="#ffffff" distance={10} />
+      {/* Environment for reflections */}
+      <Environment preset="night" />
+
+      {/* Subtle ambient */}
+      <ambientLight intensity={0.15} />
+
+      {/* Key lights */}
+      <pointLight position={[5, 5, 5]} intensity={2} color={colors.primary} distance={25} />
+      <pointLight position={[-5, -3, 5]} intensity={1.5} color={colors.secondary} distance={20} />
+      <pointLight position={[0, 3, 8]} intensity={0.8} color={LIGHT_BLUE} distance={15} />
+
+      {/* Rim light */}
+      <pointLight position={[3, 0, -5]} intensity={1} color={colors.secondary} distance={15} />
 
       <InteractiveCamera />
-      <CapabilityBlob color1={colors.primary} color2={colors.secondary} />
+      <CapabilitySphere color1={colors.primary} color2={colors.secondary} />
       <OrbitingOrbs color1={colors.primary} color2={colors.secondary} />
       <OrbitalRings color1={colors.primary} color2={colors.secondary} />
       <ParticleField color={colors.secondary} />
 
-      <Sparkles count={80} scale={10} size={2} speed={0.4} opacity={0.6} color={colors.primary} />
-      <Sparkles count={50} scale={12} size={1.5} speed={0.3} opacity={0.4} color={colors.secondary} />
+      <Sparkles count={100} scale={12} size={1.5} speed={0.3} opacity={0.5} color={colors.primary} />
+      <Sparkles count={60} scale={14} size={1} speed={0.2} opacity={0.3} color={colors.secondary} />
     </>
   );
 }
@@ -348,7 +394,7 @@ export default function CapabilityModal3D({ capability, onClose, onContact }: Ca
               dpr={[1, 2]}
               gl={{ antialias: true, alpha: true }}
             >
-              <ModalScene gradient={capability.gradient} />
+              <ModalScene color={capability.color} />
             </Canvas>
           </div>
 
@@ -402,7 +448,10 @@ export default function CapabilityModal3D({ capability, onClose, onContact }: Ca
                   transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
                   className="mb-6"
                 >
-                  <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br ${capability.gradient} text-4xl font-bold text-white shadow-2xl`}>
+                  <div
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-2xl"
+                    style={{ backgroundColor: capability.color }}
+                  >
                     {capability.icon}
                   </div>
                 </motion.div>
@@ -458,7 +507,10 @@ export default function CapabilityModal3D({ capability, onClose, onContact }: Ca
                         transition={{ delay: 0.4 + i * 0.05 }}
                         className="flex items-center gap-3 p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors group"
                       >
-                        <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${capability.gradient} group-hover:scale-150 transition-transform`} />
+                        <div
+                          className="w-2 h-2 rounded-full group-hover:scale-150 transition-transform"
+                          style={{ backgroundColor: capability.color }}
+                        />
                         <span className="text-white/70">{service}</span>
                       </motion.div>
                     ))}
@@ -483,7 +535,10 @@ export default function CapabilityModal3D({ capability, onClose, onContact }: Ca
                           transition={{ delay: 0.55 + i * 0.05 }}
                           className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10"
                         >
-                          <div className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br ${capability.gradient} flex items-center justify-center`}>
+                          <div
+                            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: capability.color }}
+                          >
                             <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
@@ -532,7 +587,8 @@ export default function CapabilityModal3D({ capability, onClose, onContact }: Ca
                       onClose();
                       onContact();
                     }}
-                    className={`flex-1 py-4 px-8 bg-gradient-to-r ${capability.gradient} rounded-full text-white font-semibold text-center hover:shadow-lg hover:shadow-amber-500/25 transition-shadow`}
+                    className="flex-1 py-4 px-8 rounded-full text-white font-semibold text-center hover:shadow-lg hover:shadow-[#FF5C34]/25 transition-shadow"
+                    style={{ backgroundColor: capability.color }}
                     strength={0.2}
                   >
                     Discuss This Service

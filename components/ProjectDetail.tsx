@@ -8,13 +8,18 @@ export interface Project {
   title: string;
   category: string;
   description: string;
-  gradient: string;
+  color: string;
   tags: string[];
   // Extended details
   challenge?: string;
   solution?: string;
   results?: { metric: string; label: string }[];
   testimonial?: { quote: string; author: string; role: string };
+  // Enhanced case study fields
+  processSteps?: { phase: string; description: string }[];
+  videoUrl?: string;
+  deliverables?: string[];
+  tools?: string[];
 }
 
 interface ProjectDetailProps {
@@ -77,7 +82,7 @@ export default function ProjectDetail({ project, onClose }: ProjectDetailProps) 
                 className="relative w-full max-w-4xl bg-zinc-900 rounded-3xl border border-white/10 overflow-hidden"
               >
                 {/* Gradient Header */}
-                <div className={`relative h-48 md:h-64 bg-gradient-to-br ${project.gradient}`}>
+                <div className="relative h-48 md:h-64" style={{ backgroundColor: project.color }}>
                   <div className="absolute inset-0 bg-black/30" />
 
                   {/* Close Button */}
@@ -156,8 +161,8 @@ export default function ProjectDetail({ project, onClose }: ProjectDetailProps) 
                           transition={{ delay: 0.35 }}
                           className="p-5 rounded-xl bg-white/5 border border-white/10"
                         >
-                          <h4 className="text-amber-500 font-semibold mb-2 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-amber-500" />
+                          <h4 className="text-[#FF5C34] font-semibold mb-2 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-[#FF5C34]" />
                             The Challenge
                           </h4>
                           <p className="text-white/50 text-sm leading-relaxed">{project.challenge}</p>
@@ -170,8 +175,8 @@ export default function ProjectDetail({ project, onClose }: ProjectDetailProps) 
                           transition={{ delay: 0.4 }}
                           className="p-5 rounded-xl bg-white/5 border border-white/10"
                         >
-                          <h4 className="text-emerald-500 font-semibold mb-2 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          <h4 className="text-[#AEB8A0] font-semibold mb-2 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-[#AEB8A0]" />
                             Our Solution
                           </h4>
                           <p className="text-white/50 text-sm leading-relaxed">{project.solution}</p>
@@ -201,7 +206,8 @@ export default function ProjectDetail({ project, onClose }: ProjectDetailProps) 
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: 0.6 + i * 0.1 }}
-                              className={`text-2xl md:text-3xl font-bold bg-gradient-to-r ${project.gradient} bg-clip-text text-transparent block mb-1`}
+                              className="text-2xl md:text-3xl font-bold block mb-1"
+                              style={{ color: project.color }}
                             >
                               {result.metric}
                             </motion.span>
@@ -225,7 +231,7 @@ export default function ProjectDetail({ project, onClose }: ProjectDetailProps) 
                         {project.testimonial.quote}
                       </p>
                       <div className="flex items-center gap-3 pl-4">
-                        <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${project.gradient}`} />
+                        <div className="w-10 h-10 rounded-full" style={{ backgroundColor: project.color }} />
                         <div>
                           <p className="text-white font-medium text-sm">{project.testimonial.author}</p>
                           <p className="text-white/40 text-xs">{project.testimonial.role}</p>
@@ -242,7 +248,8 @@ export default function ProjectDetail({ project, onClose }: ProjectDetailProps) 
                     className="flex flex-col sm:flex-row gap-4 pt-4"
                   >
                     <MagneticButton
-                      className={`flex-1 py-4 bg-gradient-to-r ${project.gradient} rounded-xl text-white font-semibold text-center hover:opacity-90 transition-opacity`}
+                      className="flex-1 py-4 rounded-xl text-white font-semibold text-center hover:opacity-90 transition-opacity"
+                      style={{ backgroundColor: project.color }}
                       strength={0.15}
                     >
                       Start a Similar Project
