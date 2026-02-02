@@ -1908,7 +1908,6 @@ function ScrollToTopButton({ onScrollToTop }: { onScrollToTop: () => void }) {
 }
 
 export default function Overlay() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const lenisRef = useRef<Lenis | null>(null);
   const setScroll = useStore((state) => state.setScroll);
   const setMousePosition = useStore((state) => state.setMousePosition);
@@ -1919,8 +1918,8 @@ export default function Overlay() {
   const [selectedCapability, setSelectedCapability] = useState<Capability | null>(null);
 
   const scrollToPosition = useCallback((position: number) => {
-    if (!lenisRef.current || !containerRef.current) return;
-    const scrollHeight = containerRef.current.scrollHeight - window.innerHeight;
+    if (!lenisRef.current) return;
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
     lenisRef.current.scrollTo(position * scrollHeight, { duration: 1.5 });
   }, []);
 
@@ -1956,6 +1955,7 @@ export default function Overlay() {
           if (lenisRef.current) {
             lenisRef.current.scrollTo(0, { immediate: true });
           }
+          window.scrollTo(0, 0);
         }, 300);
       }
     };
@@ -1964,14 +1964,10 @@ export default function Overlay() {
   }, [setReturning, setReturnProgress, setScroll]);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
     const isMobile = window.innerWidth < 768;
 
+    // Use window-based scrolling so events aren't blocked by overlays
     const lenis = new Lenis({
-      wrapper: container,
-      content: container.firstChild as HTMLElement,
       duration: isMobile ? 1.2 : 1.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
@@ -2021,13 +2017,8 @@ export default function Overlay() {
       <ScrollToTopButton onScrollToTop={() => scrollToPosition(0)} />
       <QuickNav onNavigate={scrollToPosition} />
 
-      <div
-        ref={containerRef}
-        className="fixed inset-0 overflow-y-auto z-20"
-      >
-        {/* Taller scroll area on mobile for better section separation */}
-        <div className="h-[800vh] md:h-[500vh]" />
-      </div>
+      {/* Scroll height container - creates the scrollable document */}
+      <div className="h-[800vh] md:h-[500vh] pointer-events-none" />
 
       <IntroSection />
       <HeroSection />
