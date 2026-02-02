@@ -181,8 +181,10 @@ function IntroSection() {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="mb-8"
         >
-          <span className="text-[#2F6364] text-6xl md:text-8xl font-bold tracking-tighter">
-            DT+C
+          <span className="text-6xl md:text-8xl font-bold tracking-tighter">
+            <span className="text-[#F9F5F0]">DT</span>
+            <span className="text-[#FF7F6B]">+</span>
+            <span className="text-[#F9F5F0]">C</span>
           </span>
         </motion.div>
 
@@ -190,7 +192,7 @@ function IntroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.2 }}
-          className="text-white/40 text-sm tracking-[0.3em] uppercase mb-12"
+          className="text-[#E3D3C5] text-sm tracking-[0.3em] uppercase mb-12"
         >
           Scroll to begin
         </motion.p>
@@ -207,11 +209,11 @@ function IntroSection() {
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
             className="flex flex-col items-center gap-2"
           >
-            <div className="w-px h-16 bg-gradient-to-b from-transparent via-[#2F6364]/50 to-[#2F6364]" />
+            <div className="w-px h-16 bg-gradient-to-b from-transparent via-[#FF7F6B]/50 to-[#FF7F6B]" />
             <motion.div
               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="w-2 h-2 rounded-full bg-[#2F6364]"
+              className="w-2 h-2 rounded-full bg-[#FF7F6B]"
             />
           </motion.div>
         </motion.div>
@@ -275,7 +277,7 @@ function HeroSection() {
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[0.9] tracking-[-0.03em] mb-8 overflow-hidden">
           <motion.span
-            className="block text-[#2F6364]"
+            className="block text-[#A8E6CF]"
             style={{
               opacity: Math.min(1, revealProgress * 1.5),
               transform: `translateY(${(1 - Math.min(1, revealProgress * 1.5)) * 60}px)`
@@ -321,8 +323,8 @@ function HeroSection() {
             { value: "3x", label: "CONCEPTS" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#2F6364] block tracking-tight">{stat.value}</span>
-              <span className="text-[10px] sm:text-xs text-white/40 tracking-[0.2em] font-medium">{stat.label}</span>
+              <span className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[#A8E6CF] block tracking-tight">{stat.value}</span>
+              <span className="text-[10px] sm:text-xs text-[#E3D3C5] tracking-[0.2em] font-medium">{stat.label}</span>
             </div>
           ))}
         </motion.div>
@@ -887,7 +889,7 @@ function AIDifferentiatorSection() {
       <div className="px-4 sm:px-6 max-w-5xl w-full overflow-y-auto max-h-[80vh]">
         <motion.div className="text-center mb-6 sm:mb-12">
           <motion.p
-            className="text-[#2F6364] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-2 sm:mb-4"
+            className="text-[#A8E6CF] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-2 sm:mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
           >
@@ -897,7 +899,7 @@ function AIDifferentiatorSection() {
             <TextReveal type="words" stagger={0.05}>
               AI-Augmented
             </TextReveal>{" "}
-            <span className="italic text-[#2F6364]">
+            <span className="italic text-[#A8E6CF]">
               <TextReveal type="words" stagger={0.05} delay={0.15}>
                 Creative
               </TextReveal>
@@ -942,7 +944,7 @@ function AIDifferentiatorSection() {
                     <span className="text-white/40 text-[10px] sm:text-sm line-through">{step.traditional}</span>
                   </div>
                   <div className="flex items-start gap-1 sm:gap-2">
-                    <span className="text-[#2F6364] text-[10px] sm:text-xs mt-0.5 font-semibold">NEW</span>
+                    <span className="text-[#A8E6CF] text-[10px] sm:text-xs mt-0.5 font-semibold">NEW</span>
                     <span className="text-white/70 text-[10px] sm:text-sm">{step.aiPowered}</span>
                   </div>
                 </div>
@@ -1224,7 +1226,7 @@ function CTASection() {
   return (
     <ContentSection scrollStart={0.73} scrollEnd={1}>
       <div className="px-4 sm:px-6 text-center max-w-3xl pointer-events-auto">
-        <span className="text-[#2F6364] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-4 block">Let&apos;s Talk</span>
+        <span className="text-[#A8E6CF] text-[10px] sm:text-xs font-medium tracking-[0.3em] uppercase mb-4 block">Let&apos;s Talk</span>
         <h2 className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-white mb-4 sm:mb-6 tracking-tight">
           <TextReveal type="words" stagger={0.04}>
             Ready to build
@@ -1394,7 +1396,7 @@ function ReturnAnimation() {
       {/* Logo flash at the end */}
       {returnProgress > 0.8 && (
         <motion.span
-          className="absolute text-[#2F6364] text-6xl md:text-8xl font-bold tracking-tighter"
+          className="absolute text-[#A8E6CF] text-6xl md:text-8xl font-bold tracking-tighter"
           initial={{ opacity: 0, scale: 1.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
@@ -1750,7 +1752,7 @@ function LoadingScreen() {
       <div
         className="absolute inset-0"
         style={{
-          background: `radial-gradient(ellipse at center, transparent 0%, rgba(53, 30, 40, ${0.8 - introProgress * 0.8}) 100%)`,
+          background: `radial-gradient(ellipse at center, transparent 0%, rgba(74, 59, 51, ${0.8 - introProgress * 0.8}) 100%)`,
         }}
       />
 
@@ -1799,7 +1801,7 @@ function LoadingScreen() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="text-white/60 text-sm sm:text-base tracking-[0.25em] uppercase"
+          className="text-[#E3D3C5] text-sm sm:text-base tracking-[0.25em] uppercase"
         >
           AI-Powered Creative
         </motion.p>
@@ -1818,7 +1820,7 @@ function LoadingScreen() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             transition={{ delay: 0.5 }}
-            className="mt-6 text-white/30 text-xs tracking-[0.3em] uppercase"
+            className="mt-6 text-[#E3D3C5]/60 text-xs tracking-[0.3em] uppercase"
           >
             Entering Experience
           </motion.p>
