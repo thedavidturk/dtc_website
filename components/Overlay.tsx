@@ -1364,6 +1364,40 @@ function BackgroundDimmer() {
   );
 }
 
+function ScrollToTopButton({ onScrollToTop }: { onScrollToTop: () => void }) {
+  const scroll = useStore((state) => state.scroll);
+  const isVisible = scroll > 0.15;
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 20 }}
+          transition={{ duration: 0.2 }}
+          onClick={onScrollToTop}
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#FF5C34] text-white shadow-lg shadow-[#FF5C34]/25 flex items-center justify-center hover:bg-[#ff7a5a] active:scale-95 transition-all"
+          aria-label="Scroll to top"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M18 15l-6-6-6 6" />
+          </svg>
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function Overlay() {
   const containerRef = useRef<HTMLDivElement>(null);
   const lenisRef = useRef<Lenis | null>(null);
@@ -1433,6 +1467,7 @@ export default function Overlay() {
       <BackgroundDimmer />
       <Navigation onNavigate={scrollToPosition} />
       <ScrollIndicator />
+      <ScrollToTopButton onScrollToTop={() => scrollToPosition(0)} />
 
       <div
         ref={containerRef}
