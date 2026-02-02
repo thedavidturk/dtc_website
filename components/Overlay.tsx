@@ -605,230 +605,124 @@ function CapabilitiesSection({ onCapabilityClick }: { onCapabilityClick: (cap: C
           </TextReveal>
         </div>
 
-        {/* Mobile: Full-width stacked cards */}
-        <div className="md:hidden pointer-events-auto space-y-4">
+        {/* Mobile: Clean stacked cards - touch-action allows scroll */}
+        <div className="md:hidden space-y-3" style={{ touchAction: 'pan-y' }}>
           {CAPABILITIES.map((cap, i) => (
             <motion.div
               key={cap.title}
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-              viewport={{ once: true, margin: "-50px" }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05, duration: 0.4 }}
+              viewport={{ once: true, margin: "-20px" }}
+              onClick={() => onCapabilityClick(cap)}
+              className="relative p-5 rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 active:scale-[0.98] transition-transform pointer-events-auto"
+              style={{ touchAction: 'manipulation' }}
             >
-              <motion.div
-                onClick={() => onCapabilityClick(cap)}
-                onTouchStart={() => setHoveredCard('service', i, cap.color)}
-                onTouchEnd={() => setHoveredCard(null, -1, null)}
-                className="relative overflow-hidden rounded-2xl active:scale-[0.98] transition-transform"
-                style={{ perspective: "1000px" }}
-              >
-                {/* Gradient background */}
-                <div
-                  className="absolute inset-0 opacity-20"
-                  style={{
-                    background: `linear-gradient(135deg, ${cap.color}40 0%, transparent 60%)`,
-                  }}
-                />
+              {/* Color accent */}
+              <div
+                className="absolute top-0 left-0 w-1 h-full rounded-l-2xl"
+                style={{ backgroundColor: cap.color }}
+              />
 
-                {/* Glass card */}
-                <div className="relative p-6 border border-white/10 rounded-2xl bg-black/40 backdrop-blur-xl">
-                  {/* Number badge */}
-                  <div
-                    className="absolute -top-3 -right-3 w-16 h-16 rounded-full flex items-center justify-center text-3xl font-black opacity-20"
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <span
+                    className="text-[10px] font-bold tracking-wider uppercase"
                     style={{ color: cap.color }}
                   >
                     {cap.icon}
-                  </div>
-
-                  {/* Colored line */}
-                  <div
-                    className="w-12 h-1 rounded-full mb-4"
-                    style={{ backgroundColor: cap.color }}
-                  />
-
-                  <h3 className="text-xl font-bold text-white mb-2">
+                  </span>
+                  <h3 className="text-lg font-bold text-white mt-1">
                     {cap.title}
                   </h3>
-                  <p className="text-sm text-white/50 leading-relaxed mb-4">
+                  <p className="text-xs text-white/50 mt-1 line-clamp-2">
                     {cap.description}
                   </p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {cap.services.slice(0, 2).map((service) => (
-                      <span
-                        key={service}
-                        className="px-3 py-1 text-[10px] rounded-full bg-white/5 text-white/40 border border-white/10"
-                      >
-                        {service.split(" ").slice(0, 2).join(" ")}
-                      </span>
-                    ))}
-                    <span
-                      className="px-3 py-1 text-[10px] rounded-full border border-white/20 text-white/60"
-                      style={{ borderColor: `${cap.color}40` }}
-                    >
-                      +{cap.services.length - 2} more →
-                    </span>
-                  </div>
                 </div>
-              </motion.div>
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: `${cap.color}20` }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={cap.color} strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Desktop: Immersive Bento Grid */}
-        <div className="hidden md:block pointer-events-auto max-w-7xl mx-auto">
-          <div className="grid grid-cols-12 gap-4 lg:gap-6" style={{ perspective: "2000px" }}>
-            {CAPABILITIES.map((cap, i) => {
-              // Bento layout: first card spans more columns
-              const isLarge = i === 0;
-              const colSpan = isLarge ? "col-span-7" : i === 1 ? "col-span-5" : i === 2 ? "col-span-5" : "col-span-7";
-              const rowSpan = isLarge ? "row-span-2" : "";
+        {/* Desktop: Clean 2x2 grid */}
+        <div className="hidden md:grid md:grid-cols-2 gap-4 lg:gap-6 max-w-5xl mx-auto">
+          {CAPABILITIES.map((cap, i) => (
+            <motion.div
+              key={cap.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              viewport={{ once: true, margin: "-50px" }}
+              onClick={() => onCapabilityClick(cap)}
+              onMouseEnter={() => setHoveredCard('service', i, cap.color)}
+              onMouseLeave={() => setHoveredCard(null, -1, null)}
+              data-card
+              data-cursor="view"
+              data-cursor-text="Explore"
+              className="group relative p-8 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 cursor-pointer hover:border-white/20 transition-all pointer-events-auto"
+            >
+              {/* Left accent */}
+              <div
+                className="absolute top-0 left-0 w-1 h-full rounded-l-2xl transition-all group-hover:w-1.5"
+                style={{ backgroundColor: cap.color }}
+              />
 
-              return (
-                <motion.div
-                  key={cap.title}
-                  className={`${colSpan} ${rowSpan}`}
-                  initial={{ opacity: 0, y: 60, rotateX: -15 }}
-                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                  transition={{
-                    delay: i * 0.1,
-                    duration: 0.8,
-                    ease: [0.23, 1, 0.32, 1],
-                  }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  style={{ transformStyle: "preserve-3d" }}
+              {/* Number watermark */}
+              <div
+                className="absolute top-4 right-4 text-7xl font-black opacity-5 group-hover:opacity-10 transition-opacity select-none"
+                style={{ color: cap.color }}
+              >
+                {cap.icon}
+              </div>
+
+              {/* Content */}
+              <div className="relative">
+                <span
+                  className="text-xs font-bold tracking-wider uppercase"
+                  style={{ color: cap.color }}
                 >
-                  <motion.div
-                    onClick={() => onCapabilityClick(cap)}
-                    onMouseEnter={() => setHoveredCard('service', i, cap.color)}
-                    onMouseLeave={() => setHoveredCard(null, -1, null)}
-                    data-card
-                    data-cursor="view"
-                    data-cursor-text="Explore"
-                    className="group relative h-full min-h-[280px] lg:min-h-[320px] overflow-hidden rounded-3xl cursor-pointer"
-                    whileHover={{
-                      scale: 1.02,
-                      rotateY: 2,
-                      rotateX: -2,
-                      z: 50,
-                    }}
-                    transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                    style={{ transformStyle: "preserve-3d" }}
-                  >
-                    {/* Animated gradient background */}
-                    <motion.div
-                      className="absolute inset-0"
-                      style={{
-                        background: `radial-gradient(ellipse at 30% 20%, ${cap.color}30 0%, transparent 50%),
-                                    radial-gradient(ellipse at 70% 80%, ${cap.color}20 0%, transparent 50%),
-                                    linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%)`,
-                      }}
-                      animate={{
-                        background: [
-                          `radial-gradient(ellipse at 30% 20%, ${cap.color}30 0%, transparent 50%),
-                           radial-gradient(ellipse at 70% 80%, ${cap.color}20 0%, transparent 50%),
-                           linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%)`,
-                          `radial-gradient(ellipse at 70% 30%, ${cap.color}30 0%, transparent 50%),
-                           radial-gradient(ellipse at 30% 70%, ${cap.color}20 0%, transparent 50%),
-                           linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 100%)`,
-                        ],
-                      }}
-                      transition={{ duration: 8, repeat: Infinity, repeatType: "reverse" }}
-                    />
+                  Service {cap.icon}
+                </span>
+                <h3 className="text-2xl font-bold text-white mt-2 mb-3 group-hover:text-white transition-colors">
+                  {cap.title}
+                </h3>
+                <p className="text-white/50 leading-relaxed mb-6 group-hover:text-white/70 transition-colors">
+                  {cap.description}
+                </p>
 
-                    {/* Glass layer */}
-                    <div className="absolute inset-0 bg-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl" />
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {cap.services.slice(0, 3).map((service) => (
+                    <span
+                      key={service}
+                      className="px-3 py-1 text-xs rounded-full bg-white/5 text-white/40 border border-white/5"
+                    >
+                      {service.split(" ").slice(0, 2).join(" ")}
+                    </span>
+                  ))}
+                </div>
 
-                    {/* Hover glow */}
-                    <motion.div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"
-                      style={{
-                        boxShadow: `inset 0 0 80px ${cap.color}20, 0 0 60px ${cap.color}30`,
-                      }}
-                    />
-
-                    {/* Content */}
-                    <div className="relative h-full p-6 lg:p-8 flex flex-col justify-between z-10">
-                      {/* Top section */}
-                      <div>
-                        {/* Large number watermark */}
-                        <div
-                          className="absolute top-4 right-4 text-[120px] lg:text-[180px] font-black leading-none opacity-[0.04] group-hover:opacity-[0.08] transition-opacity select-none"
-                          style={{ color: cap.color }}
-                        >
-                          {cap.icon}
-                        </div>
-
-                        {/* Icon pill */}
-                        <motion.div
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-6"
-                          style={{
-                            borderColor: `${cap.color}40`,
-                            backgroundColor: `${cap.color}10`,
-                          }}
-                          whileHover={{ scale: 1.05 }}
-                        >
-                          <div
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: cap.color }}
-                          />
-                          <span className="text-xs font-medium text-white/70">
-                            Service {cap.icon}
-                          </span>
-                        </motion.div>
-
-                        {/* Title */}
-                        <h3 className={`font-bold text-white mb-3 group-hover:text-white transition-colors ${isLarge ? 'text-3xl lg:text-4xl' : 'text-xl lg:text-2xl'}`}>
-                          {cap.title}
-                        </h3>
-
-                        {/* Description */}
-                        <p className={`text-white/50 leading-relaxed group-hover:text-white/70 transition-colors ${isLarge ? 'text-base lg:text-lg max-w-md' : 'text-sm'}`}>
-                          {cap.description}
-                        </p>
-                      </div>
-
-                      {/* Bottom section */}
-                      <div className="mt-6">
-                        {/* Service tags */}
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {cap.services.slice(0, isLarge ? 4 : 2).map((service) => (
-                            <span
-                              key={service}
-                              className="px-3 py-1.5 text-[11px] rounded-full bg-white/5 text-white/40 border border-white/5 group-hover:border-white/10 group-hover:text-white/60 transition-all"
-                            >
-                              {service.split(" ").slice(0, 3).join(" ")}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* CTA */}
-                        <motion.div
-                          className="flex items-center gap-2 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity"
-                          style={{ color: cap.color }}
-                        >
-                          <span>Explore service</span>
-                          <motion.svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            animate={{ x: [0, 4, 0] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                          >
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                          </motion.svg>
-                        </motion.div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              );
-            })}
-          </div>
+                {/* CTA */}
+                <div
+                  className="flex items-center gap-2 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ color: cap.color }}
+                >
+                  <span>Learn more</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </ContentSection>
@@ -1071,7 +965,7 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
     <ContentSection scrollStart={0.50} scrollEnd={0.64}>
       <div className="w-full px-4 sm:px-6 lg:px-8">
         {/* Section header */}
-        <div className="text-center mb-8 sm:mb-16">
+        <div className="text-center mb-8 sm:mb-12">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1079,276 +973,134 @@ function ProjectsSection({ onProjectClick }: { onProjectClick: (project: Project
           >
             Selected Work
           </motion.span>
-          <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-white tracking-tight">
-            <TextReveal type="words" stagger={0.05}>
-              Projects that
-            </TextReveal>{" "}
-            <span className="relative inline-block">
-              <motion.span
-                className="text-[#FF7F6B]"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-              >
-                deliver
-              </motion.span>
-              <motion.span
-                className="absolute -bottom-2 left-0 right-0 h-1 bg-[#FF7F6B]"
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-              />
-            </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+            Projects that{" "}
+            <span className="text-[#FF7F6B]">deliver</span>
           </h2>
         </div>
 
-        {/* Mobile: Full-width stacked cards with parallax */}
-        <div className="md:hidden pointer-events-auto space-y-6">
+        {/* Mobile: Clean stacked cards - scroll-friendly */}
+        <div className="md:hidden space-y-3" style={{ touchAction: 'pan-y' }}>
           {PROJECTS.map((project, i) => (
             <motion.div
               key={project.title}
-              initial={{ opacity: 0, y: 80 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
-              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.05, duration: 0.4 }}
+              viewport={{ once: true, margin: "-20px" }}
+              onClick={() => onProjectClick(project)}
+              className="relative p-5 rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 active:scale-[0.98] transition-transform pointer-events-auto"
+              style={{ touchAction: 'manipulation' }}
             >
-              <motion.div
-                onClick={() => onProjectClick(project)}
-                onTouchStart={() => setHoveredCard('project', i, project.color)}
-                onTouchEnd={() => setHoveredCard(null, -1, null)}
-                className="relative overflow-hidden rounded-3xl active:scale-[0.98] transition-transform"
-              >
-                {/* Gradient background */}
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: `linear-gradient(135deg, ${project.color}20 0%, transparent 40%),
-                                linear-gradient(225deg, ${project.color}15 0%, transparent 50%),
-                                rgba(0,0,0,0.6)`,
-                  }}
-                />
+              {/* Color accent */}
+              <div
+                className="absolute top-0 left-0 w-1 h-full rounded-l-2xl"
+                style={{ backgroundColor: project.color }}
+              />
 
-                {/* Glass card */}
-                <div className="relative p-6 border border-white/10 rounded-3xl backdrop-blur-xl">
-                  {/* Project number */}
-                  <div
-                    className="absolute top-4 right-4 text-6xl font-black opacity-10"
-                    style={{ color: project.color }}
-                  >
-                    0{i + 1}
-                  </div>
-
-                  {/* Category pill */}
-                  <div
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border mb-4"
-                    style={{
-                      borderColor: `${project.color}40`,
-                      backgroundColor: `${project.color}10`,
-                    }}
-                  >
-                    <div
-                      className="w-1.5 h-1.5 rounded-full"
-                      style={{ backgroundColor: project.color }}
-                    />
-                    <span className="text-[10px] font-medium text-white/60">
-                      {project.category}
-                    </span>
-                  </div>
-
-                  <h3 className="text-2xl font-bold text-white mb-3">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <span className="text-[10px] text-white/40 uppercase tracking-wider">
+                    {project.category}
+                  </span>
+                  <h3 className="text-lg font-bold text-white mt-1">
                     {project.title}
                   </h3>
-                  <p className="text-sm text-white/50 leading-relaxed mb-4">
+                  <p className="text-xs text-white/50 mt-1 line-clamp-2">
                     {project.description}
                   </p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag) => (
+                  <div className="flex gap-1.5 mt-3">
+                    {project.tags.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 text-[10px] rounded-full bg-white/5 text-white/40 border border-white/10"
+                        className="px-2 py-0.5 text-[9px] rounded-full bg-white/5 text-white/40"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
-
-                  {/* View CTA */}
-                  <div
-                    className="flex items-center gap-2 text-sm font-medium"
-                    style={{ color: project.color }}
-                  >
-                    <span>View case study</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </div>
                 </div>
-              </motion.div>
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: `${project.color}20` }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={project.color} strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Desktop: Immersive showcase layout */}
-        <div className="hidden md:block pointer-events-auto max-w-7xl mx-auto">
-          <div className="space-y-8" style={{ perspective: "2000px" }}>
-            {PROJECTS.map((project, i) => {
-              // Alternate layout direction
-              const isReversed = i % 2 === 1;
+        {/* Desktop: Clean 2x2 grid */}
+        <div className="hidden md:grid md:grid-cols-2 gap-4 lg:gap-6 max-w-5xl mx-auto">
+          {PROJECTS.map((project, i) => (
+            <motion.div
+              key={project.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              viewport={{ once: true, margin: "-50px" }}
+              onClick={() => onProjectClick(project)}
+              onMouseEnter={() => setHoveredCard('project', i, project.color)}
+              onMouseLeave={() => setHoveredCard(null, -1, null)}
+              data-card
+              data-cursor="view"
+              data-cursor-text="View"
+              className="group relative p-8 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 cursor-pointer hover:border-white/20 transition-all pointer-events-auto"
+            >
+              {/* Left accent */}
+              <div
+                className="absolute top-0 left-0 w-1 h-full rounded-l-2xl transition-all group-hover:w-1.5"
+                style={{ backgroundColor: project.color }}
+              />
 
-              return (
-                <motion.div
-                  key={project.title}
-                  initial={{ opacity: 0, y: 100, rotateX: -10 }}
-                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                  transition={{
-                    duration: 0.9,
-                    ease: [0.23, 1, 0.32, 1],
-                  }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  style={{ transformStyle: "preserve-3d" }}
+              {/* Number watermark */}
+              <div
+                className="absolute top-4 right-4 text-6xl font-black opacity-5 group-hover:opacity-10 transition-opacity select-none"
+                style={{ color: project.color }}
+              >
+                0{i + 1}
+              </div>
+
+              {/* Content */}
+              <div className="relative">
+                <span className="text-xs text-white/40 uppercase tracking-wider">
+                  {project.category}
+                </span>
+                <h3 className="text-2xl font-bold text-white mt-2 mb-3 group-hover:text-white transition-colors">
+                  {project.title}
+                </h3>
+                <p className="text-white/50 leading-relaxed mb-6 group-hover:text-white/70 transition-colors">
+                  {project.description}
+                </p>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 text-xs rounded-full bg-white/5 text-white/40 border border-white/5"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <div
+                  className="flex items-center gap-2 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ color: project.color }}
                 >
-                  <motion.div
-                    onClick={() => onProjectClick(project)}
-                    onMouseEnter={() => setHoveredCard('project', i, project.color)}
-                    onMouseLeave={() => setHoveredCard(null, -1, null)}
-                    data-card
-                    data-cursor="view"
-                    data-cursor-text="View Case"
-                    className={`group relative overflow-hidden rounded-3xl cursor-pointer flex ${isReversed ? 'flex-row-reverse' : 'flex-row'}`}
-                    whileHover={{
-                      scale: 1.01,
-                      y: -5,
-                    }}
-                    transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                  >
-                    {/* Visual side - Abstract gradient art */}
-                    <div className="relative w-2/5 min-h-[350px] overflow-hidden">
-                      {/* Animated gradient background */}
-                      <motion.div
-                        className="absolute inset-0"
-                        style={{
-                          background: `radial-gradient(circle at 30% 30%, ${project.color}60 0%, transparent 50%),
-                                      radial-gradient(circle at 70% 70%, ${project.color}40 0%, transparent 50%),
-                                      radial-gradient(circle at 50% 50%, ${project.color}20 0%, transparent 70%),
-                                      linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%)`,
-                        }}
-                        animate={{
-                          background: [
-                            `radial-gradient(circle at 30% 30%, ${project.color}60 0%, transparent 50%),
-                             radial-gradient(circle at 70% 70%, ${project.color}40 0%, transparent 50%),
-                             radial-gradient(circle at 50% 50%, ${project.color}20 0%, transparent 70%),
-                             linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%)`,
-                            `radial-gradient(circle at 70% 30%, ${project.color}60 0%, transparent 50%),
-                             radial-gradient(circle at 30% 70%, ${project.color}40 0%, transparent 50%),
-                             radial-gradient(circle at 50% 50%, ${project.color}20 0%, transparent 70%),
-                             linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%)`,
-                          ],
-                        }}
-                        transition={{ duration: 6, repeat: Infinity, repeatType: "reverse" }}
-                      />
-
-                      {/* Large project number */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <motion.span
-                          className="text-[200px] font-black opacity-10 select-none"
-                          style={{ color: project.color }}
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 4, repeat: Infinity }}
-                        >
-                          {String(i + 1).padStart(2, '0')}
-                        </motion.span>
-                      </div>
-
-                      {/* Floating tags overlay */}
-                      <div className="absolute bottom-6 left-6 right-6 flex flex-wrap gap-2">
-                        {project.tags.map((tag, tagIndex) => (
-                          <motion.span
-                            key={tag}
-                            className="px-3 py-1.5 text-xs rounded-full bg-black/50 backdrop-blur-md text-white/70 border border-white/10"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 + tagIndex * 0.1 }}
-                          >
-                            {tag}
-                          </motion.span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Content side */}
-                    <div className="relative w-3/5 p-10 lg:p-12 bg-black/40 backdrop-blur-xl border border-white/10 flex flex-col justify-between">
-                      {/* Hover glow */}
-                      <motion.div
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                        style={{
-                          background: `radial-gradient(ellipse at ${isReversed ? 'right' : 'left'} center, ${project.color}10 0%, transparent 70%)`,
-                        }}
-                      />
-
-                      <div className="relative z-10">
-                        {/* Category */}
-                        <motion.div
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-6"
-                          style={{
-                            borderColor: `${project.color}40`,
-                            backgroundColor: `${project.color}10`,
-                          }}
-                        >
-                          <div
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: project.color }}
-                          />
-                          <span className="text-xs font-medium text-white/70">
-                            {project.category}
-                          </span>
-                        </motion.div>
-
-                        {/* Title */}
-                        <h3 className="text-3xl lg:text-4xl font-bold text-white mb-4 group-hover:text-white transition-colors">
-                          {project.title}
-                        </h3>
-
-                        {/* Description */}
-                        <p className="text-white/50 text-lg leading-relaxed group-hover:text-white/70 transition-colors max-w-lg">
-                          {project.description}
-                        </p>
-                      </div>
-
-                      {/* CTA */}
-                      <div className="relative z-10 mt-8">
-                        <motion.div
-                          className="inline-flex items-center gap-3 text-base font-semibold group-hover:gap-4 transition-all"
-                          style={{ color: project.color }}
-                        >
-                          <span>View case study</span>
-                          <motion.div
-                            className="w-10 h-10 rounded-full border-2 flex items-center justify-center group-hover:bg-white/10 transition-colors"
-                            style={{ borderColor: project.color }}
-                            whileHover={{ scale: 1.1, rotate: 45 }}
-                          >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M7 17L17 7M17 7H7M17 7V17" />
-                            </svg>
-                          </motion.div>
-                        </motion.div>
-                      </div>
-
-                      {/* Bottom accent line */}
-                      <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-1 origin-left"
-                        style={{ backgroundColor: project.color }}
-                        initial={{ scaleX: 0 }}
-                        whileHover={{ scaleX: 1 }}
-                        transition={{ duration: 0.4 }}
-                      />
-                    </div>
-                  </motion.div>
-                </motion.div>
-              );
-            })}
-          </div>
+                  <span>View case study</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </ContentSection>
@@ -2036,18 +1788,17 @@ function LoadingScreen() {
 function BackgroundDimmer() {
   const scroll = useStore((state) => state.scroll);
 
-  // Dim more during hero section (0.05 to 0.32)
+  // Lighter dimming to let Three.js shine through
   let dimOpacity = 0;
 
   if (scroll < 0.05) {
-    // During intro - slight dim
-    dimOpacity = scroll * 4; // 0 to 0.2
+    dimOpacity = scroll * 2; // 0 to 0.1
   } else if (scroll < 0.32) {
-    // During hero - strong dim for readability
-    dimOpacity = 0.75;
+    // During hero - moderate dim for readability
+    dimOpacity = 0.4;
   } else {
-    // After hero - gradual return
-    dimOpacity = Math.max(0.5, 0.75 - (scroll - 0.32) * 0.5);
+    // After hero - very light dim to show Three.js
+    dimOpacity = Math.max(0.25, 0.4 - (scroll - 0.32) * 0.3);
   }
 
   return (
@@ -2055,6 +1806,70 @@ function BackgroundDimmer() {
       className="fixed inset-0 pointer-events-none z-[2] bg-[#4A3B33]"
       style={{ opacity: dimOpacity }}
     />
+  );
+}
+
+// Quick navigation floating menu
+function QuickNav({ onNavigate }: { onNavigate: (position: number) => void }) {
+  const scroll = useStore((state) => state.scroll);
+  const setContactOpen = useStore((state) => state.setContactOpen);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Only show after intro
+  if (scroll < 0.1) return null;
+
+  const sections = [
+    { label: "Services", position: 0.34, icon: "◆" },
+    { label: "Work", position: 0.54, icon: "◈" },
+    { label: "Process", position: 0.67, icon: "◇" },
+  ];
+
+  return (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:hidden">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 bg-black/80 backdrop-blur-xl rounded-2xl p-2 border border-white/10"
+          >
+            {sections.map((section) => (
+              <button
+                key={section.label}
+                onClick={() => {
+                  onNavigate(section.position);
+                  setIsOpen(false);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
+              >
+                {section.label}
+              </button>
+            ))}
+            <button
+              onClick={() => {
+                setContactOpen(true);
+                setIsOpen(false);
+              }}
+              className="px-4 py-2 rounded-xl text-xs font-medium bg-[#FF7F6B] text-white"
+            >
+              Contact
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-14 h-14 rounded-full bg-black/80 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-lg"
+        whileTap={{ scale: 0.95 }}
+        animate={{ rotate: isOpen ? 45 : 0 }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </motion.button>
+    </div>
   );
 }
 
@@ -2204,6 +2019,7 @@ export default function Overlay() {
       <Navigation onNavigate={scrollToPosition} />
       <ScrollIndicator />
       <ScrollToTopButton onScrollToTop={() => scrollToPosition(0)} />
+      <QuickNav onNavigate={scrollToPosition} />
 
       <div
         ref={containerRef}
