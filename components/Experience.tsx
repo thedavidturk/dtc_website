@@ -3,23 +3,22 @@
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
-  Environment,
   MeshDistortMaterial,
   Sphere,
   Float,
+  Environment,
 } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useStore } from "@/store/useStore";
 
-// Colors
 const DEEP_SPACE = "#0a0908";
 const PERSIMMON = "#FF7F6B";
 const NEO_MINT = "#A8E6CF";
 const TEAL = "#2F6364";
 const CREAM = "#F9F5F0";
 
-// The main morphing blob - using MeshDistortMaterial for stable distortion
+// Main morphing blob inspired by Blobmixer
 function MorphingBlob() {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<any>(null);
@@ -36,7 +35,7 @@ function MorphingBlob() {
     meshRef.current.rotation.x = Math.sin(time * 0.1) * 0.2;
 
     // Mouse influence on position
-    const mouseInfluence = 1 - scroll * 0.8;
+    const mouseInfluence = 1 - scroll * 0.7;
     meshRef.current.position.x = mousePosition.x * 0.5 * mouseInfluence;
     meshRef.current.position.y = mousePosition.y * 0.4 * mouseInfluence;
 
@@ -45,27 +44,23 @@ function MorphingBlob() {
     meshRef.current.scale.setScalar(breathe);
 
     // Update material color based on hover
-    if (materialRef.current) {
+    if (materialRef.current && materialRef.current.color) {
       const targetColor = new THREE.Color(hoveredCard.color || PERSIMMON);
       materialRef.current.color.lerp(targetColor, 0.05);
     }
   });
-
-  // Distortion amount varies slightly with scroll
-  const distort = 0.4 + scroll * 0.1;
 
   return (
     <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
       <Sphere ref={meshRef} args={[1, 64, 64]}>
         <MeshDistortMaterial
           ref={materialRef}
-          color={hoveredCard.color || PERSIMMON}
-          envMapIntensity={1}
-          clearcoat={1}
-          clearcoatRoughness={0}
+          color={PERSIMMON}
+          emissive={PERSIMMON}
+          emissiveIntensity={0.2}
+          roughness={0.2}
           metalness={0.1}
-          roughness={0.1}
-          distort={distort}
+          distort={0.4}
           speed={2}
         />
       </Sphere>
@@ -73,51 +68,39 @@ function MorphingBlob() {
   );
 }
 
-// Glass-like inner blob
-function InnerBlob() {
+// Inner glowing core
+function InnerCore() {
   const meshRef = useRef<THREE.Mesh>(null);
-  const scroll = useStore((state) => state.scroll);
-  const hoveredCard = useStore((state) => state.hoveredCard);
 
   useFrame((state) => {
     if (!meshRef.current) return;
     const time = state.clock.elapsedTime;
 
-    meshRef.current.rotation.y = -time * 0.2;
-    meshRef.current.rotation.z = Math.sin(time * 0.15) * 0.3;
-
-    // Pulse
-    const pulse = 0.6 + Math.sin(time * 0.8) * 0.05;
+    meshRef.current.rotation.y = -time * 0.3;
+    const pulse = 0.5 + Math.sin(time * 0.8) * 0.05;
     meshRef.current.scale.setScalar(pulse);
   });
 
   return (
-    <Sphere ref={meshRef} args={[0.6, 32, 32]}>
-      <MeshDistortMaterial
-        color={hoveredCard.color || NEO_MINT}
-        envMapIntensity={2}
-        clearcoat={1}
-        clearcoatRoughness={0.1}
-        metalness={0}
-        roughness={0}
+    <Sphere ref={meshRef} args={[0.5, 32, 32]}>
+      <meshBasicMaterial
+        color={NEO_MINT}
         transparent
         opacity={0.6}
-        distort={0.3}
-        speed={3}
       />
     </Sphere>
   );
 }
 
-// Secondary smaller blobs that orbit around
+// Orbiting smaller blobs
 function OrbitingBlobs() {
   const groupRef = useRef<THREE.Group>(null);
   const scroll = useStore((state) => state.scroll);
 
   const blobs = useMemo(() => [
-    { distance: 2.2, size: 0.18, speed: 0.4, offset: 0, color: NEO_MINT, yOffset: 0 },
-    { distance: 2.6, size: 0.12, speed: -0.3, offset: Math.PI * 0.7, color: TEAL, yOffset: 0.3 },
-    { distance: 2.4, size: 0.15, speed: 0.35, offset: Math.PI * 1.4, color: CREAM, yOffset: -0.2 },
+    { distance: 2.2, size: 0.15, speed: 0.4, offset: 0, color: NEO_MINT },
+    { distance: 2.5, size: 0.1, speed: -0.3, offset: Math.PI * 0.7, color: TEAL },
+    { distance: 2.3, size: 0.12, speed: 0.35, offset: Math.PI * 1.4, color: CREAM },
   ], []);
 
   useFrame((state) => {
@@ -125,36 +108,20 @@ function OrbitingBlobs() {
     groupRef.current.rotation.y = state.clock.elapsedTime * 0.05;
   });
 
-  // Fade out orbiting blobs as user scrolls
-  const opacity = Math.max(0.2, 1 - scroll * 0.8);
-
   return (
     <group ref={groupRef}>
       {blobs.map((blob, i) => (
-        <OrbitingBlob key={i} {...blob} index={i} opacity={opacity} />
+        <OrbitingBlob key={i} {...blob} index={i} scroll={scroll} />
       ))}
     </group>
   );
 }
 
 function OrbitingBlob({
-  distance,
-  size,
-  speed,
-  offset,
-  color,
-  index,
-  yOffset,
-  opacity
+  distance, size, speed, offset, color, index, scroll
 }: {
-  distance: number;
-  size: number;
-  speed: number;
-  offset: number;
-  color: string;
-  index: number;
-  yOffset: number;
-  opacity: number;
+  distance: number; size: number; speed: number; offset: number;
+  color: string; index: number; scroll: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
 
@@ -162,67 +129,47 @@ function OrbitingBlob({
     if (!meshRef.current) return;
     const time = state.clock.elapsedTime;
 
-    // Orbit around center
     const angle = time * speed + offset;
     meshRef.current.position.x = Math.cos(angle) * distance;
     meshRef.current.position.z = Math.sin(angle) * distance;
-    meshRef.current.position.y = yOffset + Math.sin(time * 0.5 + index) * 0.3;
-
-    // Gentle rotation
-    meshRef.current.rotation.y = time * 0.5;
-    meshRef.current.rotation.x = time * 0.3;
+    meshRef.current.position.y = Math.sin(time * 0.5 + index) * 0.3;
   });
 
   return (
-    <Sphere ref={meshRef} args={[size, 24, 24]}>
-      <MeshDistortMaterial
+    <Sphere ref={meshRef} args={[size, 16, 16]}>
+      <meshStandardMaterial
         color={color}
-        envMapIntensity={1.5}
-        clearcoat={1}
-        clearcoatRoughness={0.2}
-        metalness={0}
-        roughness={0.2}
+        emissive={color}
+        emissiveIntensity={0.3}
         transparent
-        opacity={opacity}
-        distort={0.2}
-        speed={4}
+        opacity={Math.max(0.4, 1 - scroll)}
       />
     </Sphere>
   );
 }
 
 // Ambient particles
-function AmbientParticles() {
+function Particles() {
   const pointsRef = useRef<THREE.Points>(null);
   const scroll = useStore((state) => state.scroll);
 
-  const count = 100;
-
   const positions = useMemo(() => {
+    const count = 80;
     const pos = new Float32Array(count * 3);
-
     for (let i = 0; i < count; i++) {
       const radius = 4 + Math.random() * 6;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
-
       pos[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
       pos[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
       pos[i * 3 + 2] = radius * Math.cos(phi);
     }
-
     return pos;
   }, []);
 
   useFrame((state) => {
     if (!pointsRef.current) return;
-    const time = state.clock.elapsedTime;
-
-    pointsRef.current.rotation.y = time * 0.02;
-    pointsRef.current.rotation.x = time * 0.01;
-
-    // Fade based on scroll
-    (pointsRef.current.material as THREE.PointsMaterial).opacity = 0.3 + scroll * 0.4;
+    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.02;
   });
 
   return (
@@ -234,44 +181,11 @@ function AmbientParticles() {
         size={0.04}
         color={CREAM}
         transparent
-        opacity={0.3}
+        opacity={0.3 + scroll * 0.3}
         sizeAttenuation
         blending={THREE.AdditiveBlending}
       />
     </points>
-  );
-}
-
-// Outer glow ring
-function GlowRing() {
-  const ringRef = useRef<THREE.Mesh>(null);
-  const scroll = useStore((state) => state.scroll);
-  const hoveredCard = useStore((state) => state.hoveredCard);
-
-  useFrame((state) => {
-    if (!ringRef.current) return;
-    const time = state.clock.elapsedTime;
-
-    ringRef.current.rotation.x = Math.PI / 2 + Math.sin(time * 0.2) * 0.1;
-    ringRef.current.rotation.z = time * 0.1;
-
-    // Scale based on scroll
-    const scale = 1.8 + scroll * 0.3;
-    ringRef.current.scale.setScalar(scale);
-  });
-
-  const ringColor = hoveredCard.color || NEO_MINT;
-
-  return (
-    <mesh ref={ringRef} rotation={[Math.PI / 2, 0, 0]}>
-      <torusGeometry args={[1, 0.01, 16, 100]} />
-      <meshBasicMaterial
-        color={ringColor}
-        transparent
-        opacity={0.4}
-        blending={THREE.AdditiveBlending}
-      />
-    </mesh>
   );
 }
 
@@ -282,32 +196,28 @@ function CameraController() {
   const mousePosition = useStore((state) => state.mousePosition);
   const isReturning = useStore((state) => state.isReturning);
   const returnProgress = useStore((state) => state.returnProgress);
-  const targetPos = useRef({ x: 0, y: 0, z: 4 });
+  const targetPos = useRef({ x: 0, y: 0, z: 5 });
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
 
     let effectiveScroll = scroll;
-    let interpolationSpeed = 0.02;
-
     if (isReturning) {
       effectiveScroll = 1 - returnProgress;
-      interpolationSpeed = 0.05;
     }
 
-    // Camera journey - zoom out as user scrolls
-    const scrollEased = Math.pow(effectiveScroll, 0.5);
-    const targetZ = 4 + scrollEased * 5;
+    // Zoom out as user scrolls
+    const targetZ = 5 + effectiveScroll * 4;
 
-    // Mouse parallax (reduces as you scroll)
-    const mouseInfluence = 1 - effectiveScroll * 0.7;
-    const targetX = mousePosition.x * 0.6 * mouseInfluence + Math.sin(time * 0.1) * 0.08;
-    const targetY = mousePosition.y * 0.4 * mouseInfluence + Math.cos(time * 0.08) * 0.05;
+    // Mouse parallax
+    const mouseInfluence = 1 - effectiveScroll * 0.6;
+    const targetX = mousePosition.x * 0.5 * mouseInfluence;
+    const targetY = mousePosition.y * 0.3 * mouseInfluence;
 
     // Smooth interpolation
     targetPos.current.x += (targetX - targetPos.current.x) * 0.03;
     targetPos.current.y += (targetY - targetPos.current.y) * 0.03;
-    targetPos.current.z += (targetZ - targetPos.current.z) * interpolationSpeed;
+    targetPos.current.z += (targetZ - targetPos.current.z) * 0.02;
 
     camera.position.set(targetPos.current.x, targetPos.current.y, targetPos.current.z);
     camera.lookAt(0, 0, 0);
@@ -316,75 +226,36 @@ function CameraController() {
   return null;
 }
 
-// Post-processing effects
 function Effects() {
   return (
     <EffectComposer>
       <Bloom
-        intensity={0.6}
+        intensity={0.5}
         luminanceThreshold={0.2}
         luminanceSmoothing={0.9}
         mipmapBlur
-        radius={0.5}
       />
-      <Vignette offset={0.3} darkness={0.5} />
     </EffectComposer>
   );
 }
 
-// Main scene
 function Scene() {
   return (
     <>
       <color attach="background" args={[DEEP_SPACE]} />
-      <fog attach="fog" args={[DEEP_SPACE, 6, 20]} />
+      <fog attach="fog" args={[DEEP_SPACE, 8, 20]} />
 
-      {/* Environment for PBR reflections */}
       <Environment preset="night" />
 
-      {/* Lighting */}
-      <ambientLight intensity={0.15} />
-      <directionalLight
-        position={[5, 5, 5]}
-        intensity={0.4}
-        color="#ffffff"
-      />
-      <pointLight
-        position={[3, 2, 4]}
-        intensity={1.5}
-        color={PERSIMMON}
-        distance={12}
-      />
-      <pointLight
-        position={[-3, -1, 3]}
-        intensity={0.8}
-        color={NEO_MINT}
-        distance={10}
-      />
-      <pointLight
-        position={[0, -3, 2]}
-        intensity={0.4}
-        color={TEAL}
-        distance={8}
-      />
+      <ambientLight intensity={0.3} />
+      <pointLight position={[5, 5, 5]} intensity={1} color={PERSIMMON} />
+      <pointLight position={[-5, -3, 3]} intensity={0.5} color={NEO_MINT} />
 
       <CameraController />
-
-      {/* The hero blob */}
       <MorphingBlob />
-
-      {/* Inner glass blob */}
-      <InnerBlob />
-
-      {/* Glow ring */}
-      <GlowRing />
-
-      {/* Orbiting smaller blobs */}
+      <InnerCore />
       <OrbitingBlobs />
-
-      {/* Background particles */}
-      <AmbientParticles />
-
+      <Particles />
       <Effects />
     </>
   );
@@ -395,17 +266,12 @@ export default function Experience() {
 
   return (
     <Canvas
-      camera={{ position: [0, 0, 4], fov: 50 }}
+      camera={{ position: [0, 0, 5], fov: 50 }}
       dpr={[1, 2]}
       gl={{
         antialias: true,
-        alpha: false,
-        powerPreference: "high-performance",
         toneMapping: THREE.ACESFilmicToneMapping,
         toneMappingExposure: 1.2,
-      }}
-      onCreated={() => {
-        setLoaded(true);
       }}
       style={{
         position: "fixed",
@@ -414,8 +280,8 @@ export default function Experience() {
         width: "100%",
         height: "100%",
         zIndex: 5,
-        backgroundColor: DEEP_SPACE,
       }}
+      onCreated={() => setLoaded(true)}
     >
       <Scene />
     </Canvas>

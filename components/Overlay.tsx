@@ -1689,18 +1689,10 @@ function LoadingScreen() {
       className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
       style={{ opacity: overlayOpacity }}
     >
-      {/* Semi-transparent overlay that reveals the 3D scene */}
+      {/* Transparent overlay - Three.js shows through */}
       <motion.div
-        className="absolute inset-0 bg-[#4A3B33]"
-        style={{ opacity: phase === "waiting" ? 1 : 0.85 - introProgress * 0.85 }}
-      />
-
-      {/* Vignette effect */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(ellipse at center, transparent 0%, rgba(74, 59, 51, ${0.8 - introProgress * 0.8}) 100%)`,
-        }}
+        className="absolute inset-0 bg-[#0a0908]"
+        style={{ opacity: phase === "waiting" ? 0.9 : Math.max(0, 0.5 - introProgress) }}
       />
 
       {/* Logo content */}
