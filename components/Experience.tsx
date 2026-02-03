@@ -228,12 +228,15 @@ function Scene() {
 }
 
 export default function Experience() {
+  const setLoaded = useStore((state) => state.setLoaded);
+
   return (
     <Canvas
       camera={{ position: [0, 0, 5], fov: 50 }}
       dpr={[1, 2]}
       gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
       style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh" }}
+      onCreated={() => setLoaded(true)}
     >
       <Scene />
     </Canvas>
