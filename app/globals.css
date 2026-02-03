@@ -109,8 +109,9 @@ code, pre {
 
 /* Canvas optimization */
 canvas {
-  touch-action: none;
+  touch-action: pan-y;
   display: block;
+  pointer-events: none;
 }
 
 /* Smooth text rendering */

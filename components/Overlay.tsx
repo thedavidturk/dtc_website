@@ -1634,51 +1634,18 @@ function ShowreelModal() {
 }
 
 function LoadingScreen() {
+  // Completely disabled - no loading screen
+  return null;
+
+  /* Original code disabled for debugging
   const isLoaded = useStore((state) => state.isLoaded);
   const introProgress = useStore((state) => state.introProgress);
   const setIntroProgress = useStore((state) => state.setIntroProgress);
   const isIntroComplete = useStore((state) => state.isIntroComplete);
   const setIntroComplete = useStore((state) => state.setIntroComplete);
   const [phase, setPhase] = useState<"waiting" | "animating" | "done">("waiting");
-
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    // Three.js is ready, start the intro animation
-    setPhase("animating");
-
-    // Animate intro progress over 2.5 seconds
-    const duration = 2500;
-    const startTime = Date.now();
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(1, elapsed / duration);
-
-      setIntroProgress(progress);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        // Intro complete
-        setTimeout(() => {
-          setIntroComplete(true);
-          setPhase("done");
-        }, 300);
-      }
-    };
-
-    // Small delay before starting camera animation
-    setTimeout(() => {
-      requestAnimationFrame(animate);
-    }, 500);
-  }, [isLoaded, setIntroProgress, setIntroComplete]);
-
-  // Calculate overlay opacity - fades out as intro progresses
-  const overlayOpacity = phase === "waiting" ? 1 : Math.max(0, 1 - introProgress * 1.5);
-  const logoOpacity = phase === "waiting" ? 1 : Math.max(0, 1 - introProgress * 2);
-
   if (phase === "done") return null;
+  */
 
   return (
     <motion.div
