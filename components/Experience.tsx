@@ -2,12 +2,7 @@
 
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import {
-  MeshDistortMaterial,
-  Sphere,
-  Float,
-  Environment,
-} from "@react-three/drei";
+import { MeshDistortMaterial, Sphere, Float, Environment } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useStore } from "@/store/useStore";
@@ -18,7 +13,7 @@ const NEO_MINT = "#A8E6CF";
 const TEAL = "#2F6364";
 const CREAM = "#F9F5F0";
 
-// Main morphing blob inspired by Blobmixer
+// Main morphing blob - Blobmixer inspired
 function MorphingBlob() {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<any>(null);
@@ -34,17 +29,17 @@ function MorphingBlob() {
     meshRef.current.rotation.y = time * 0.15;
     meshRef.current.rotation.x = Math.sin(time * 0.1) * 0.2;
 
-    // Mouse influence on position
+    // Mouse follow
     const mouseInfluence = 1 - scroll * 0.7;
     meshRef.current.position.x = mousePosition.x * 0.5 * mouseInfluence;
     meshRef.current.position.y = mousePosition.y * 0.4 * mouseInfluence;
 
-    // Breathing scale
+    // Breathing
     const breathe = 1 + Math.sin(time * 0.5) * 0.05;
     meshRef.current.scale.setScalar(breathe);
 
-    // Update material color based on hover
-    if (materialRef.current && materialRef.current.color) {
+    // Color lerp on hover
+    if (materialRef.current?.color) {
       const targetColor = new THREE.Color(hoveredCard.color || PERSIMMON);
       materialRef.current.color.lerp(targetColor, 0.05);
     }
@@ -75,7 +70,6 @@ function InnerCore() {
   useFrame((state) => {
     if (!meshRef.current) return;
     const time = state.clock.elapsedTime;
-
     meshRef.current.rotation.y = -time * 0.3;
     const pulse = 0.5 + Math.sin(time * 0.8) * 0.05;
     meshRef.current.scale.setScalar(pulse);
@@ -83,16 +77,12 @@ function InnerCore() {
 
   return (
     <Sphere ref={meshRef} args={[0.5, 32, 32]}>
-      <meshBasicMaterial
-        color={NEO_MINT}
-        transparent
-        opacity={0.6}
-      />
+      <meshBasicMaterial color={NEO_MINT} transparent opacity={0.6} />
     </Sphere>
   );
 }
 
-// Orbiting smaller blobs
+// Orbiting blobs
 function OrbitingBlobs() {
   const groupRef = useRef<THREE.Group>(null);
   const scroll = useStore((state) => state.scroll);
@@ -111,24 +101,18 @@ function OrbitingBlobs() {
   return (
     <group ref={groupRef}>
       {blobs.map((blob, i) => (
-        <OrbitingBlob key={i} {...blob} index={i} scroll={scroll} />
+        <OrbitBlob key={i} {...blob} index={i} scroll={scroll} />
       ))}
     </group>
   );
 }
 
-function OrbitingBlob({
-  distance, size, speed, offset, color, index, scroll
-}: {
-  distance: number; size: number; speed: number; offset: number;
-  color: string; index: number; scroll: number;
-}) {
+function OrbitBlob({ distance, size, speed, offset, color, index, scroll }: any) {
   const meshRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
     if (!meshRef.current) return;
     const time = state.clock.elapsedTime;
-
     const angle = time * speed + offset;
     meshRef.current.position.x = Math.cos(angle) * distance;
     meshRef.current.position.z = Math.sin(angle) * distance;
@@ -148,7 +132,7 @@ function OrbitingBlob({
   );
 }
 
-// Ambient particles
+// Particles
 function Particles() {
   const pointsRef = useRef<THREE.Points>(null);
   const scroll = useStore((state) => state.scroll);
@@ -189,7 +173,7 @@ function Particles() {
   );
 }
 
-// Camera controller
+// Camera
 function CameraController() {
   const { camera } = useThree();
   const scroll = useStore((state) => state.scroll);
@@ -198,23 +182,13 @@ function CameraController() {
   const returnProgress = useStore((state) => state.returnProgress);
   const targetPos = useRef({ x: 0, y: 0, z: 5 });
 
-  useFrame((state) => {
-    const time = state.clock.elapsedTime;
-
-    let effectiveScroll = scroll;
-    if (isReturning) {
-      effectiveScroll = 1 - returnProgress;
-    }
-
-    // Zoom out as user scrolls
+  useFrame(() => {
+    let effectiveScroll = isReturning ? 1 - returnProgress : scroll;
     const targetZ = 5 + effectiveScroll * 4;
-
-    // Mouse parallax
     const mouseInfluence = 1 - effectiveScroll * 0.6;
     const targetX = mousePosition.x * 0.5 * mouseInfluence;
     const targetY = mousePosition.y * 0.3 * mouseInfluence;
 
-    // Smooth interpolation
     targetPos.current.x += (targetX - targetPos.current.x) * 0.03;
     targetPos.current.y += (targetY - targetPos.current.y) * 0.03;
     targetPos.current.z += (targetZ - targetPos.current.z) * 0.02;
@@ -229,12 +203,7 @@ function CameraController() {
 function Effects() {
   return (
     <EffectComposer>
-      <Bloom
-        intensity={0.5}
-        luminanceThreshold={0.2}
-        luminanceSmoothing={0.9}
-        mipmapBlur
-      />
+      <Bloom intensity={0.5} luminanceThreshold={0.2} luminanceSmoothing={0.9} mipmapBlur />
     </EffectComposer>
   );
 }
@@ -244,13 +213,10 @@ function Scene() {
     <>
       <color attach="background" args={[DEEP_SPACE]} />
       <fog attach="fog" args={[DEEP_SPACE, 8, 20]} />
-
       <Environment preset="night" />
-
       <ambientLight intensity={0.3} />
       <pointLight position={[5, 5, 5]} intensity={1} color={PERSIMMON} />
       <pointLight position={[-5, -3, 3]} intensity={0.5} color={NEO_MINT} />
-
       <CameraController />
       <MorphingBlob />
       <InnerCore />
@@ -262,26 +228,12 @@ function Scene() {
 }
 
 export default function Experience() {
-  const setLoaded = useStore((state) => state.setLoaded);
-
   return (
     <Canvas
       camera={{ position: [0, 0, 5], fov: 50 }}
       dpr={[1, 2]}
-      gl={{
-        antialias: true,
-        toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.2,
-      }}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: 5,
-      }}
-      onCreated={() => setLoaded(true)}
+      gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
+      style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh" }}
     >
       <Scene />
     </Canvas>

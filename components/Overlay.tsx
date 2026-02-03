@@ -167,11 +167,7 @@ function IntroSection() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1, delay: 0.5 }}
     >
-      {/* Subtle vignette overlay - lets Three.js show through */}
-      <div
-        className="absolute inset-0 bg-[#0a0908]"
-        style={{ opacity: 0.3 - introProgress * 0.2 }}
-      />
+      {/* No overlay - Three.js shows through */}
 
       {/* Centered scroll prompt */}
       <div className="relative z-10 text-center">
@@ -1689,11 +1685,7 @@ function LoadingScreen() {
       className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
       style={{ opacity: overlayOpacity }}
     >
-      {/* Transparent overlay - Three.js shows through */}
-      <motion.div
-        className="absolute inset-0 bg-[#0a0908]"
-        style={{ opacity: phase === "waiting" ? 0.9 : Math.max(0, 0.5 - introProgress) }}
-      />
+      {/* No background - Three.js shows through completely */}
 
       {/* Logo content */}
       <motion.div
@@ -1703,10 +1695,10 @@ function LoadingScreen() {
         animate={{ scale: phase === "animating" ? 1.1 : 1 }}
         transition={{ duration: 2, ease: "easeOut" }}
       >
-        {/* Glowing backdrop for logo */}
+        {/* Subtle glow behind logo */}
         <motion.div
           className="absolute inset-0 -m-20 rounded-full bg-[#FF7F6B]"
-          style={{ filter: "blur(80px)", opacity: 0.3 - introProgress * 0.3 }}
+          style={{ filter: "blur(100px)", opacity: 0.2 - introProgress * 0.2 }}
         />
 
         {/* Logo */}
@@ -1778,27 +1770,8 @@ function LoadingScreen() {
 }
 
 function BackgroundDimmer() {
-  const scroll = useStore((state) => state.scroll);
-
-  // Very light dimming - Three.js should always be visible
-  let dimOpacity = 0;
-
-  if (scroll < 0.05) {
-    dimOpacity = 0; // No dimming at start
-  } else if (scroll < 0.32) {
-    // During hero - very light dim for text readability
-    dimOpacity = 0.15;
-  } else {
-    // After hero - slightly more dim for content sections
-    dimOpacity = 0.2;
-  }
-
-  return (
-    <div
-      className="fixed inset-0 pointer-events-none z-[2] bg-[#0a0908]"
-      style={{ opacity: dimOpacity }}
-    />
-  );
+  // Removed - no dimmer to block Three.js
+  return null;
 }
 
 // Quick navigation floating menu
