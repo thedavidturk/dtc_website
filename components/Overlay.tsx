@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/store/useStore";
-import Lenis from "@studio-freight/lenis";
+// Removed Lenis - using native scroll for mobile compatibility
 import MagneticButton from "./MagneticButton";
 import TextReveal, { FadeReveal } from "./TextReveal";
 import CustomCursor from "./CustomCursor";
@@ -1636,104 +1636,6 @@ function ShowreelModal() {
 function LoadingScreen() {
   // Completely disabled - no loading screen
   return null;
-
-  /* Original code disabled for debugging
-  const isLoaded = useStore((state) => state.isLoaded);
-  const introProgress = useStore((state) => state.introProgress);
-  const setIntroProgress = useStore((state) => state.setIntroProgress);
-  const isIntroComplete = useStore((state) => state.isIntroComplete);
-  const setIntroComplete = useStore((state) => state.setIntroComplete);
-  const [phase, setPhase] = useState<"waiting" | "animating" | "done">("waiting");
-  if (phase === "done") return null;
-  */
-
-  return (
-    <motion.div
-      className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center"
-      style={{ opacity: overlayOpacity }}
-    >
-      {/* No background - Three.js shows through completely */}
-
-      {/* Logo content */}
-      <motion.div
-        className="relative z-10 text-center"
-        style={{ opacity: logoOpacity }}
-        initial={{ scale: 1 }}
-        animate={{ scale: phase === "animating" ? 1.1 : 1 }}
-        transition={{ duration: 2, ease: "easeOut" }}
-      >
-        {/* Subtle glow behind logo */}
-        <motion.div
-          className="absolute inset-0 -m-20 rounded-full bg-[#FF7F6B]"
-          style={{ filter: "blur(100px)", opacity: 0.2 - introProgress * 0.2 }}
-        />
-
-        {/* Logo */}
-        <motion.div className="relative mb-4">
-          <div className="flex items-center justify-center gap-1">
-            {["D", "T", "+", "C"].map((letter, i) => (
-              <motion.span
-                key={i}
-                className={`text-6xl sm:text-7xl md:text-8xl font-bold ${
-                  letter === "+" ? "text-[#FF7F6B]" : "text-white"
-                }`}
-                initial={{ opacity: 0, y: 30, rotateX: -90 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{
-                  delay: 0.1 + i * 0.1,
-                  duration: 0.6,
-                  ease: [0.34, 1.56, 0.64, 1],
-                }}
-                style={{
-                  textShadow: letter === "+" ? "0 0 40px rgba(255, 92, 52, 0.5)" : "none",
-                }}
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-          className="text-[#E3D3C5] text-sm sm:text-base tracking-[0.25em] uppercase"
-        >
-          AI-Powered Creative
-        </motion.p>
-
-        {/* Animated line */}
-        <motion.div
-          className="mt-8 mx-auto h-px bg-gradient-to-r from-transparent via-[#FF7F6B] to-transparent"
-          initial={{ width: 0, opacity: 0 }}
-          animate={{ width: 200, opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-        />
-
-        {/* "Entering" text */}
-        {phase === "animating" && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            transition={{ delay: 0.5 }}
-            className="mt-6 text-[#E3D3C5]/60 text-xs tracking-[0.3em] uppercase"
-          >
-            Entering Experience
-          </motion.p>
-        )}
-      </motion.div>
-
-      {/* Scan lines effect */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)",
-        }}
-      />
-    </motion.div>
-  );
 }
 
 function BackgroundDimmer() {
@@ -1840,7 +1742,6 @@ function ScrollToTopButton({ onScrollToTop }: { onScrollToTop: () => void }) {
 }
 
 export default function Overlay() {
-  const lenisRef = useRef<Lenis | null>(null);
   const setScroll = useStore((state) => state.setScroll);
   const setMousePosition = useStore((state) => state.setMousePosition);
   const setContactOpen = useStore((state) => state.setContactOpen);
@@ -1850,9 +1751,8 @@ export default function Overlay() {
   const [selectedCapability, setSelectedCapability] = useState<Capability | null>(null);
 
   const scrollToPosition = useCallback((position: number) => {
-    if (!lenisRef.current) return;
     const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-    lenisRef.current.scrollTo(position * scrollHeight, { duration: 1.5 });
+    window.scrollTo({ top: position * scrollHeight, behavior: "smooth" });
   }, []);
 
   // Restart journey with animated return
@@ -1884,9 +1784,6 @@ export default function Overlay() {
           setReturning(false);
           setReturnProgress(0);
           // Physically scroll to top
-          if (lenisRef.current) {
-            lenisRef.current.scrollTo(0, { immediate: true });
-          }
           window.scrollTo(0, 0);
         }, 300);
       }
@@ -1896,34 +1793,18 @@ export default function Overlay() {
   }, [setReturning, setReturnProgress, setScroll]);
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-
-    // Use window-based scrolling so events aren't blocked by overlays
-    const lenis = new Lenis({
-      duration: isMobile ? 1.2 : 1.8,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: isMobile ? 0.4 : 0.6,
-      touchMultiplier: isMobile ? 2 : 1.2,
-    });
-
-    lenisRef.current = lenis;
-
-    lenis.on("scroll", ({ progress }: { progress: number }) => {
+    // Use native scroll instead of Lenis for better mobile compatibility
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollHeight > 0 ? window.scrollY / scrollHeight : 0;
       setScroll(Math.max(0, Math.min(1, progress)));
-    });
+    };
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Initial call
 
     return () => {
-      lenis.destroy();
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [setScroll]);
 
@@ -1950,7 +1831,7 @@ export default function Overlay() {
       <QuickNav onNavigate={scrollToPosition} />
 
       {/* Scroll height container - creates the scrollable document */}
-      <div className="h-[800vh] md:h-[500vh] pointer-events-none" />
+      <div className="h-[800vh] md:h-[500vh]" style={{ touchAction: 'pan-y' }} />
 
       <IntroSection />
       <HeroSection />
