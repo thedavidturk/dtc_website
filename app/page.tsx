@@ -15,7 +15,7 @@ const Experience = dynamic(() => import("@/components/Experience"), {
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full bg-[#4A3B33] overflow-hidden">
+    <main className="min-h-screen w-full bg-[#0a0908]">
       <Experience />
       <Overlay />
     </main>

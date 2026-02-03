@@ -5,14 +5,15 @@
   --cream: #F9F5F0;
   --sandstone: #E3D3C5;
   --cocoa-brown: #4A3B33;
+  --deep-space: #0a0908;
   --teal: #2F6364;
   --persimmon: #FF7F6B;
   --neo-mint: #A8E6CF;
 
-  /* Semantic mappings */
-  --background: var(--cream);
-  --background-dark: var(--cocoa-brown);
-  --foreground: var(--cocoa-brown);
+  /* Semantic mappings - dark theme for Three.js visibility */
+  --background: var(--deep-space);
+  --background-dark: var(--deep-space);
+  --foreground: var(--cream);
   --foreground-light: var(--cream);
 
   /* Brand colors */
@@ -62,7 +63,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* Display font for headlines */
@@ -110,7 +111,6 @@ code, pre {
 canvas {
   touch-action: none;
   display: block;
-  background: var(--background);
 }
 
 /* Smooth text rendering */
